@@ -152,25 +152,21 @@ The whole goal of the graphics pipeline is to transform the raw input data which
 ### Stage 2: Declaring Shader Stages:
 
 We then configure ths shader stages of the graphics pipeline. We do this with the shader stages variable we configured earlier. 
-
 For this game engine, we will be using 2 shader stages, one for the vertex shaders and one fo rthe fragment shaders.
 
 ### Stage 3: Vertex Input State:
 
 The next stage is the vert input state which defines how vertex data is provided to the pipeline. 
-
 For thie, we will be pointing to the vertexINputInfo variable we configured earlier.
 
 ### Stage 4: Input Assembly State:
 
 This stage defines the type of primitives to assemble (like points, lines, or triangles) for rendering the input data.
-
 In this case, we will be using triangles.
 
 ### Stage 5: Viewport State:
 
 Define the viewport and scissor rectangle configurations. This controls the region of the framebuffer that will be rendered into. 
-
 For this game engine, we would want both the viewport and the scissor rectangle to be the size and the location of our window.
 
 ### Stage 6: Rasterization State:
@@ -180,21 +176,17 @@ This stages defines how the primative graphic structures like points, lines, and
 ### Stage 7: Multisample State:
 
 The multisampling stage determines how aspects of anti-aliasing is handled. 
-
 Multisampling allows for smoother edges by sampling a pixel multiple times ad averaging the results.
 
 ### Stage 8: Color Blend State:
 
 This stage defines how color belding is handled during the graphics pipeline for the fragment shader. 
-
 This stage is basically used to blend nearby colors together.
 
 ### Stage 9: Depth-Stencil State:
 
 This stage defines how depth testig and stencil testing is preformed.
-
 Depth testing controls whether fragments are rendered base don their depth.
-
 Stencil testing controls more advamced features like shadow volumns.
 
 ### Stage 10: Dynamic State:
@@ -212,5 +204,4 @@ Specifies which render pass the pipeline will use, which describes the framebuff
 ### Stage 13: Base Pipeline:
 
 Sepcifies whether a base pipeline will be used.
-
 In this case, no base pipeline is used.
