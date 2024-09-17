@@ -1,6 +1,6 @@
 # JCAT-Game-Engine
 
-[![Discord](https://img.shields.io/discord/1281033293441269974.svg?label=Join%20us%20on%20Discord&logo=discord&color=7289DA)](https://discord.gg/eJx6G9yygP)
+[![Discord](https://img.shields.io/discord/1281033293441269974.svg?label=JCAT%20Game%20Engine%20Discord&logo=discord&color=7289DA)](https://discord.gg/eJx6G9yygP)
 
 JCAT Game engine is a project where we build a game engine from scratch using
 Vulkan and C/C++. We started this project because we wanted to learn how low level graphics
