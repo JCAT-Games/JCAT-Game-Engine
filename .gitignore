@@ -1,0 +1,22 @@
+# Ignore the build directory
+build/
+Build/
+
+# Ignore object files
+*.o
+*.obj
+
+# Ignore binary executables
+*.exe
+*.out
+*.app
+
+# Ignore compiled shader objects
+*.spv
+
+# Ignore IDE specific files:
+.vscode/
+.idea/
+
+# Ignore CMake files for specific setup
+.env.cmake

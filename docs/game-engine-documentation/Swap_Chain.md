@@ -3,9 +3,7 @@
 To help create a Vulkan game engine, this [youtube playlist](https://www.youtube.com/playlist?list=PL8327DO66nu9qYVKLDmdLW_84-yE4auCR) was used.
 
 This file contains the instructions for setting up the swap chain for Vulkan.
-
 The swap chain manages the presentation of rednered images on the screen, ensuring that the display happens without any tearing.
-
 The Swap chain is basically a queue of framebuffers used in a loop to manage the rendering and display process.
 
 ## Step 1: Check for swap chain support:
