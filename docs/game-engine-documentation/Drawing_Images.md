@@ -7,7 +7,6 @@ This file contains the general instructions and setup for getting a triangle to 
 ## Step 1: Create the Vulkan Instance:
 
 The first thing you will need to do in order to utilize Vulkan is to create a Vulkan instance.
-
 The instructions for this can be found in the [Initial Setup File](./Initial_Setup.md).
 
 ## Step 2: Physical and Logical Device setup:
@@ -20,7 +19,6 @@ This instructions for this can be seen in the [Initial Setup File](./Initial_Set
 ## Step 3: Window Setup:
 
 Now we must setup the window that we will be drawing and displaying graphics in. This can be done with GLFW.
-
 The instructions for this can also be found in [Initial Setup File](./Initial_Setup.md).
 
 ## Step 4: Swap Chain Setup:
@@ -34,7 +32,6 @@ Instructions on configuring the swap chain can be found in the [Swap Chain READM
 ## Step 5: Image Views Creation:
 
 An image view must be created for each swap chain image. The image view describes how the swap chain images should be interpreted.
-
 Instructions for this can be found in the [Swap Chain README](./Swap_Chain.md).
 
 ## Step 6: Render Pass and Framebuffers:
