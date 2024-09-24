@@ -1,5 +1,8 @@
+#include "application.hpp"
+
 #include <iostream>
-#include <GLFW/glfw3.h>
+#include <cstdlib>
+#include <stdexcept>
 
 int main() {
     return 0;
