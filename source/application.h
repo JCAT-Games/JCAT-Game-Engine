@@ -1,7 +1,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "window.hpp"
+#include "window.h"
 
 // All game engine code should be under the "JCAT" namespace!
 namespace JCAT {
@@ -24,6 +24,7 @@ namespace JCAT {
             // Running the application
             void run();
         private:
+            Window window{ WINDOW_WIDTH, WINDOW_HEIGHT, "JCAT Game Engine" };
     };
 }
 

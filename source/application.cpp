@@ -1,4 +1,4 @@
-#include "application.hpp"
+#include "application.h"
 
 #include <stdexcept>
 
@@ -8,6 +8,8 @@ namespace JCAT {
     Application::~Application() {}
 
     void Application::run () {
-        
+        while (!window.shouldWindowClose()) {
+            glfwPollEvents();
+        }
     }
 }
