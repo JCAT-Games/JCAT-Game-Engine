@@ -1,10 +1,20 @@
-#include "application.hpp"
+#include "application.h"
 
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>
 
 int main() {
-    return 0;
+    JCAT::Application application{};
+
+    try {
+        application.run();
+    }
+    catch (const std::exception& e) {
+        std::cerr << e.what() << "\n";
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
 

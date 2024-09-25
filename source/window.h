@@ -20,17 +20,17 @@ namespace JCAT {
             Window& operator=(const Window&) = delete;
 
             // Prevents the window from automatically closing
-            bool shouldClose();
+            bool shouldWindowClose();
         private:
             // Initializes the window
-            void initWindow();
+            void initializeWindow();
 
             // Dimensions of the window
             const int WIDTH;
             const int HEIGHT;
 
             // Window title
-            std::string window_titlr;
+            std::string window_title;
 
             // Pointer to the GLFW window object
             GLFWwindow* window;
