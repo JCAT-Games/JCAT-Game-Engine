@@ -35,6 +35,12 @@ namespace JCAT {
             VkQueue graphicsQueue();
             VkQueue presentQueue();
         private:
+            #ifndef NDEBUG
+                const bool enableValidationLayers = false;
+            #else
+                const bool enableValidationLayers = true;
+            #endif
+
             void createVulkanInstance();
             void createWindowSurface();
             void pickPhysicalDevice();
@@ -45,9 +51,24 @@ namespace JCAT {
             // Helper functions for main functions
             bool isDeviceSuitable(VkPhysicalDevice device);
             std::vector<const char*> getRequiredGLFWExtensions();
+            bool checkValidationLayerSupport();
             void hasGLFWRequiredInstanceExtensions();
             QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+            void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
             bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+
+            // Debug Messnger Functions
+            VkResult createDebugUtilsMessenger(VkInstance instance, 
+                                                const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, 
+                                                const VkAllocationCallbacks* pAllocator, 
+                                                VkDebugUtilsMessengerEXT* pDebugMessenger);
+            void destroyDebugUtilsMessengerEXT(VkInstance instance, 
+                                                VkDebugUtilsMessengerEXT debugMessenger, 
+                                                const VkAllocationCallbacks* pAllocator);
+            static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                                VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                                const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                                void* pUserData);
 
             VkInstance instance;
             VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -59,6 +80,10 @@ namespace JCAT {
             VkSurfaceKHR windowSurface_;
             VkQueue graphicsQueue_;
             VkQueue presentQueue_;
+
+            std::vector<const char*> validationLayers = {
+                "VK_LAYER_KHRONOS_validation"
+            };
     };
 }
 
