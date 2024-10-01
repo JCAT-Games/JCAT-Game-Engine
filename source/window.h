@@ -21,6 +21,9 @@ namespace JCAT {
 
             // Prevents the window from automatically closing
             bool shouldWindowClose();
+
+            // Creates the window surface
+            void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
         private:
             // Initializes the window
             void initializeWindow();
