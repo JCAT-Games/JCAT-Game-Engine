@@ -95,11 +95,78 @@ namespace JCAT {
     }
 
     void DeviceSetup::createWindowSurface() {
-        
+        window.createWindowSurface(instance, &windowSurface_);
     }
 
     void DeviceSetup::pickPhysicalDevice() {
+        VkPhysicalDevice integratedGPU = VK_NULL_HANDLE;
+        VkPhysicalDevice discreteGPU = VK_NULL_HANDLE;
 
+        uint32_t deviceCount = 0;
+        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+
+        if (deviceCount == 0) {
+            throw std::runtime_error("Failed to find GPUs with Vulkan support!");
+        }
+
+        std::vector<VkPhysicalDevice> devices(deviceCount);
+        vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+        std::cout << "Device Count: " << deviceCount << std::endl;
+
+        for (const VkPhysicalDevice& device : devices) {
+            VkPhysicalDeviceProperties deviceProperties;
+            vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+            if (isDeviceSuitable(device)) {
+                if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && discreteGPU == VK_NULL_HANDLE) {
+                    discreteGPU = device;
+                }
+                else if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU && integratedGPU == VK_NULL_HANDLE) {
+                    integratedGPU = device;
+                }
+            }
+        }
+
+        // Should add more sophisticated checking in the future such as shader support
+        if (isOnBatteryPower()) {
+            if (integratedGPU != VK_NULL_HANDLE) {
+                physicalDevice = integratedGPU;
+            }
+            else {
+                physicalDevice = discreteGPU;
+            }
+        }
+        else {
+            if (discreteGPU != VK_NULL_HANDLE) {
+                physicalDevice = discreteGPU;
+            }
+            else {
+                physicalDevice = integratedGPU;
+            }
+        }
+
+        if (physicalDevice == VK_NULL_HANDLE) {
+            throw std::runtime_error("Failed to find a suitable GPU!");
+        }
+
+        if (integratedGPU != VK_NULL_HANDLE) {
+            VkPhysicalDeviceProperties deviceProperties;
+            vkGetPhysicalDeviceProperties(integratedGPU, &deviceProperties);
+
+            std::cout << "Found Integrated GPU: " << deviceProperties.deviceName << std::endl;
+        }
+
+        if (discreteGPU != VK_NULL_HANDLE) {
+            VkPhysicalDeviceProperties deviceProperties;
+            vkGetPhysicalDeviceProperties(discreteGPU, &deviceProperties);
+
+            std::cout << "Found Discrete GPU: " << deviceProperties.deviceName << std::endl;
+        }
+
+        VkPhysicalDeviceProperties deviceProperties;
+        vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
+        std::cout << "Chose the following GPU: " << deviceProperties.deviceName << std::endl;
     }
 
     void DeviceSetup::createLogicalDevice() {
@@ -184,6 +251,29 @@ namespace JCAT {
 
     bool DeviceSetup::checkDeviceExtensionSupport(VkPhysicalDevice device) {
 
+    }
+
+    bool DeviceSetup::isOnBatteryPower() {
+        #if defined(_WIN32) || defined(_WIN64)
+            SYSTEM_POWER_STATUS powerStatus;
+
+            if (GetSystemPowerStatus(&powerStatus)) {
+                return powerStatus.ACLineStatus == 0;
+            }
+
+            return false;
+        #elif defined(__linux__)
+            std::ifstream file("/sys/class/power_supply/AC/online");
+            std::string status;
+
+            if (file.is_open()) {
+                std::getline(file, status);
+                file.close();
+                return status == "0"; 
+            }
+            
+            return false;
+        #endif
     }
 
     VkResult DeviceSetup::createDebugUtilsMessenger(VkInstance instance, 

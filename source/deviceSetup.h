@@ -6,6 +6,13 @@
 #include <cstdint>
 #include <vector>
 
+#if defined(_WIN32) || defined(_WIN64)
+    #include <windows.h>
+#elif defined(__linux__)
+    #include <fstream>
+    #include <string>
+#endif
+
 namespace JCAT {
     struct QueueFamilyIndices {
         uint32_t graphicsFamily;
@@ -56,6 +63,7 @@ namespace JCAT {
             QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
             void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
             bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+            bool isOnBatteryPower();
 
             // Debug Messnger Functions
             VkResult createDebugUtilsMessenger(VkInstance instance, 
