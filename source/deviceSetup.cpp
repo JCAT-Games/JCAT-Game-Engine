@@ -4,6 +4,8 @@
 #include <vector>
 #include <stdexcept>
 #include <cstring>
+#include <set>
+#include <unordered_set>
 
 namespace JCAT {
     DeviceSetup::DeviceSetup(Window& window) : window(window) {
@@ -170,7 +172,10 @@ namespace JCAT {
     }
 
     void DeviceSetup::createLogicalDevice() {
+        QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
+        std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+        std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily };
     }
 
     void DeviceSetup::createCommandPool() {
@@ -239,11 +244,42 @@ namespace JCAT {
     }
 
     void DeviceSetup::hasGLFWRequiredInstanceExtensions() {
+        uint32_t glfwExtensionCount = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &glfwExtensionCount, nullptr);
 
+        std::vector<VkExtensionProperties> extensions(glfwExtensionCount);
+        vkEnumerateInstanceExtensionProperties(nullptr, &glfwExtensionCount, extensions.data());
+
+        std::cout << "Vulkan Instance Availible Extensions: " << std::endl;
+        std::unordered_set<std::string> availibleExtensions;
+        for (const VkExtensionProperties& extension : extensions) {
+            std::cout << "\t" << extension.extensionName << std::endl;
+            availibleExtensions.insert(extension.extensionName);
+        }
+
+        uint32_t glfwRequiredExtensionCount = 0;
+        const char** glfwExtensions;
+        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+        std::vector<const char*> glfwRequiredExtensions(glfwExtensions, glfwExtensions + glfwRequiredExtensionCount);
+        if (enableValidationLayers) {
+            glfwRequiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        }
+
+        std::cout << "Required Extensions:" << std::endl;
+        for (const char* required : glfwRequiredExtensions) {
+            std::cout << "\t" << required << std::endl;
+            if (availibleExtensions.find(required) == availibleExtensions.end()) {
+                throw std::runtime_error("Missing required GLFW extension");
+            }
+        }
     }
 
     QueueFamilyIndices DeviceSetup::findQueueFamilies(VkPhysicalDevice device) {
+        QueueFamilyIndices indices;
 
+        uint32_t queueFamilyCount = 0;
+        
     }
 
     void DeviceSetup::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
