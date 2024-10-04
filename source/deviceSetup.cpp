@@ -193,7 +193,20 @@ namespace JCAT {
     }
 
     bool DeviceSetup::isDeviceSuitable(VkPhysicalDevice device) {
+        QueueFamilyIndices indices = findQueueFamilies(device);
+        
+        bool extensionsSupported = checkDeviceExtensionSupport(device);
 
+        // Check for swap chain support here
+
+        VkPhysicalDeviceFeatures supportedFeatures;
+        vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
+        
+        bool samplerAnisotropySupported = supportedFeatures.samplerAnisotropy;
+        bool sampleRateSahdingSupported = supportedFeatures.sampleRateShading;
+        bool geometryShaderSupported = supportedFeatures.geometryShader;
+
+        return indices.isComplete() && extensionsSupported && samplerAnisotropySupported && sampleRateSahdingSupported && geometryShaderSupported;
     }
 
     std::vector<const char*> DeviceSetup::getRequiredGLFWExtensions() {
@@ -250,7 +263,32 @@ namespace JCAT {
     }
 
     bool DeviceSetup::checkDeviceExtensionSupport(VkPhysicalDevice device) {
+        uint32_t extensionCount = 0;
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
+        std::vector<VkExtensionProperties> availibleExtensions(extensionCount);
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availibleExtensions.data());
+
+        std::vector<const char*> requiredExtensions;
+        requiredExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+
+        for (const char* required : requiredExtensions) {
+            bool extensionFound = false;
+
+            for (const VkExtensionProperties& extension : availibleExtensions) {
+                if (strcmp(required, extension.extensionName) == 0) {
+                    extensionFound = true;
+                    break;
+                }
+            }
+
+            if (!extensionFound) {
+                std::cerr << "Required device extension not supported: " << required << std::endl;
+                return false;
+            }
+        }
+
+        return true;
     }
 
     bool DeviceSetup::isOnBatteryPower() {
