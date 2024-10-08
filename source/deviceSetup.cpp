@@ -250,7 +250,12 @@ namespace JCAT {
         
         bool extensionsSupported = checkDeviceExtensionSupport(device);
 
-        // Check for swap chain support here
+        // Checks for swap chain support
+        bool swapChainAdequate = false;
+        if (extensionsSupported) {
+            SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+            swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+        }
 
         VkPhysicalDeviceFeatures supportedFeatures;
         vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
@@ -402,6 +407,34 @@ namespace JCAT {
         }
 
         return true;
+    }
+
+    SwapChainSupportDetails DeviceSetup::querySwapChainSupport(VkPhysicalDevice device) {
+        SwapChainSupportDetails swapChainDetails;
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, windowSurface_, &swapChainDetails.capabilities);
+    
+        uint32_t formatCount;
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, windowSurface_, &formatCount, nullptr);
+    
+        if (formatCount != 0) {
+            swapChainDetails.formats.resize(formatCount);
+            vkGetPhysicalDeviceSurfaceFormatsKHR(device, windowSurface_, &formatCount, swapChainDetails.formats.data());
+        }
+
+        uint32_t presentModeCount;
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, windowSurface_, &presentModeCount, nullptr);
+
+        if (presentModeCount != 0) {
+            swapChainDetails.presentModes.resize(presentModeCount);
+
+            vkGetPhysicalDeviceSurfacePresentModesKHR(
+                device,
+                windowSurface_,
+                &presentModeCount,
+                swapChainDetails.presentModes.data());
+        }
+
+        return swapChainDetails;
     }
 
     bool DeviceSetup::isOnBatteryPower() {

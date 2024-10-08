@@ -26,6 +26,12 @@ namespace JCAT {
         }
     };
 
+    struct SwapChainSupportDetails {
+        VkSurfaceCapabilitiesKHR capabilities;
+        std::vector<VkSurfaceFormatKHR> formats;
+        std::vector<VkPresentModeKHR> presentModes;
+    };
+
     class DeviceSetup {
         public:
             DeviceSetup(Window& window);
@@ -49,8 +55,11 @@ namespace JCAT {
             #endif
 
             void createVulkanInstance();
+
             void createWindowSurface();
+
             void pickPhysicalDevice();
+
             void createLogicalDevice();
 
             /**
@@ -75,6 +84,7 @@ namespace JCAT {
             QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
             void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
             bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+            SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
             bool isOnBatteryPower();
 
             // Debug Messnger Functions
