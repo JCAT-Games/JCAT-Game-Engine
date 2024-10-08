@@ -176,10 +176,58 @@ namespace JCAT {
 
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
         std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily };
+
+        float queuePriority = 1.0f;
+        for (uint32_t queueFamily : uniqueQueueFamilies) {
+            VkDeviceQueueCreateInfo queueCreateInfo = {};
+            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfo.queueFamilyIndex = queueFamily;
+            queueCreateInfo.queueCount = 1;
+            queueCreateInfo.pQueuePriorities = &queuePriority;
+            queueCreateInfos.push_back(queueCreateInfo);
+        }
+
+        VkPhysicalDeviceFeatures deviceFeatures{};
+        deviceFeatures.samplerAnisotropy = VK_TRUE;
+
+        std::vector<const char*> deviceExtensions = {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+        };
+
+        VkDeviceCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+        createInfo.pQueueCreateInfos = queueCreateInfos.data();
+        createInfo.pEnabledFeatures = &deviceFeatures;
+        createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+        createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+
+        if (enableValidationLayers) {
+            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+            createInfo.ppEnabledLayerNames = validationLayers.data();
+        } else {
+            createInfo.enabledLayerCount = 0;
+        }
+
+        if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device_) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create logical device!");
+        }
+
+        vkGetDeviceQueue(device_, indices.graphicsFamily, 0, &graphicsQueue_);
+        vkGetDeviceQueue(device_, indices.presentFamily, 0, &presentQueue_);
     }
 
     void DeviceSetup::createCommandPool() {
+        QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
 
+        VkCommandPoolCreateInfo poolInfo{};
+        poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
+        poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+        if (vkCreateCommandPool(device_, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create command pool!");
+        }
     }
 
     void DeviceSetup::setupDebugMessenger() {
@@ -202,7 +250,12 @@ namespace JCAT {
         
         bool extensionsSupported = checkDeviceExtensionSupport(device);
 
-        // Check for swap chain support here
+        // Checks for swap chain support
+        bool swapChainAdequate = false;
+        if (extensionsSupported) {
+            SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+            swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+        }
 
         VkPhysicalDeviceFeatures supportedFeatures;
         vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
@@ -215,7 +268,17 @@ namespace JCAT {
     }
 
     std::vector<const char*> DeviceSetup::getRequiredGLFWExtensions() {
+        uint32_t glfwRequiredExtensionCount = 0;
+        const char** glfwExtensions;
+        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwRequiredExtensionCount);
 
+        std::vector<const char*> glfwRequiredExtensions(glfwExtensions, glfwExtensions + glfwRequiredExtensionCount);
+        
+        if (enableValidationLayers) {
+            glfwRequiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        }
+
+        return glfwRequiredExtensions;
     }
 
     bool DeviceSetup::checkValidationLayerSupport() {
@@ -257,14 +320,7 @@ namespace JCAT {
             availibleExtensions.insert(extension.extensionName);
         }
 
-        uint32_t glfwRequiredExtensionCount = 0;
-        const char** glfwExtensions;
-        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-        std::vector<const char*> glfwRequiredExtensions(glfwExtensions, glfwExtensions + glfwRequiredExtensionCount);
-        if (enableValidationLayers) {
-            glfwRequiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-        }
+        std::vector<const char*> glfwRequiredExtensions = getRequiredGLFWExtensions();
 
         std::cout << "Required Extensions:" << std::endl;
         for (const char* required : glfwRequiredExtensions) {
@@ -279,7 +335,33 @@ namespace JCAT {
         QueueFamilyIndices indices;
 
         uint32_t queueFamilyCount = 0;
-        
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+        int i = 0;
+        for (const VkQueueFamilyProperties& queueFamily : queueFamilies) {
+            if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                indices.graphicsFamily = i;
+                indices.graphicsFamilyHasValue = true;
+            }
+
+            VkBool32 presentSupport = false;
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, windowSurface_, &presentSupport);
+            if (queueFamily.queueCount > 0 && presentSupport) {
+                indices.presentFamily = i;
+                indices.presentFamilyHasValue = true;
+            }
+
+            if (indices.isComplete()) {
+                break;
+            }
+
+            i++;
+        }
+
+        return indices;
     }
 
     void DeviceSetup::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
@@ -325,6 +407,34 @@ namespace JCAT {
         }
 
         return true;
+    }
+
+    SwapChainSupportDetails DeviceSetup::querySwapChainSupport(VkPhysicalDevice device) {
+        SwapChainSupportDetails swapChainDetails;
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, windowSurface_, &swapChainDetails.capabilities);
+    
+        uint32_t formatCount;
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, windowSurface_, &formatCount, nullptr);
+    
+        if (formatCount != 0) {
+            swapChainDetails.formats.resize(formatCount);
+            vkGetPhysicalDeviceSurfaceFormatsKHR(device, windowSurface_, &formatCount, swapChainDetails.formats.data());
+        }
+
+        uint32_t presentModeCount;
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, windowSurface_, &presentModeCount, nullptr);
+
+        if (presentModeCount != 0) {
+            swapChainDetails.presentModes.resize(presentModeCount);
+
+            vkGetPhysicalDeviceSurfacePresentModesKHR(
+                device,
+                windowSurface_,
+                &presentModeCount,
+                swapChainDetails.presentModes.data());
+        }
+
+        return swapChainDetails;
     }
 
     bool DeviceSetup::isOnBatteryPower() {

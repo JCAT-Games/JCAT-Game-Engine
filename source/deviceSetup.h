@@ -26,6 +26,12 @@ namespace JCAT {
         }
     };
 
+    struct SwapChainSupportDetails {
+        VkSurfaceCapabilitiesKHR capabilities;
+        std::vector<VkSurfaceFormatKHR> formats;
+        std::vector<VkPresentModeKHR> presentModes;
+    };
+
     class DeviceSetup {
         public:
             DeviceSetup(Window& window);
@@ -49,10 +55,25 @@ namespace JCAT {
             #endif
 
             void createVulkanInstance();
+
             void createWindowSurface();
+
             void pickPhysicalDevice();
+
             void createLogicalDevice();
+
+            /**
+             * @brief Creates a command pool for allocating command buffers.
+             *
+             * This function creates a command pool associated with the graphics queue
+             * family index. The command pool can be used to allocate command buffers,
+             * which in turn can be used to record and submit commands to the GPU.
+             *
+             * @return None, but sets the commandPool instance variable in the DeviceSetup class.
+             * @throws std::runtime_error If the command pool creation fails.
+             */
             void createCommandPool();
+
             void setupDebugMessenger();
 
             // Helper functions for main functions
@@ -63,6 +84,7 @@ namespace JCAT {
             QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
             void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
             bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+            SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
             bool isOnBatteryPower();
 
             // Debug Messnger Functions
