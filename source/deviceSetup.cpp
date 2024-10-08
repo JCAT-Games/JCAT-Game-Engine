@@ -210,7 +210,7 @@ namespace JCAT {
         }
 
         if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device_) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create logical device!");
+            throw std::runtime_error("Failed to create logical device!");
         }
 
         vkGetDeviceQueue(device_, indices.graphicsFamily, 0, &graphicsQueue_);
@@ -218,7 +218,16 @@ namespace JCAT {
     }
 
     void DeviceSetup::createCommandPool() {
-    
+        QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
+
+        VkCommandPoolCreateInfo poolInfo{};
+        poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
+        poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+        if (vkCreateCommandPool(device_, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create command pool!");
+        }
     }
 
     void DeviceSetup::setupDebugMessenger() {
@@ -254,7 +263,17 @@ namespace JCAT {
     }
 
     std::vector<const char*> DeviceSetup::getRequiredGLFWExtensions() {
+        uint32_t glfwRequiredExtensionCount = 0;
+        const char** glfwExtensions;
+        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwRequiredExtensionCount);
+
+        std::vector<const char*> glfwRequiredExtensions(glfwExtensions, glfwExtensions + glfwRequiredExtensionCount);
         
+        if (enableValidationLayers) {
+            glfwRequiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        }
+
+        return glfwRequiredExtensions;
     }
 
     bool DeviceSetup::checkValidationLayerSupport() {
@@ -296,14 +315,7 @@ namespace JCAT {
             availibleExtensions.insert(extension.extensionName);
         }
 
-        uint32_t glfwRequiredExtensionCount = 0;
-        const char** glfwExtensions;
-        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-        std::vector<const char*> glfwRequiredExtensions(glfwExtensions, glfwExtensions + glfwRequiredExtensionCount);
-        if (enableValidationLayers) {
-            glfwRequiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-        }
+        std::vector<const char*> glfwRequiredExtensions = getRequiredGLFWExtensions();
 
         std::cout << "Required Extensions:" << std::endl;
         for (const char* required : glfwRequiredExtensions) {

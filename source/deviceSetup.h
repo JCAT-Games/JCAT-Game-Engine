@@ -52,7 +52,19 @@ namespace JCAT {
             void createWindowSurface();
             void pickPhysicalDevice();
             void createLogicalDevice();
+
+            /**
+             * @brief Creates a command pool for allocating command buffers.
+             *
+             * This function creates a command pool associated with the graphics queue
+             * family index. The command pool can be used to allocate command buffers,
+             * which in turn can be used to record and submit commands to the GPU.
+             *
+             * @return None, but sets the commandPool instance variable in the DeviceSetup class.
+             * @throws std::runtime_error If the command pool creation fails.
+             */
             void createCommandPool();
+
             void setupDebugMessenger();
 
             // Helper functions for main functions
