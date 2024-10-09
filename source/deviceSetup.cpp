@@ -470,12 +470,10 @@ namespace JCAT {
         if (func != nullptr) {
             VkResult result = func(instance, pCreateInfo, pAllocator, pDebugMessenger);
 
-            if (result != VK_SUCCESS) {
-                throw std::runtime_error("Failed to set up Debug Messenger!");
-            }
+            return result;
         }
         else {
-            throw std::runtime_error("Could not load vkCreateDebugUtilsMessengerEXT!");
+            return VK_ERROR_EXTENSION_NOT_PRESENT;
         }
     }
 
