@@ -49,6 +49,19 @@ namespace JCAT {
         return presentQueue_;
     }
 
+    uint32_t DeviceSetup::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+        VkPhysicalDeviceMemoryProperties memProperties;
+        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
+
+        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+            if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+                return i;
+            }
+        }
+
+        throw std::runtime_error("Failed to find suitable memory type!");
+    }
+
     void DeviceSetup::createVulkanInstance() {
         // Check if validation layers are requested
         if (enableValidationLayers && !checkValidationLayerSupport()) {
@@ -169,6 +182,7 @@ namespace JCAT {
         VkPhysicalDeviceProperties deviceProperties;
         vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
         std::cout << "Chose the following GPU: " << deviceProperties.deviceName << std::endl;
+        properties = deviceProperties;
     }
 
     void DeviceSetup::createLogicalDevice() {

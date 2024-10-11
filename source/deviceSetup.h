@@ -138,6 +138,10 @@ namespace JCAT {
              * @return VkQueue The present queue handle for presenting images to the window.
              */
             VkQueue presentQueue();
+
+            uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+
+            VkPhysicalDeviceProperties properties;
         private:
             #ifndef NDEBUG
                 // Disable validation layers in release mode for performance.
