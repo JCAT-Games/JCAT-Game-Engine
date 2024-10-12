@@ -181,7 +181,7 @@ namespace JCAT {
 
         VkPhysicalDeviceProperties deviceProperties;
         vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
-        std::cout << "Chose the following GPU: " << deviceProperties.deviceName << std::endl;
+        std::cout << "Choosing the following GPU: " << deviceProperties.deviceName << std::endl;
         properties = deviceProperties;
     }
 
