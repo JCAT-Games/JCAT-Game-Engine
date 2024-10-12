@@ -129,3 +129,10 @@ elseif (UNIX)
     # Linking required libraries
     target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES})
 endif()
+
+##### For Compiling Shader Objects #####
+
+add_custom_target(
+    Shaders
+    DEPENDS ${SHADER_FILES}
+)
