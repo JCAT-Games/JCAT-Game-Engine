@@ -131,8 +131,51 @@ elseif (UNIX)
 endif()
 
 ##### For Compiling Shader Objects #####
+# Credit: https://github.com/vblanco20-1/vulkan-guide/blob/all-chapters/CMakeLists.txt
 
+# First we must find the GLSL Validator glslc
+find_program(GLSL_VALIDATOR glslangValidator HINTS
+    ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE}
+    /usr/bin 
+    /usr/local/bin 
+    ${VULKAN_SDK_PATH}/Bin
+    ${VULKAN_SDK_PATH}/Bin32
+    $ENV{VULKAN_SDK}/Bin/ 
+    $ENV{VULKAN_SDK}/Bin32/
+)
+
+# Check if the GLSL validator was found
+if(NOT GLSL_VALIDATOR)
+    message(FATAL_ERROR "GLSL Validator not found! Please install it or set the VULKAN_SDK_PATH.")
+else()
+    message(STATUS "GLSL Validator found at: ${GLSL_VALIDATOR}")
+endif()
+
+# Now we must take in all .vert and .frag shader files.
+file(GLOB_RECURSE GLSL_SOURCE_FILES
+    "${PROJECT_SOURCE_DIR}/shaders/*.frag"
+    "${PROJECT_SOURCE_DIR}/shaders/*.vert"
+)
+
+# Output the list of found shader files for verification
+message(STATUS "Found GLSL source files: ${GLSL_SOURCE_FILES}")
+
+# Now we must compile the shader files into SPIR-V files
+foreach(GLSL_FILE ${GLSL_SOURCE_FILES})
+    get_filename_component(FILE_NAME ${GLSL_FILE} NAME)
+    set(SPIRV_FILE "${PROJECT_SOURCE_DIR}/shaders/${FILE_NAME}.spv")
+
+    add_custom_command(
+        OUTPUT ${SPIRV_FILE}
+        COMMAND ${GLSL_VALIDATOR} -V ${GLSL_FILE} -o ${SPIRV_FILE}
+        DEPENDS ${GLSL_FILE}
+    )
+
+    list(APPEND SPIRV_BINARY_FILES ${SPIRV_FILE})
+endforeach(GLSL_FILE)
+
+# Run the shaders compilation with the "Shaders" keyword
 add_custom_target(
     Shaders
-    DEPENDS ${SHADER_FILES}
+    DEPENDS ${SPIRV_BINARY_FILES}
 )
