@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "resourceManager.h"
+#include "./engine/resourceManager.h"
 
 namespace JCAT {
     ResourceManager::ResourceManager(DeviceSetup& device) : device_{ device } {}

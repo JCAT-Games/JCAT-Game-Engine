@@ -10,7 +10,7 @@
  * and swap chain support details. 
  */
 
-#include "window.h"
+#include "./engine/window.h"
 
 // std namespace
 #include <cstdint>
@@ -96,7 +96,7 @@ namespace JCAT {
 
             /** ### Delete Copy, Move, Assignment, and Move Assignment operators ### */
             DeviceSetup(const DeviceSetup&) = delete;
-            void operator=(const DeviceSetup&) = delete;
+            DeviceSetup& operator=(const DeviceSetup&) = delete;
             DeviceSetup(DeviceSetup&&) = delete;
             DeviceSetup& operator=(DeviceSetup&&) = delete;
 

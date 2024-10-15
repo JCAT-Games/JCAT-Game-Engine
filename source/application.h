@@ -1,8 +1,8 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "window.h"
-#include "deviceSetup.h"
+#include "./engine/window.h"
+#include "./engine/deviceSetup.h"
 
 // All game engine code should be under the "JCAT" namespace!
 namespace JCAT {

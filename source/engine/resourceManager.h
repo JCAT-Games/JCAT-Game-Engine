@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "deviceSetup.h"
+#include "./engine/deviceSetup.h"
 
 // Should be declared after deviceSetup in application.cpp
 

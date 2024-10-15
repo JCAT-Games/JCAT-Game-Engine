@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_PIPELINE_H
 #define GRAPHICS_PIPELINE_H
 
-#include "deviceSetup.h"
+#include "./engine/deviceSetup.h"
 
 #include <string>
 #include <vector>
