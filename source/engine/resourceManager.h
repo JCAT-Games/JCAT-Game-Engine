@@ -2,6 +2,7 @@
 #define RESOURCE_MANAGER_H
 
 #include <iostream>
+#include <fstream>
 
 #include "./engine/deviceSetup.h"
 
@@ -17,6 +18,8 @@ namespace JCAT {
             void operator=(const ResourceManager&) = delete;
             ResourceManager(ResourceManager&&) = delete;
             ResourceManager& operator=(ResourceManager&&) = delete;
+
+            static std::vector<char> readFile(const std::string& filepath);
 
             void createBuffer(VkDeviceSize size,
                                 VkBufferUsageFlags usage,
