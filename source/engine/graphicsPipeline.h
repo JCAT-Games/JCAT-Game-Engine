@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 namespace JCAT {
 
@@ -65,17 +66,26 @@ namespace JCAT {
 
     class GraphicsPipeline {
         public:
-            GraphicsPipeline(DeviceSetup &device, const std::string& vertFilepath, const std::string& fragfilepath, const PipelineConfigInfo& configInfo);
+            GraphicsPipeline(DeviceSetup &physicalDevice, 
+                             ResourceManager &resourceManager, 
+                             const std::string& vertFilepath, 
+                             const std::string& fragfilepath, 
+                             const std::vector<PipelineConfigInfo>& configInfos);
             ~GraphicsPipeline();
 
             GraphicsPipeline(const GraphicsPipeline&) = delete;
             void operator=(const GraphicsPipeline&) = delete;
 
-            void bindPipeline(VkCommandBuffer commandBuffer);
-            static void configurePipeline(PipelineConfigInfo& configInfo);
+            void bindPipeline(VkCommandBuffer commandBuffer, int type);
+            static void configurePipeline(std::vector<PipelineConfigInfo>& configInfos);
         private:
+            void createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragfilepath, const std::vector<PipelineConfigInfo>& configInfos);
+            void createShaderModule(const std::vector<char>& shaderBinaryCode, VkShaderModule* shaderModule);
+
             DeviceSetup &device;
-            VkPipeline graphicsPipeline;
+            ResourceManager &resources;
+            // Will change to a map
+            std::vector<VkPipeline> graphicsPipelines;
             VkShaderModule vertShaderModule;
             VkShaderModule fragShaderModule;
     };
