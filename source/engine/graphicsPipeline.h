@@ -48,17 +48,18 @@ namespace JCAT {
      */
     struct PipelineConfigInfo {
         /** ### Delete Copy and Assignment operators ### */
-        PipelineConfigInfo(const PipelineConfigInfo&) = delete;
-        PipelineConfigInfo& operator=(const PipelineConfigInfo&) = delete;
+        //PipelineConfigInfo(const PipelineConfigInfo&) = delete;
+        //PipelineConfigInfo& operator=(const PipelineConfigInfo&) = delete;
 
-        VkPipelineViewportStateCreateInfo viewportState; ///< State for the viewport and scissor rectangle settings.
+        VkPipelineViewportStateCreateInfo viewportInfo; ///< State for the viewport and scissor rectangle settings.
         VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo; ///< Configuration for primitive assembly topology.
         VkPipelineRasterizationStateCreateInfo rasterizationInfo; ///< Settings for rasterizing primitives, including culling mode.
         VkPipelineMultisampleStateCreateInfo multisampleInfo; ///< Multisampling settings to enhance image quality.
-        std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments; ///< Vector of blending configurations for multiple color attachments.
+        VkPipelineColorBlendAttachmentState colorBlendAttachment; ///< Vector of blending configurations for multiple color attachments.
         VkPipelineColorBlendStateCreateInfo colorBlendInfo; ///< Color blending settings for framebuffer operations.
         VkPipelineDepthStencilStateCreateInfo depthStencilInfo; ///< Depth and stencil testing configurations.
         std::vector<VkDynamicState> dynamicStateEnables; ///< Vector of dynamic state enums that can be modified at draw time.
+        VkPipelineDynamicStateCreateInfo dynamicStateInfo;
         VkPipelineLayout pipelineLayout = nullptr; ///< Layout defining descriptor sets and push constants.
         VkRenderPass renderPass = nullptr; ///< Render pass managing framebuffer and attachment usage.
         uint32_t subpass = 0; ///< Index of the subpass linked to this pipeline.
@@ -70,22 +71,21 @@ namespace JCAT {
                              ResourceManager &resourceManager, 
                              const std::string& vertFilepath, 
                              const std::string& fragfilepath, 
-                             const std::vector<PipelineConfigInfo>& configInfos);
+                             const std::unordered_map<std::string, PipelineConfigInfo>& configInfos);
             ~GraphicsPipeline();
 
             GraphicsPipeline(const GraphicsPipeline&) = delete;
             void operator=(const GraphicsPipeline&) = delete;
 
-            void bindPipeline(VkCommandBuffer commandBuffer, int type);
-            static void configurePipeline(std::vector<PipelineConfigInfo>& configInfos);
+            void bindPipeline(VkCommandBuffer commandBuffer, std::string type);
+            static void configurePipeline(std::unordered_map<std::string, PipelineConfigInfo>& configInfos);
         private:
-            void createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragfilepath, const std::vector<PipelineConfigInfo>& configInfos);
+            void createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragfilepath, const std::unordered_map<std::string, PipelineConfigInfo>& configInfos);
             void createShaderModule(const std::vector<char>& shaderBinaryCode, VkShaderModule* shaderModule);
 
             DeviceSetup &device;
             ResourceManager &resources;
-            // Will change to a map
-            std::vector<VkPipeline> graphicsPipelines;
+            std::unordered_map<std::string, VkPipeline> graphicsPipelines;
             VkShaderModule vertShaderModule;
             VkShaderModule fragShaderModule;
     };
