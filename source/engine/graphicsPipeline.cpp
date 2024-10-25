@@ -19,8 +19,13 @@ namespace JCAT {
     }
 
     void GraphicsPipeline::configurePipeline(std::unordered_map<std::string, PipelineConfigInfo>& configInfos) {
+        configInfos.insert({"SpriteRendering", PipelineConfigInfo{}});
         configInfos.insert({"ObjectRendering", PipelineConfigInfo{}});
-        configInfos.insert({});
+        configInfos.insert({"UIRendering", PipelineConfigInfo{}});
+        configInfos.insert({"ShadowMapping", PipelineConfigInfo{}});
+        configInfos.insert({"SkyboxRendering", PipelineConfigInfo{}});
+        configInfos.insert({"ParticleRendering", PipelineConfigInfo{}});
+        configInfos.insert({"PostProcessing", PipelineConfigInfo{}});
 
         for (std::pair<const std::string, PipelineConfigInfo>& configInfo : configInfos) {
             configInfo.second.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -34,9 +39,9 @@ namespace JCAT {
             configInfo.second.rasterizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
             configInfo.second.rasterizationInfo.depthClampEnable = VK_FALSE;
             configInfo.second.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
+            configInfo.second.rasterizationInfo.lineWidth = 1.0f;
 
             configInfo.second.multisampleInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-            configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
             configInfo.second.multisampleInfo.alphaToOneEnable = VK_FALSE;
 
             configInfo.second.colorBlendAttachment.colorWriteMask =
@@ -49,6 +54,107 @@ namespace JCAT {
 
             configInfo.second.dynamicStateEnables = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
             configInfo.second.dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+            configInfo.second.dynamicStateInfo.pDynamicStates = configInfo.second.dynamicStateEnables.data();
+            configInfo.second.dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(configInfo.second.dynamicStateEnables.size());
+            configInfo.second.dynamicStateInfo.flags = 0;
+
+            if (configInfo.first == "SpriteRendering") {
+                configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+                configInfo.second.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+                configInfo.second.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
+                configInfo.second.rasterizationInfo.depthBiasEnable = VK_FALSE;
+
+                configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
+                configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+            }
+            else if (configInfo.first == "ObjectRendering") {
+                configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+                configInfo.second.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+                configInfo.second.rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+                configInfo.second.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+                configInfo.second.rasterizationInfo.depthBiasEnable = VK_FALSE;
+
+                configInfo.second.multisampleInfo.sampleShadingEnable = VK_TRUE;
+                configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_4_BIT;
+                configInfo.second.multisampleInfo.minSampleShading = 1.0f;
+                configInfo.second.multisampleInfo.pSampleMask = nullptr;
+                configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+            }
+            else if (configInfo.first == "UIRendering") {
+                configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+                configInfo.second.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+                configInfo.second.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
+                configInfo.second.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+                configInfo.second.rasterizationInfo.depthBiasEnable = VK_FALSE;
+
+                configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
+                configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_TRUE;
+
+            }
+            else if (configInfo.first == "ShadowMapping") {
+                configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+                configInfo.second.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+                configInfo.second.rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+                configInfo.second.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+                configInfo.second.rasterizationInfo.depthBiasEnable = VK_TRUE;
+                configInfo.second.rasterizationInfo.depthBiasConstantFactor = 1.25f;
+                configInfo.second.rasterizationInfo.depthBiasSlopeFactor = 1.75f;
+                configInfo.second.rasterizationInfo.depthBiasClamp = 0.0f;
+
+                configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
+                configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+            }
+            else if (configInfo.first == "SkyboxRendering") {
+                configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+                configInfo.second.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+                configInfo.second.rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
+                configInfo.second.rasterizationInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+                configInfo.second.rasterizationInfo.depthBiasEnable = VK_FALSE;
+
+                configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
+                configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+            }
+            else if (configInfo.first == "ParticleRendering") {
+                configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+                configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+                configInfo.second.rasterizationInfo.polygonMode = VK_POLYGON_MODE_POINT;
+                configInfo.second.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
+                configInfo.second.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+                configInfo.second.rasterizationInfo.depthBiasEnable = VK_FALSE;
+
+                configInfo.second.multisampleInfo.sampleShadingEnable = VK_TRUE;
+                configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_4_BIT;
+                configInfo.second.multisampleInfo.minSampleShading = 0.5f;
+                configInfo.second.multisampleInfo.pSampleMask = nullptr;
+                configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_TRUE;
+            }
+            else {
+                configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+                configInfo.second.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+                configInfo.second.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
+                configInfo.second.rasterizationInfo.depthBiasEnable = VK_FALSE;
+
+                configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
+                configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+            }
         }
     }
 
