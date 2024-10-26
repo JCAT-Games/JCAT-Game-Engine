@@ -19,14 +19,18 @@ namespace JCAT {
     }
 
     void GraphicsPipeline::configurePipeline(std::unordered_map<std::string, PipelineConfigInfo>& configInfos) {
-        configInfos.insert({"SpriteRendering", PipelineConfigInfo{}});
-        configInfos.insert({"ObjectRendering", PipelineConfigInfo{}});
+        configInfos.insert({"SolidSpriteRendering", PipelineConfigInfo{}});
+        configInfos.insert({"TransparentSpriteRendering", PipelineConfigInfo{}});
+        configInfos.insert({"SolidObjectRendering", PipelineConfigInfo{}});
+        configInfos.insert({"TransparentObjectRendering", PipelineConfigInfo{}});
         configInfos.insert({"UIRendering", PipelineConfigInfo{}});
         configInfos.insert({"ShadowMapping", PipelineConfigInfo{}});
         configInfos.insert({"SkyboxRendering", PipelineConfigInfo{}});
         configInfos.insert({"ParticleRendering", PipelineConfigInfo{}});
         configInfos.insert({"PostProcessing", PipelineConfigInfo{}});
 
+        // These settings will later on be modifiable
+        // Typically, a game will have a "Graphics Settings" section in the menu where these variables can be modified
         for (std::pair<const std::string, PipelineConfigInfo>& configInfo : configInfos) {
             configInfo.second.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 
@@ -49,8 +53,18 @@ namespace JCAT {
                 VK_COLOR_COMPONENT_A_BIT;
 
             configInfo.second.colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+            configInfo.second.colorBlendInfo.logicOpEnable = VK_FALSE;
+            configInfo.second.colorBlendInfo.attachmentCount = 1;
+            configInfo.second.colorBlendInfo.pAttachments = &configInfo.second.colorBlendAttachment;
 
             configInfo.second.depthStencilInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+            configInfo.second.depthStencilInfo.depthCompareOp = VK_COMPARE_OP_LESS;
+            configInfo.second.depthStencilInfo.depthBoundsTestEnable = VK_FALSE;
+            configInfo.second.depthStencilInfo.minDepthBounds = 0.0f;
+            configInfo.second.depthStencilInfo.maxDepthBounds = 1.0f;
+            configInfo.second.depthStencilInfo.stencilTestEnable = VK_FALSE;
+            configInfo.second.depthStencilInfo.front = {};
+            configInfo.second.depthStencilInfo.back = {};
 
             configInfo.second.dynamicStateEnables = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
             configInfo.second.dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
@@ -58,7 +72,7 @@ namespace JCAT {
             configInfo.second.dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(configInfo.second.dynamicStateEnables.size());
             configInfo.second.dynamicStateInfo.flags = 0;
 
-            if (configInfo.first == "SpriteRendering") {
+            if (configInfo.first == "SolidSpriteRendering") {
                 configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
                 configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
 
@@ -69,8 +83,36 @@ namespace JCAT {
                 configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
                 configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
                 configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+
+                configInfo.second.colorBlendAttachment.blendEnable = VK_FALSE;
+
+                configInfo.second.depthStencilInfo.depthTestEnable = VK_FALSE;
+                configInfo.second.depthStencilInfo.depthWriteEnable = VK_FALSE;
             }
-            else if (configInfo.first == "ObjectRendering") {
+            else if (configInfo.first == "TransparentSpriteRendering") {
+                configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+                configInfo.second.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+                configInfo.second.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
+                configInfo.second.rasterizationInfo.depthBiasEnable = VK_FALSE;
+
+                configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
+                configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+
+                configInfo.second.colorBlendAttachment.blendEnable = VK_TRUE;
+                configInfo.second.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+                configInfo.second.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+                configInfo.second.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+                configInfo.second.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+                configInfo.second.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+                configInfo.second.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+                configInfo.second.depthStencilInfo.depthTestEnable = VK_FALSE;
+                configInfo.second.depthStencilInfo.depthWriteEnable = VK_FALSE;
+            }
+            else if (configInfo.first == "SolidObjectRendering") {
                 configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
                 configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
 
@@ -84,6 +126,37 @@ namespace JCAT {
                 configInfo.second.multisampleInfo.minSampleShading = 1.0f;
                 configInfo.second.multisampleInfo.pSampleMask = nullptr;
                 configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+
+                configInfo.second.colorBlendAttachment.blendEnable = VK_FALSE;
+
+                configInfo.second.depthStencilInfo.depthTestEnable = VK_TRUE;
+                configInfo.second.depthStencilInfo.depthWriteEnable = VK_TRUE;
+            }
+            else if (configInfo.first == "TransparentObjectRendering") {
+                configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                configInfo.second.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+                configInfo.second.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+                configInfo.second.rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+                configInfo.second.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+                configInfo.second.rasterizationInfo.depthBiasEnable = VK_FALSE;
+
+                configInfo.second.multisampleInfo.sampleShadingEnable = VK_TRUE;
+                configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_4_BIT;
+                configInfo.second.multisampleInfo.minSampleShading = 1.0f;
+                configInfo.second.multisampleInfo.pSampleMask = nullptr;
+                configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+
+                configInfo.second.colorBlendAttachment.blendEnable = VK_TRUE;
+                configInfo.second.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+                configInfo.second.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+                configInfo.second.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+                configInfo.second.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+                configInfo.second.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+                configInfo.second.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+                configInfo.second.depthStencilInfo.depthTestEnable = VK_TRUE;
+                configInfo.second.depthStencilInfo.depthWriteEnable = VK_TRUE;
             }
             else if (configInfo.first == "UIRendering") {
                 configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -98,6 +171,10 @@ namespace JCAT {
                 configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
                 configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_TRUE;
 
+                configInfo.second.colorBlendAttachment.blendEnable = VK_FALSE;
+
+                configInfo.second.depthStencilInfo.depthTestEnable = VK_FALSE;
+                configInfo.second.depthStencilInfo.depthWriteEnable = VK_FALSE;
             }
             else if (configInfo.first == "ShadowMapping") {
                 configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -114,6 +191,11 @@ namespace JCAT {
                 configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
                 configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
                 configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+            
+                configInfo.second.colorBlendAttachment.blendEnable = VK_FALSE;
+
+                configInfo.second.depthStencilInfo.depthTestEnable = VK_TRUE;
+                configInfo.second.depthStencilInfo.depthWriteEnable = VK_TRUE;
             }
             else if (configInfo.first == "SkyboxRendering") {
                 configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -127,6 +209,11 @@ namespace JCAT {
                 configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
                 configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
                 configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+
+                configInfo.second.colorBlendAttachment.blendEnable = VK_FALSE;
+
+                configInfo.second.depthStencilInfo.depthTestEnable = VK_TRUE;
+                configInfo.second.depthStencilInfo.depthWriteEnable = VK_FALSE;
             }
             else if (configInfo.first == "ParticleRendering") {
                 configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
@@ -142,6 +229,17 @@ namespace JCAT {
                 configInfo.second.multisampleInfo.minSampleShading = 0.5f;
                 configInfo.second.multisampleInfo.pSampleMask = nullptr;
                 configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_TRUE;
+
+                configInfo.second.colorBlendAttachment.blendEnable = VK_TRUE;
+                configInfo.second.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+                configInfo.second.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+                configInfo.second.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+                configInfo.second.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+                configInfo.second.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+                configInfo.second.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+                configInfo.second.depthStencilInfo.depthTestEnable = VK_TRUE;
+                configInfo.second.depthStencilInfo.depthWriteEnable = VK_FALSE;
             }
             else {
                 configInfo.second.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -154,6 +252,17 @@ namespace JCAT {
                 configInfo.second.multisampleInfo.sampleShadingEnable = VK_FALSE;
                 configInfo.second.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
                 configInfo.second.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+
+                configInfo.second.colorBlendAttachment.blendEnable = VK_TRUE;
+                configInfo.second.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+                configInfo.second.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+                configInfo.second.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+                configInfo.second.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+                configInfo.second.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+                configInfo.second.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+                configInfo.second.depthStencilInfo.depthTestEnable = VK_FALSE;
+                configInfo.second.depthStencilInfo.depthWriteEnable = VK_FALSE;
             }
         }
     }
