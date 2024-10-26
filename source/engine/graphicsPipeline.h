@@ -67,6 +67,18 @@ namespace JCAT {
 
     class GraphicsPipeline {
         public:
+            enum class PipelineType {
+                SOLID_SPRITE_PIPELINE,
+                TRANSPARENT_SPRITE_PIPELINE,
+                SOLID_OBJECT_PIPELINE,
+                TRANSPARENT_OBJECT_PIPELINE,
+                UI_RENDERING_PIPELINE,
+                SHADOW_MAPPING_PIPELINE,
+                SKYBOX_RENDERING_PIPELINE,
+                PARTICLE_RENDERING_PIPELINE,
+                POST_PROCESSING_PIPELINE
+            };
+
             GraphicsPipeline(DeviceSetup &physicalDevice, 
                              ResourceManager &resourceManager, 
                              const std::string& vertFilepath, 
@@ -77,18 +89,28 @@ namespace JCAT {
             GraphicsPipeline(const GraphicsPipeline&) = delete;
             void operator=(const GraphicsPipeline&) = delete;
 
-            void bindPipeline(VkCommandBuffer commandBuffer, std::string type);
-            static void configurePipeline(std::unordered_map<std::string, PipelineConfigInfo>& configInfos);
+            void bindPipeline(VkCommandBuffer commandBuffer, PipelineType type);
+            static void configurePipelines(std::unordered_map<PipelineType, PipelineConfigInfo>& configInfos);
+
+            static void configureSolidSpritePipeline(PipelineConfigInfo& solidSpriteRenderingInfo);
+            static void configureTransparentSpritePipeline(PipelineConfigInfo& transparentSpriteRenderingInfo);
+            static void configureSolidObjectPipeline(PipelineConfigInfo& solidObjectRenderingInfo);
+            static void configureTransparentObjectPipeline(PipelineConfigInfo& transparentObjectRenderingInfo);
+            static void configureUIRenderingPipeline(PipelineConfigInfo& UIRenderingInfo);
+            static void configureShadowMappingPipeline(PipelineConfigInfo& shadowMappingInfo);
+            static void configureSkyboxRenderingPipeline(PipelineConfigInfo& skyboxRenderingInfo);
+            static void configureParticleRenderingPipeline(PipelineConfigInfo& particleRenderingInfo);
+            static void configurePostProcessingPipeline(PipelineConfigInfo& postProcessingInfo);
         private:
             void createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragfilepath, const std::unordered_map<std::string, PipelineConfigInfo>& configInfos);
             void createShaderModule(const std::vector<char>& shaderBinaryCode, VkShaderModule* shaderModule);
 
             DeviceSetup &device;
             ResourceManager &resources;
-            std::unordered_map<std::string, VkPipeline> graphicsPipelines;
+            std::unordered_map<PipelineType, VkPipeline> graphicsPipelines;
             VkShaderModule vertShaderModule;
             VkShaderModule fragShaderModule;
     };
-}
+};
 
 #endif
