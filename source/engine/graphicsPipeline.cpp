@@ -1,9 +1,9 @@
+#include <cassert>
+
 #include "./engine/graphicsPipeline.h"
 
 namespace JCAT {
-    GraphicsPipeline::GraphicsPipeline(DeviceSetup &physicalDevice, ResourceManager &resourceManager, const std::string& vertFilepath, const std::string& fragfilepath, const std::unordered_map<std::string, PipelineConfigInfo>& configInfos) : device{ physicalDevice }, resources{ resourceManager } {
-        createGraphicsPipeline(vertFilepath, fragfilepath, configInfos);
-    }
+    GraphicsPipeline::GraphicsPipeline(DeviceSetup &physicalDevice, ResourceManager &resourceManager, const std::string& vertFilepath, const std::string& fragfilepath, std::unordered_map<PipelineType, PipelineConfigInfo>& configInfos) : device{ physicalDevice }, resources{ resourceManager } {}
 
     GraphicsPipeline::~GraphicsPipeline() {
         vkDestroyShaderModule(device.device(), vertShaderModule, nullptr);
@@ -325,8 +325,102 @@ namespace JCAT {
         postProcessingInfo.depthStencilInfo.depthWriteEnable = VK_FALSE;
     }
 
-    void GraphicsPipeline::createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragfilepath, const std::unordered_map<std::string, PipelineConfigInfo>& configInfos) {
-        std::cout << "Creating Graphics Pipelines." << std::endl;
+    // Eventually will need to add support for other file types, not just shaders
+    // We will be loading textures, blender files, may have computational shaders for physics, etc...
+
+    void GraphicsPipeline::createSolidSpritePipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
+        // Pipeline layout defined in actual application due to the customization of aspects like the PushConstantRange.
+        assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
+        // Might create the renderPass either in the swapChain file or the resourceManager File
+        assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
+
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+    }
+
+    void GraphicsPipeline::createTransparentSpritePipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
+        assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
+        assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
+    
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+    }
+
+    void GraphicsPipeline::createSolidObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
+        assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
+        assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
+    
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+    }
+
+    void GraphicsPipeline::createTransparentObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
+        assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
+        assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
+    
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+    }
+
+    void GraphicsPipeline::createUIRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
+        assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
+        assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
+    
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+    }
+
+    void GraphicsPipeline::createShadowMappingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
+        assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
+        assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
+    
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+    }
+
+    void GraphicsPipeline::createSkyboxRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
+        assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
+        assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
+    
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+    }
+
+    void GraphicsPipeline::createParticleRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
+        assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
+        assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
+    
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+    }
+
+    void GraphicsPipeline::createPostProcessingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
+        assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
+        assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
+    
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+    }
+
+    std::vector<VkPipelineShaderStageCreateInfo> GraphicsPipeline::createShaderStages(const std::string& vertFilepath, const std::string& fragFilepath) {
+        std::vector<char> vertexCode = ResourceManager::readFile(vertFilepath);
+        std::vector<char> fragmentCode = ResourceManager::readFile(fragFilepath);
+
+        std::cout << "Vertex File Size: " << vertexCode.size() << std::endl;
+        std::cout << "Fragment File Size: " << fragmentCode.size() << std::endl;
+
+        createShaderModule(vertexCode, &vertShaderModule);
+        createShaderModule(fragmentCode, &fragShaderModule);
+
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+        shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
+        shaderStages[0].module = vertShaderModule;
+        shaderStages[0].pName = "main";
+        shaderStages[0].flags = 0;
+        shaderStages[0].pNext = nullptr;
+        shaderStages[0].pSpecializationInfo = nullptr;
+
+        shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        shaderStages[1].module = fragShaderModule;
+        shaderStages[1].pName = "main";
+        shaderStages[1].flags = 0;
+        shaderStages[1].pNext = nullptr;
+        shaderStages[1].pSpecializationInfo = nullptr;
+
+        return shaderStages;
     }
 
     void GraphicsPipeline::createShaderModule(const std::vector<char>& shaderBinaryCode, VkShaderModule* shaderModule) {
