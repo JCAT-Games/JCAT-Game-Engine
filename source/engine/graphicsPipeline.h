@@ -89,6 +89,8 @@ namespace JCAT {
             GraphicsPipeline(const GraphicsPipeline&) = delete;
             void operator=(const GraphicsPipeline&) = delete;
 
+            VkPipeline& getPipeline(PipelineType type, std::unordered_map<PipelineType, VkPipeline>& graphicsPipelines);
+
             void bindPipeline(VkCommandBuffer commandBuffer, PipelineType type);
             static void configurePipelines(std::unordered_map<PipelineType, PipelineConfigInfo>& configInfos);
 
@@ -113,6 +115,10 @@ namespace JCAT {
             void createPostProcessingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
 
         private:
+            void createPipeline(VkPipeline& graphicsPipeline, 
+                                PipelineConfigInfo& configInfo, 
+                                std::vector<VkPipelineShaderStageCreateInfo>& shaderStages);
+
             std::vector<VkPipelineShaderStageCreateInfo> createShaderStages(const std::string& vertFilepath, const std::string& fragFilepath);
             void createShaderModule(const std::vector<char>& shaderBinaryCode, VkShaderModule* shaderModule);
 

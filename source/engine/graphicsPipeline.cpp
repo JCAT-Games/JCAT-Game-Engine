@@ -14,6 +14,16 @@ namespace JCAT {
         }
     }
 
+    VkPipeline& GraphicsPipeline::getPipeline(PipelineType type, std::unordered_map<PipelineType, VkPipeline>& graphicsPipelines) {
+        std::unordered_map<PipelineType, VkPipeline>::iterator it = graphicsPipelines.find(type);
+        
+        if (it != graphicsPipelines.end()) {
+            return it->second;
+        } else {
+            throw std::runtime_error("Pipeline of this type not found!");
+        }
+    }
+
     void GraphicsPipeline::bindPipeline(VkCommandBuffer commandBuffer, PipelineType type) {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelines[type]);
     }
@@ -335,6 +345,8 @@ namespace JCAT {
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
 
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+
+        createPipeline(getPipeline(PipelineType::SOLID_SPRITE_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
     }
 
     void GraphicsPipeline::createTransparentSpritePipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -342,6 +354,8 @@ namespace JCAT {
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+
+        createPipeline(getPipeline(PipelineType::TRANSPARENT_SPRITE_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
     }
 
     void GraphicsPipeline::createSolidObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -349,6 +363,8 @@ namespace JCAT {
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+
+        createPipeline(getPipeline(PipelineType::SOLID_OBJECT_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
     }
 
     void GraphicsPipeline::createTransparentObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -356,6 +372,8 @@ namespace JCAT {
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+
+        createPipeline(getPipeline(PipelineType::TRANSPARENT_OBJECT_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
     }
 
     void GraphicsPipeline::createUIRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -363,6 +381,8 @@ namespace JCAT {
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+
+        createPipeline(getPipeline(PipelineType::UI_RENDERING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
     }
 
     void GraphicsPipeline::createShadowMappingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -370,6 +390,8 @@ namespace JCAT {
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+
+        createPipeline(getPipeline(PipelineType::SHADOW_MAPPING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
     }
 
     void GraphicsPipeline::createSkyboxRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -377,6 +399,8 @@ namespace JCAT {
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+
+        createPipeline(getPipeline(PipelineType::SKYBOX_RENDERING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
     }
 
     void GraphicsPipeline::createParticleRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -384,6 +408,8 @@ namespace JCAT {
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+
+        createPipeline(getPipeline(PipelineType::PARTICLE_RENDERING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
     }
 
     void GraphicsPipeline::createPostProcessingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -391,6 +417,34 @@ namespace JCAT {
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
+
+        createPipeline(getPipeline(PipelineType::POST_PROCESSING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
+    }
+
+    void GraphicsPipeline::createPipeline(VkPipeline& graphicsPipeline, PipelineConfigInfo& configInfo, std::vector<VkPipelineShaderStageCreateInfo>& shaderStages) {
+        VkGraphicsPipelineCreateInfo pipelineInfo{};
+        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipelineInfo.stageCount = shaderStages.size();
+        pipelineInfo.pStages = shaderStages.data();
+        pipelineInfo.pVertexInputState = nullptr;
+        pipelineInfo.pInputAssemblyState = &configInfo.inputAssemblyInfo;
+        pipelineInfo.pViewportState = &configInfo.viewportInfo;
+        pipelineInfo.pRasterizationState = &configInfo.rasterizationInfo;
+        pipelineInfo.pMultisampleState = &configInfo.multisampleInfo;
+        pipelineInfo.pColorBlendState = &configInfo.colorBlendInfo;
+        pipelineInfo.pDepthStencilState = &configInfo.depthStencilInfo;
+        pipelineInfo.pDynamicState = &configInfo.dynamicStateInfo;
+
+        pipelineInfo.layout = configInfo.pipelineLayout;
+        pipelineInfo.renderPass = configInfo.renderPass;
+        pipelineInfo.subpass = configInfo.subpass;
+
+        pipelineInfo.basePipelineIndex = -1;
+        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+
+        if (vkCreateGraphicsPipelines(device.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+	        throw std::runtime_error("Failed to create this graphics pipeline!");
+        }
     }
 
     std::vector<VkPipelineShaderStageCreateInfo> GraphicsPipeline::createShaderStages(const std::string& vertFilepath, const std::string& fragFilepath) {
