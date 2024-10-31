@@ -83,11 +83,13 @@ namespace JCAT {
                              ResourceManager &resourceManager, 
                              const std::string& vertFilepath, 
                              const std::string& fragfilepath, 
-                             const std::unordered_map<std::string, PipelineConfigInfo>& configInfos);
+                             std::unordered_map<PipelineType, PipelineConfigInfo>& configInfos);
             ~GraphicsPipeline();
 
             GraphicsPipeline(const GraphicsPipeline&) = delete;
             void operator=(const GraphicsPipeline&) = delete;
+
+            VkPipeline& getPipeline(PipelineType type, std::unordered_map<PipelineType, VkPipeline>& graphicsPipelines);
 
             void bindPipeline(VkCommandBuffer commandBuffer, PipelineType type);
             static void configurePipelines(std::unordered_map<PipelineType, PipelineConfigInfo>& configInfos);
@@ -101,8 +103,23 @@ namespace JCAT {
             static void configureSkyboxRenderingPipeline(PipelineConfigInfo& skyboxRenderingInfo);
             static void configureParticleRenderingPipeline(PipelineConfigInfo& particleRenderingInfo);
             static void configurePostProcessingPipeline(PipelineConfigInfo& postProcessingInfo);
+
+            void createSolidSpritePipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
+            void createTransparentSpritePipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
+            void createSolidObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
+            void createTransparentObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
+            void createUIRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
+            void createShadowMappingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
+            void createSkyboxRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
+            void createParticleRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
+            void createPostProcessingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
+
         private:
-            void createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragfilepath, const std::unordered_map<std::string, PipelineConfigInfo>& configInfos);
+            void createPipeline(VkPipeline& graphicsPipeline, 
+                                PipelineConfigInfo& configInfo, 
+                                std::vector<VkPipelineShaderStageCreateInfo>& shaderStages);
+
+            std::vector<VkPipelineShaderStageCreateInfo> createShaderStages(const std::string& vertFilepath, const std::string& fragFilepath);
             void createShaderModule(const std::vector<char>& shaderBinaryCode, VkShaderModule* shaderModule);
 
             DeviceSetup &device;
