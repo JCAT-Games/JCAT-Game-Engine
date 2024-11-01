@@ -426,6 +426,7 @@ namespace JCAT {
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         pipelineInfo.stageCount = shaderStages.size();
         pipelineInfo.pStages = shaderStages.data();
+        // defined in model classes
         pipelineInfo.pVertexInputState = nullptr;
         pipelineInfo.pInputAssemblyState = &configInfo.inputAssemblyInfo;
         pipelineInfo.pViewportState = &configInfo.viewportInfo;
