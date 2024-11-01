@@ -1,4 +1,4 @@
-#include "model2d.h"
+#include "./engine/twoD/model2d.h"
 
 namespace JCAT {
     std::vector<VkVertexInputBindingDescription> JCATModel2D::Vertex::getBindingDescriptions() {

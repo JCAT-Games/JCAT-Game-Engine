@@ -113,11 +113,15 @@ namespace JCAT {
             void createSkyboxRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
             void createParticleRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
             void createPostProcessingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo);
-
+        
         private:
             void createPipeline(VkPipeline& graphicsPipeline, 
                                 PipelineConfigInfo& configInfo, 
-                                std::vector<VkPipelineShaderStageCreateInfo>& shaderStages);
+                                std::vector<VkPipelineShaderStageCreateInfo>& shaderStages,
+                                VkPipelineVertexInputStateCreateInfo& vertexInputInfo);
+
+            VkPipelineVertexInputStateCreateInfo getDescriptions2D();
+            VkPipelineVertexInputStateCreateInfo getDescriptions3D();
 
             std::vector<VkPipelineShaderStageCreateInfo> createShaderStages(const std::string& vertFilepath, const std::string& fragFilepath);
             void createShaderModule(const std::vector<char>& shaderBinaryCode, VkShaderModule* shaderModule);

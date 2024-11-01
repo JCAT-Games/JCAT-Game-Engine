@@ -1,5 +1,5 @@
-#ifndef MODEL_3D_H
-#define MODEL_3D_H
+#ifndef MODEL_THREE_D_H
+#define MODEL_THREE_D_H
 
 #include <vector>
 
@@ -7,8 +7,8 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm.hpp>
 
-#include "../deviceSetup.h"
-#include "../resourceManager.h"
+#include "./engine/deviceSetup.h"
+#include "./engine/resourceManager.h"
 
 namespace JCAT {
     class JCATModel3D {
@@ -29,6 +29,7 @@ namespace JCAT {
 
             void bind(VkCommandBuffer commandBuffer);
             void draw(VkCommandBuffer commandBuffer);
+
         private:
             DeviceSetup& device;
             ResourceManager& resourceManager;
