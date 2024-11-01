@@ -1,6 +1,8 @@
 #include <cassert>
 
 #include "./engine/graphicsPipeline.h"
+#include "./engine/twoD/model2d.h"
+#include "./engine/threeD/model3d.h"
 
 namespace JCAT {
     GraphicsPipeline::GraphicsPipeline(DeviceSetup &physicalDevice, ResourceManager &resourceManager, const std::string& vertFilepath, const std::string& fragfilepath, std::unordered_map<PipelineType, PipelineConfigInfo>& configInfos) : device{ physicalDevice }, resources{ resourceManager } {}
@@ -346,7 +348,9 @@ namespace JCAT {
 
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
 
-        createPipeline(getPipeline(PipelineType::SOLID_SPRITE_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = getDescriptions2D();
+
+        createPipeline(getPipeline(PipelineType::SOLID_SPRITE_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
     void GraphicsPipeline::createTransparentSpritePipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -355,7 +359,9 @@ namespace JCAT {
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
 
-        createPipeline(getPipeline(PipelineType::TRANSPARENT_SPRITE_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = getDescriptions2D();
+
+        createPipeline(getPipeline(PipelineType::TRANSPARENT_SPRITE_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
     void GraphicsPipeline::createSolidObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -364,7 +370,9 @@ namespace JCAT {
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
 
-        createPipeline(getPipeline(PipelineType::SOLID_OBJECT_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = getDescriptions3D();
+
+        createPipeline(getPipeline(PipelineType::SOLID_OBJECT_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
     void GraphicsPipeline::createTransparentObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -373,7 +381,9 @@ namespace JCAT {
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
 
-        createPipeline(getPipeline(PipelineType::TRANSPARENT_OBJECT_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = getDescriptions3D();
+
+        createPipeline(getPipeline(PipelineType::TRANSPARENT_OBJECT_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
     void GraphicsPipeline::createUIRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -382,7 +392,9 @@ namespace JCAT {
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
 
-        createPipeline(getPipeline(PipelineType::UI_RENDERING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = getDescriptions2D();
+
+        createPipeline(getPipeline(PipelineType::UI_RENDERING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
     void GraphicsPipeline::createShadowMappingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -391,7 +403,9 @@ namespace JCAT {
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
 
-        createPipeline(getPipeline(PipelineType::SHADOW_MAPPING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = getDescriptions2D();
+
+        createPipeline(getPipeline(PipelineType::SHADOW_MAPPING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
     void GraphicsPipeline::createSkyboxRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -400,7 +414,9 @@ namespace JCAT {
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
 
-        createPipeline(getPipeline(PipelineType::SKYBOX_RENDERING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = getDescriptions3D();
+
+        createPipeline(getPipeline(PipelineType::SKYBOX_RENDERING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
     void GraphicsPipeline::createParticleRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -409,7 +425,9 @@ namespace JCAT {
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
 
-        createPipeline(getPipeline(PipelineType::PARTICLE_RENDERING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = getDescriptions2D();
+
+        createPipeline(getPipeline(PipelineType::PARTICLE_RENDERING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
     void GraphicsPipeline::createPostProcessingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -418,15 +436,18 @@ namespace JCAT {
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
 
-        createPipeline(getPipeline(PipelineType::POST_PROCESSING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages);
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = getDescriptions2D();
+
+        createPipeline(getPipeline(PipelineType::POST_PROCESSING_PIPELINE, graphicsPipelines), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
-    void GraphicsPipeline::createPipeline(VkPipeline& graphicsPipeline, PipelineConfigInfo& configInfo, std::vector<VkPipelineShaderStageCreateInfo>& shaderStages) {
+    void GraphicsPipeline::createPipeline(VkPipeline& graphicsPipeline, PipelineConfigInfo& configInfo, std::vector<VkPipelineShaderStageCreateInfo>& shaderStages, VkPipelineVertexInputStateCreateInfo& vertexInputInfo) {
         VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         pipelineInfo.stageCount = shaderStages.size();
         pipelineInfo.pStages = shaderStages.data();
-        pipelineInfo.pVertexInputState = nullptr;
+        
+        pipelineInfo.pVertexInputState = &vertexInputInfo;
         pipelineInfo.pInputAssemblyState = &configInfo.inputAssemblyInfo;
         pipelineInfo.pViewportState = &configInfo.viewportInfo;
         pipelineInfo.pRasterizationState = &configInfo.rasterizationInfo;
@@ -445,6 +466,34 @@ namespace JCAT {
         if (vkCreateGraphicsPipelines(device.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
 	        throw std::runtime_error("Failed to create this graphics pipeline!");
         }
+    }
+
+    VkPipelineVertexInputStateCreateInfo GraphicsPipeline::getDescriptions2D() {
+        std::vector<VkVertexInputBindingDescription> bindingDescriptions = JCATModel2D::Vertex::getBindingDescriptions();
+        std::vector<VkVertexInputAttributeDescription> attributeDescriptions = JCATModel2D::Vertex::getAttributeDescriptions();
+
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+        vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+        vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+        vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+
+        return vertexInputInfo;
+    }
+
+    VkPipelineVertexInputStateCreateInfo GraphicsPipeline::getDescriptions3D() {
+        std::vector<VkVertexInputBindingDescription> bindingDescriptions = JCATModel3D::Vertex::getBindingDescriptions();
+        std::vector<VkVertexInputAttributeDescription> attributeDescriptions = JCATModel3D::Vertex::getAttributeDescriptions();
+
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+        vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+        vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+        vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+
+        return vertexInputInfo;
     }
 
     std::vector<VkPipelineShaderStageCreateInfo> GraphicsPipeline::createShaderStages(const std::string& vertFilepath, const std::string& fragFilepath) {
