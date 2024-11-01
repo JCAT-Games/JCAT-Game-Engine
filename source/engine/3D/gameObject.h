@@ -2,7 +2,10 @@
 #define GAME_OBJECT_H
 
 namespace JCAT {
-    
+    class GameObject {
+        public:
+        private:
+    };
 }
 
 #endif
