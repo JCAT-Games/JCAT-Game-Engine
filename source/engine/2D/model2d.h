@@ -13,7 +13,7 @@
 namespace JCAT {
     class JCATModel2D {
         public:
-            struct Vertex {
+            struct Vertex2D {
                 glm::vec2 position;
                 glm::vec3 color;
 
@@ -21,7 +21,7 @@ namespace JCAT {
                 static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
             };
 
-            JCATModel2D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex>& spriteVertices);
+            JCATModel2D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex2D>& spriteVertices);
             ~JCATModel2D();
 
             JCATModel2D(const JCATModel2D&) = delete;
@@ -37,6 +37,6 @@ namespace JCAT {
             VkDeviceMemory vertexBufferMemory;
             uint32_t vertexCount;
     };
-}
+};
 
 #endif

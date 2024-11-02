@@ -1,8 +1,8 @@
 #include <cassert>
 
 #include "./engine/graphicsPipeline.h"
-#include "./engine/twoD/model2d.h"
-#include "./engine/threeD/model3d.h"
+#include "./engine/2D/model2d.h"
+#include "./engine/3D/model3d.h"
 
 namespace JCAT {
     GraphicsPipeline::GraphicsPipeline(DeviceSetup &physicalDevice, ResourceManager &resourceManager, const std::string& vertFilepath, const std::string& fragfilepath, std::unordered_map<PipelineType, PipelineConfigInfo>& configInfos) : device{ physicalDevice }, resources{ resourceManager } {}
@@ -469,8 +469,8 @@ namespace JCAT {
     }
 
     VkPipelineVertexInputStateCreateInfo GraphicsPipeline::getDescriptions2D() {
-        std::vector<VkVertexInputBindingDescription> bindingDescriptions = JCATModel2D::Vertex::getBindingDescriptions();
-        std::vector<VkVertexInputAttributeDescription> attributeDescriptions = JCATModel2D::Vertex::getAttributeDescriptions();
+        std::vector<VkVertexInputBindingDescription> bindingDescriptions = JCATModel2D::Vertex2D::getBindingDescriptions();
+        std::vector<VkVertexInputAttributeDescription> attributeDescriptions = JCATModel2D::Vertex2D::getAttributeDescriptions();
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -483,8 +483,8 @@ namespace JCAT {
     }
 
     VkPipelineVertexInputStateCreateInfo GraphicsPipeline::getDescriptions3D() {
-        std::vector<VkVertexInputBindingDescription> bindingDescriptions = JCATModel3D::Vertex::getBindingDescriptions();
-        std::vector<VkVertexInputAttributeDescription> attributeDescriptions = JCATModel3D::Vertex::getAttributeDescriptions();
+        std::vector<VkVertexInputBindingDescription> bindingDescriptions = JCATModel3D::Vertex3D::getBindingDescriptions();
+        std::vector<VkVertexInputAttributeDescription> attributeDescriptions = JCATModel3D::Vertex3D::getAttributeDescriptions();
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -536,4 +536,4 @@ namespace JCAT {
             throw std::runtime_error("Failed to create the shader module!");
         }
     }
-}
+};
