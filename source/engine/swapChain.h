@@ -12,7 +12,9 @@
 namespace JCAT {
     class SwapChain {
         public:
-            SwapChain(DeviceSetup& d, VkExtent2D wE, std::string& gameType, bool vsync);
+            static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
+
+            SwapChain(DeviceSetup& d, VkExtent2D wE, std::string& gameType, bool v);
             SwapChain(DeviceSetup& d, VkExtent2D wE, std::shared_ptr<SwapChain> previousFrame);
             ~SwapChain();
 
