@@ -66,6 +66,10 @@ namespace JCAT {
         throw std::runtime_error("Failed to find suitable memory type!");
     }
 
+    QueueFamilyIndices DeviceSetup::findPhysicalQueueFamilies() {
+        return findQueueFamilies(physicalDevice);
+    }
+
     void DeviceSetup::createVulkanInstance() {
         // Check if validation layers are requested
         if (enableValidationLayers && !checkValidationLayerSupport()) {

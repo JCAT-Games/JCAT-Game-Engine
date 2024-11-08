@@ -141,6 +141,7 @@ namespace JCAT {
 
             SwapChainSupportDetails getSwapChainSupport();
             uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+            QueueFamilyIndices findPhysicalQueueFamilies();
 
             VkPhysicalDeviceProperties properties;
         private:
