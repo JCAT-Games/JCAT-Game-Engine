@@ -89,7 +89,7 @@ namespace JCAT {
             DeviceSetup(Window& window);
 
             /**
-             * @brief Destroys the DeviceSetup instance and releases associated resources.
+             * @brief Destroys the DeviceSetup instance and releases associated resources from memory.
              */
             ~DeviceSetup();
 
@@ -139,7 +139,9 @@ namespace JCAT {
              */
             VkQueue presentQueue();
 
+            SwapChainSupportDetails getSwapChainSupport();
             uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+            QueueFamilyIndices findPhysicalQueueFamilies();
 
             VkPhysicalDeviceProperties properties;
         private:

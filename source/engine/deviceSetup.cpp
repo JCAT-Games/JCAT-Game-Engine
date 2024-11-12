@@ -49,6 +49,10 @@ namespace JCAT {
         return presentQueue_;
     }
 
+    SwapChainSupportDetails DeviceSetup::getSwapChainSupport() {
+        return querySwapChainSupport(physicalDevice);
+    }
+
     uint32_t DeviceSetup::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
         VkPhysicalDeviceMemoryProperties memProperties;
         vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
@@ -60,6 +64,10 @@ namespace JCAT {
         }
 
         throw std::runtime_error("Failed to find suitable memory type!");
+    }
+
+    QueueFamilyIndices DeviceSetup::findPhysicalQueueFamilies() {
+        return findQueueFamilies(physicalDevice);
     }
 
     void DeviceSetup::createVulkanInstance() {
