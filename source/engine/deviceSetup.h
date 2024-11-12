@@ -89,7 +89,7 @@ namespace JCAT {
             DeviceSetup(Window& window);
 
             /**
-             * @brief Destroys the DeviceSetup instance and releases associated resources.
+             * @brief Destroys the DeviceSetup instance and releases associated resources from memory.
              */
             ~DeviceSetup();
 
