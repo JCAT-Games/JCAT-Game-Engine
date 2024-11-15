@@ -3,7 +3,9 @@
 #include <limits>
 #include <algorithm>
 #include <cstring>
+#include <cstdlib>
 #include <iostream>
+#include <limits>
 
 namespace JCAT {
     SwapChain::SwapChain(DeviceSetup& d, VkExtent2D wE, std::string& gameType, bool v) 
@@ -22,7 +24,17 @@ namespace JCAT {
     }
 
     SwapChain::~SwapChain() {
+        for (VkImageView imageView : swapChainImageViews) {
+            vkDestroyImageView(device.device(), imageView, nullptr);
+        }
 
+        swapChainImageViews.clear();
+
+        if (swapChain != nullptr) {
+            vkDestroySwapchainKHR(device.device(), swapChain, nullptr);
+            swapChain = nullptr;
+        }
+        
     }
 
     void SwapChain::init() {
@@ -113,7 +125,26 @@ namespace JCAT {
     }
 
     void SwapChain::createImageViews() {
+        swapChainImageViews.resize(swapChainImages.size());
 
+        for (size_t i = 0; i < swapChainImages.size(); i++) {
+            VkImageViewCreateInfo viewInfo{};
+            viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            viewInfo.image = swapChainImages[i];
+
+            // Each frame will always represent a 2D image that is being rendered onto the screen
+            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            viewInfo.format = swapChainImageFormat;
+            viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            viewInfo.subresourceRange.baseMipLevel = 0;
+            viewInfo.subresourceRange.levelCount = 1;
+            viewInfo.subresourceRange.baseArrayLayer = 0;
+            viewInfo.subresourceRange.layerCount = 1;
+
+            if (vkCreateImageView(device.device(), &viewInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create swap chain image view!");
+            }
+        }
     }
 
     void SwapChain::createDepthResources() {
@@ -180,10 +211,8 @@ namespace JCAT {
         else {
             VkExtent2D actualExtent = windowExtent;
 
-            actualExtent.width = std::max(capabilities.minImageExtent.width,
-                std::min(capabilities.maxImageExtent.width, actualExtent.width));
-            actualExtent.height = std::max(capabilities.minImageExtent.height,
-                std::min(capabilities.maxImageExtent.height, actualExtent.height));
+            actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
+            actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
 
             return actualExtent;
         }
