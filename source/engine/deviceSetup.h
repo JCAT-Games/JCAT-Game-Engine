@@ -18,6 +18,7 @@
 
 /** Used for checking if the current device is plugged in or not (Imports based on operating system) */
 #if defined(_WIN32) || defined(_WIN64)
+    #define NOMINMAX
     #include <windows.h>
 #elif defined(__linux__)
     #include <fstream>
