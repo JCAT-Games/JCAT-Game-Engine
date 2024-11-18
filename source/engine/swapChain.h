@@ -38,6 +38,7 @@ namespace JCAT {
             VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
             VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
             VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+            VkFormat findSupportedDepthFormat();
 
             std::string type;
             bool vsyncEnabled;
@@ -61,8 +62,6 @@ namespace JCAT {
             std::vector<VkImage> depthImages;
             std::vector<VkDeviceMemory> depthImageMemorys;
             std::vector<VkImageView> depthImageViews;
-            std::vector<VkImage> swapChainImages;
-            std::vector<VkImageView> swapChainImageViews;
     };
 }
 

@@ -34,7 +34,7 @@ namespace JCAT {
             vkDestroySwapchainKHR(device.device(), swapChain, nullptr);
             swapChain = nullptr;
         }
-        
+
     }
 
     void SwapChain::init() {
@@ -152,7 +152,48 @@ namespace JCAT {
     }
 
     void SwapChain::createRenderPass() {
+        VkAttachmentDescription colorAttachment{};
+        colorAttachment.format = swapChainImageFormat;
 
+        // Make this customizable!
+        if (type == "3D") {
+            colorAttachment.samples = VK_SAMPLE_COUNT_4_BIT;
+        }
+        else {
+            colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+        }
+
+        colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        // Might need to change for post processing features
+        colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+        VkAttachmentReference colorAttachmentRef = {};
+        colorAttachmentRef.attachment = 0;
+        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        if (type == "3D") {
+            VkAttachmentDescription depthAttachment{};
+            depthAttachment.format = findSupportedDepthFormat();
+            // THIS SHOULD BE CUSTOMIZABLE
+            depthAttachment.samples = VK_SAMPLE_COUNT_4_BIT;
+            depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+            // Will need to change for shadow mapping and post processing
+            depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            // Should change later
+            depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            // Might need to change for post processing
+            depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+            depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+            VkAttachmentReference depthAttachmentRef{};
+            depthAttachmentRef.attachment = 1;
+            depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        }
     }
 
     void SwapChain::createFramebuffers() {
@@ -216,5 +257,15 @@ namespace JCAT {
 
             return actualExtent;
         }
+    }
+
+    VkFormat SwapChain::findSupportedDepthFormat() {
+        std::vector<VkFormat> preferredFormats = { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT };
+        VkFormat foundFormat = device.findSupportedDepthFormat(preferredFormats, 
+                                                               VK_IMAGE_TILING_OPTIMAL, 
+                                                               VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+        swapChainDepthFormat = foundFormat;
+
+        return foundFormat;
     }
 }
