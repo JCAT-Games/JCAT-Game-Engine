@@ -36,15 +36,31 @@ namespace JCAT {
             swapChain = nullptr;
         }
 
+        for (VkFramebuffer framebuffer : swapChainFramebuffers) {
+            vkDestroyFramebuffer(device.device(), framebuffer, nullptr);
+        }
+
+        vkDestroyRenderPass(device.device(), renderPass, nullptr);
+
+        // Cleanup synchronization objects for each frame
+        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+            vkDestroySemaphore(device.device(), renderFinishedSemaphores[i], nullptr);
+            vkDestroySemaphore(device.device(), imageAvailableSemaphores[i], nullptr);
+            vkDestroyFence(device.device(), inFlightFences[i], nullptr);
+        }
     }
 
     void SwapChain::init() {
         createSwapChain();
         createImageViews();
         createRenderPass();
-        createDepthResources();
+        
+        if (type == "3D") {
+            createDepthResources();
+        }
+        
         createFramebuffers();
-        createSyncObjects();
+        createSynchronizationObjects();
     }
 
     bool SwapChain::getVSync() {
@@ -253,11 +269,53 @@ namespace JCAT {
     }
 
     void SwapChain::createFramebuffers() {
+        swapChainFramebuffers.resize(swapChainImages.size());
 
+        for (size_t i = 0; i < swapChainImages.size(); i++) {
+            VkFramebufferCreateInfo framebufferInfo = {};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = renderPass;
+
+            if (type == "3D") {
+                std::array<VkImageView, 2> attachments = { swapChainImageViews[i], depthImageViews[i] };
+                framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+                framebufferInfo.pAttachments = attachments.data();
+            }
+            else {
+                framebufferInfo.attachmentCount = 1;
+                framebufferInfo.pAttachments = &swapChainImageViews[i];
+            }
+
+            framebufferInfo.width = swapChainExtent.width;
+            framebufferInfo.height = swapChainExtent.height;
+            framebufferInfo.layers = 1;
+
+            if (vkCreateFramebuffer(device.device(), &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create framebuffer!");
+            }
+        }
     }
 
-    void SwapChain::createSyncObjects() {
+    void SwapChain::createSynchronizationObjects() {
+        imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+        renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+        inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+        imagesInFlight.resize(swapChainImages.size(), VK_NULL_HANDLE);
 
+        VkSemaphoreCreateInfo semaphoreInfo = {};
+        semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+        VkFenceCreateInfo fenceInfo = {};
+        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+            if (vkCreateSemaphore(device.device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
+                vkCreateSemaphore(device.device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
+                vkCreateFence(device.device(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create the necessary synchronization objects for a frame!");
+            }
+        }
     }
 
     VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {

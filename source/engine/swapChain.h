@@ -33,7 +33,7 @@ namespace JCAT {
             void createDepthResources();
             void createRenderPass();
             void createFramebuffers();
-            void createSyncObjects();
+            void createSynchronizationObjects();
 
             VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
             VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
@@ -62,6 +62,11 @@ namespace JCAT {
             std::vector<VkImage> depthImages;
             std::vector<VkDeviceMemory> depthImageMemorys;
             std::vector<VkImageView> depthImageViews;
+
+            std::vector<VkSemaphore> imageAvailableSemaphores;
+            std::vector<VkSemaphore> renderFinishedSemaphores;
+            std::vector<VkFence> inFlightFences;
+            std::vector<VkFence> imagesInFlight;
     };
 }
 
