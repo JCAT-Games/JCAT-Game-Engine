@@ -3,6 +3,7 @@
 
 #include "./engine/window.h"
 #include "./engine/deviceSetup.h"
+#include "./engine/renderer.h"
 
 // All game engine code should be under the "JCAT" namespace!
 namespace JCAT {
