@@ -22,10 +22,10 @@ namespace JCAT {
             static std::vector<char> readFile(const std::string& filepath);
 
             void createBuffer(VkDeviceSize size,
-                                VkBufferUsageFlags usage,
-                                VkMemoryPropertyFlags properties,
-                                VkBuffer& buffer,
-                                VkDeviceMemory& bufferMemory);
+                              VkBufferUsageFlags usage,
+                              VkMemoryPropertyFlags properties,
+                              VkBuffer& buffer,
+                              VkDeviceMemory& bufferMemory);
 
             VkCommandBuffer beginSingleTimeCommands();
             void endSingleTimeCommands(VkCommandBuffer commandBuffer);

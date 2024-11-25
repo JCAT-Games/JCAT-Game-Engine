@@ -32,19 +32,42 @@ namespace JCAT {
         return objectAttributeDescriptions;
     }
 
-    JCATModel3D::JCATModel3D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex3D>& spriteVertices) : device{d}, resourceManager{r} {
-        
+    JCATModel3D::JCATModel3D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex3D>& objectVertices) : device{d}, resourceManager{r} {
+        createVertexBuffers(objectVertices);
     }
 
     JCATModel3D::~JCATModel3D() {
 
     }
 
-    void JCATModel3D::bind(VkCommandBuffer commandBuffer) {
+    void JCATModel3D::createVertexBuffers(const std::vector<Vertex3D>& vertices) {
+        vertexCount = static_cast<uint32_t>(vertices.size());
 
+        // We need to have at least 3 vertices to form a visable shape (like a 2D triange)
+        assert(vertexCount >= 3 && "Vertex count must be at least 3!");
+
+        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertexCount;
+        resourceManager.createBuffer(
+            bufferSize,
+            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+            vertexBuffer,
+            vertexBufferMemory
+        );
+
+        void* modelData;
+        vkMapMemory(device.device(), vertexBufferMemory, 0, bufferSize, 0, &modelData);
+        memcpy(modelData, vertices.data(), static_cast<size_t>(bufferSize));
+        vkUnmapMemory(device.device(), vertexBufferMemory);
+    }
+
+    void JCATModel3D::bind(VkCommandBuffer commandBuffer) {
+        VkBuffer buffers[] = { vertexBuffer };
+        VkDeviceSize offsets[] = { 0 };
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
     }
 
     void JCATModel3D::draw(VkCommandBuffer commandBuffer) {
-        
+        vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
     }
 }
