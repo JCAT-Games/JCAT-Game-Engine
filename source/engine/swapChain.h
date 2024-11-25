@@ -12,7 +12,8 @@
 namespace JCAT {
     class SwapChain {
         public:
-            static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
+            // The number of frames that can be processed in parallel. 3 is a good number to avoid bottlenecking.
+            static constexpr int MAX_FRAMES_IN_FLIGHT = 3;
 
             SwapChain(DeviceSetup& d, ResourceManager& r, VkExtent2D wE, std::string& gameType, bool v);
             SwapChain(DeviceSetup& d, ResourceManager& r, VkExtent2D wE, std::shared_ptr<SwapChain> previousFrame);
@@ -26,6 +27,7 @@ namespace JCAT {
 
             VkResult acquireNextImage(uint32_t* imageIndex);
             VkResult submitSwapChainCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
+            VkResult presentImage(uint32_t* imageIndex);
         private:
             void init();
             void createSwapChain();
@@ -68,6 +70,7 @@ namespace JCAT {
             std::vector<VkSemaphore> renderFinishedSemaphores;
             std::vector<VkFence> inFlightFences;
             std::vector<VkFence> imagesInFlight;
+            size_t currentFrame = 0;
     };
 }
 

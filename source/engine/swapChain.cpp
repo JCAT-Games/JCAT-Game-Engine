@@ -80,11 +80,80 @@ namespace JCAT {
     }
 
     VkResult SwapChain::acquireNextImage(uint32_t* imageIndex) {
+        // Might need to remove this or modify this for preformance later
+        vkWaitForFences(device.device(), 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
+        VkResult result = vkAcquireNextImageKHR(
+            device.device(),
+            swapChain,
+            std::numeric_limits<uint64_t>::max(),
+            imageAvailableSemaphores[currentFrame],  // must be a not signaled semaphore
+            VK_NULL_HANDLE,
+            imageIndex
+        );
+
+        return result;
     }
 
     VkResult SwapChain::submitSwapChainCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex) {
+        // Wait for the previous frame to complete
+        if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
+            vkWaitForFences(device.device(), 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
+        }
 
+        // Mark this current image as in flight
+        imagesInFlight[*imageIndex] = inFlightFences[currentFrame];
+
+        VkSubmitInfo submitInfo = {};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+        // Wait for the image to become availible before rendering begins
+        VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
+        VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = waitSemaphores;
+        submitInfo.pWaitDstStageMask = waitStages;
+
+        // The command buffer for the current frame
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = buffers;
+
+        // Semaphore signal when rendering is complete
+        VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores = signalSemaphores;
+
+        // Reset the fence for synchronization
+        vkResetFences(device.device(), 1, &inFlightFences[currentFrame]);
+
+        // Submit the draw command buffer
+        if (vkQueueSubmit(device.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to submit the draw command buffer!");
+        }
+
+        VkResult result = presentImage(imageIndex);
+
+        return result;
+    }
+
+    VkResult SwapChain::presentImage(uint32_t* imageIndex) {
+        VkPresentInfoKHR presentInfo = {};
+        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+        presentInfo.waitSemaphoreCount = 1;
+        presentInfo.pWaitSemaphores = &renderFinishedSemaphores[currentFrame];
+
+        VkSwapchainKHR swapChains[] = { swapChain };
+        presentInfo.swapchainCount = 1;
+        presentInfo.pSwapchains = swapChains;
+
+        presentInfo.pImageIndices = imageIndex;
+
+        VkResult result = vkQueuePresentKHR(device.presentQueue(), &presentInfo);
+
+        currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+        return result;
     }
 
     void SwapChain::createSwapChain() {
