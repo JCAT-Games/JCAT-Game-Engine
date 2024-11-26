@@ -39,7 +39,8 @@ namespace JCAT {
     }
 
     JCATModel2D::~JCATModel2D() {
-
+        vkDestroyBuffer(device.device(), vertexBuffer, nullptr);
+        vkFreeMemory(device.device(), vertexBufferMemory, nullptr);
     }
 
     void JCATModel2D::createVertexBuffers(const std::vector<Vertex2D>& vertices) {
