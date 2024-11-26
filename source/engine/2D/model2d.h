@@ -31,6 +31,8 @@ namespace JCAT {
             void draw(VkCommandBuffer commandBuffer);
 
         private:
+            void createVertexBuffers(const std::vector<Vertex2D>& vertices);
+
             DeviceSetup& device;
             ResourceManager& resourceManager;
             VkBuffer vertexBuffer;

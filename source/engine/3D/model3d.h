@@ -21,7 +21,7 @@ namespace JCAT {
                 static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
             };
 
-            JCATModel3D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex3D> &spriteVertices);
+            JCATModel3D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex3D> &objectVertices);
             ~JCATModel3D();
 
             JCATModel3D(const JCATModel3D&) = delete;
@@ -31,6 +31,8 @@ namespace JCAT {
             void draw(VkCommandBuffer commandBuffer);
 
         private:
+            void createVertexBuffers(const std::vector<Vertex3D>& vertices);
+
             DeviceSetup& device;
             ResourceManager& resourceManager;
             VkBuffer vertexBuffer;
