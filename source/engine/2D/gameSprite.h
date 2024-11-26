@@ -1,10 +1,36 @@
 #ifndef GAME_SPRITE_H
 #define GAME_SPRITE_H
 
+#include <memory>
+
+#include "./engine/2D/model2d.h"
+#include <gtc/matrix_transform.hpp>
+
 namespace JCAT {
+    struct TransformSprite {
+
+    };
+
     class GameSprite {
         public:
+            using id = unsigned int;
+
+            static GameSprite createGameSprite();
+
+            GameSprite(const GameSprite&) = delete;
+            GameSprite& operator=(const GameSprite&) = delete;
+            GameSprite(GameSprite&&) = default;
+            GameSprite& operator=(GameSprite&&) = default;
+
+            id getSpriteId();
+
+            std::shared_ptr<JCATModel2D> model2D;
+            glm::vec3 color{};
+            TransformSprite transform{};
         private:
+            GameSprite(id sprId);
+
+            id id;
     };
 }
 
