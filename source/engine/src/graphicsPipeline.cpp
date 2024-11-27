@@ -1,8 +1,8 @@
 #include <cassert>
 
 #include "./engine/graphicsPipeline.h"
-#include "./engine/2D/model2d.h"
-#include "./engine/3D/model3d.h"
+#include "./engine/2d/model2d.h"
+#include "./engine/3d/model3d.h"
 
 namespace JCAT {
     GraphicsPipeline::GraphicsPipeline(DeviceSetup &physicalDevice, ResourceManager &resourceManager, const std::string& vertFilepath, const std::string& fragfilepath) : device{ physicalDevice }, resources{ resourceManager } {
