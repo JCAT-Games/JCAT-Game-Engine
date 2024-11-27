@@ -1,4 +1,4 @@
-#include "./engine/2D/gameSprite.h"
+#include "./engine/2d/gameSprite.h"
 
 namespace JCAT {
     using id_t = unsigned int;

@@ -1,5 +1,5 @@
-#ifndef CAMERA_2D_H
-#define CAMERA_2D_H
+#ifndef CAMERA_3D_H
+#define CAMERA_3D_H
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -10,6 +10,6 @@ namespace JCAT {
         public:
         private:
     };
-};  
+};
 
 #endif

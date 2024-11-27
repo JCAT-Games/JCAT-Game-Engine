@@ -1,4 +1,4 @@
-#include "application.h"
+#include "./apps/default/application.h"
 
 #include <iostream>
 #include <cstdlib>

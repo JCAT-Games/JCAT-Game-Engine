@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "./engine/2D/model2d.h"
+#include "./engine/2d/model2d.h"
 #include <gtc/matrix_transform.hpp>
 
 namespace JCAT {
@@ -17,7 +17,7 @@ namespace JCAT {
 
     class GameSprite {
         public:
-            using id = unsigned int;
+            using id_t = unsigned int;
 
             static GameSprite createGameSprite();
 
@@ -26,15 +26,15 @@ namespace JCAT {
             GameSprite(GameSprite&&) = default;
             GameSprite& operator=(GameSprite&&) = default;
 
-            id getSpriteId();
+            id_t getSpriteId();
 
             std::shared_ptr<JCATModel2D> model2D;
             glm::vec3 color{};
             TransformSprite transform{};
         private:
-            GameSprite(id sprId);
+            GameSprite(id_t sprId);
 
-            id id;
+            id_t id;
     };
 }
 

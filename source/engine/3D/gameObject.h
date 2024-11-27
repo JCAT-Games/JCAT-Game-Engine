@@ -17,7 +17,7 @@ namespace JCAT {
 
     class GameObject {
         public:
-            using id = unsigned int;
+            using id_t = unsigned int;
 
             static GameObject createGameObject();
 
@@ -26,15 +26,15 @@ namespace JCAT {
             GameObject(GameObject&&) = default;
             GameObject& operator=(GameObject&&) = default;
 
-            id getObjectId();
+            id_t getObjectId();
 
             std::shared_ptr<JCATModel3D> model3D;
             glm::vec3 color{};
             TransformObject transform{};
         private:
-            GameObject(id objId);
+            GameObject(id_t objId);
 
-            id id;
+            id_t id;
     };
 }
 
