@@ -8,7 +8,11 @@
 
 namespace JCAT {
     struct TransformSprite {
+        glm::vec2 translation{};
+        glm::vec2 scale{ 1.0f, 1.0f };
+        float rotation;
 
+        glm::mat3 transformationMatrix();
     };
 
     class GameSprite {
