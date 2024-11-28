@@ -40,7 +40,22 @@ namespace JCAT {
     }
 
     void Renderer::createCommandBuffers() {
-        
+        commandBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
+
+        VkCommandBufferAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.commandPool = device.getCommandPool();
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
+
+        if (vkAllocateCommandBuffers(device.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to allocate command buffers for renderer!");
+        }
+    }
+
+    void Renderer::freeCommandBuffers() {
+        vkFreeCommandBuffers(device.device(), device.getCommandPool(), static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+        commandBuffers.clear();
     }
 
     bool Renderer::isFrameInProgress() {
@@ -48,7 +63,7 @@ namespace JCAT {
     }
 
     VkCommandBuffer Renderer::beginFrame() {
-
+        
     }
 
     void Renderer::endFrame() {
@@ -60,10 +75,6 @@ namespace JCAT {
     }
 
     void Renderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer) {
-
-    }
-
-    void Renderer::freeCommandBuffers() {
 
     }
 }

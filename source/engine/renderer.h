@@ -40,7 +40,7 @@ namespace JCAT {
             ResourceManager& resourceManager;
 
             std::unique_ptr<SwapChain> swapChain;
-            std::vector<VkCommandBuffer> commandBuffer;
+            std::vector<VkCommandBuffer> commandBuffers;
 
             bool isFrameStarted;
     };
