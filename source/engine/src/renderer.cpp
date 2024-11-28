@@ -62,16 +62,69 @@ namespace JCAT {
         return isFrameStarted;
     }
 
-    VkCommandBuffer Renderer::beginFrame() {
-        
+    VkCommandBuffer Renderer::getCurrentCommandBuffer() const {
+        assert(isFrameStarted && "Cannot get command buffer when a frame is not in progress!");
+        return commandBuffers[currentFrameIndex];
     }
 
-    void Renderer::endFrame() {
+    VkCommandBuffer Renderer::beginRecordingFrame() {
+        assert(!isFrameStarted && "Cannot begin recording frame while a frame is already in progress!");
 
+        VkResult result = swapChain->acquireNextImage(&currentImageIndex);
+
+        // If the window has been resized
+        if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+            // Swap chain must be recreated
+            recreateSwapChain();
+            return nullptr;
+        }
+
+        // If acquiring the next image fails
+        if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+            throw std::runtime_error("Failed to aquire the next swap chain image!");
+        }
+
+        isFrameStarted = true;
+
+        VkCommandBuffer commandBuffer = getCurrentCommandBuffer();
+
+        VkCommandBufferBeginInfo beginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+        if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
+            throw std::runtime_error("Command buffer failed to begin recording!");
+        }
+
+        return commandBuffer;
+    }
+
+    void Renderer::endRecordingFrame() {
+        assert(isFrameStarted && "Can not end recording frame while a frame is not in progress!");
+
+        VkCommandBuffer commandBuffer = getCurrentCommandBuffer();
+
+        if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+            throw std::runtime_error("Command buffer failed to end recording!");
+        }
+
+        // Submit the command buffers to the GPU once they are done being recorded
+        VkResult result = swapChain->submitSwapChainCommandBuffers(&commandBuffer, &currentImageIndex);
+
+        // Check if window has been resized or if there was an error
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window.wasWindowResized()) {
+            window.resetWindowResized();
+            recreateSwapChain();
+        }
+        else if (result != VK_SUCCESS) {
+            throw std::runtime_error("Failed to present swap chain image!");
+        }
+
+        isFrameStarted = false;
+        currentFrameIndex = (currentFrameIndex + 1) % SwapChain::MAX_FRAMES_IN_FLIGHT;
     }
 
     void Renderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
-
+        
     }
 
     void Renderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer) {

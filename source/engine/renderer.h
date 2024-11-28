@@ -21,9 +21,10 @@ namespace JCAT {
             Renderer& operator=(const Renderer&) = delete;
 
             bool isFrameInProgress();
+            VkCommandBuffer getCurrentCommandBuffer() const;
 
-            VkCommandBuffer beginFrame();
-            void endFrame();
+            VkCommandBuffer beginRecordingFrame();
+            void endRecordingFrame();
 
             void beginSwapChainRenderPass(VkCommandBuffer commandBuffer);
             void endSwapChainRenderPass(VkCommandBuffer commandBuffer);
@@ -42,6 +43,8 @@ namespace JCAT {
             std::unique_ptr<SwapChain> swapChain;
             std::vector<VkCommandBuffer> commandBuffers;
 
+            uint32_t currentImageIndex;
+            int currentFrameIndex;
             bool isFrameStarted;
     };
 }
