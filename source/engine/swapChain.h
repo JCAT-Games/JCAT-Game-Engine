@@ -23,6 +23,9 @@ namespace JCAT {
             SwapChain& operator=(const SwapChain&) = delete;
 
             bool getVSync();
+            VkFramebuffer getFrameBuffer(int index);
+            VkRenderPass getRenderPass();
+            VkExtent2D getSwapChainExtent();
             void setVSync(bool toggle);
 
             VkResult acquireNextImage(uint32_t* imageIndex);

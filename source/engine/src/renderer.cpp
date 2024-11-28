@@ -1,3 +1,5 @@
+#include <array>
+
 #include "./engine/renderer.h"
 
 namespace JCAT {
@@ -124,10 +126,59 @@ namespace JCAT {
     }
 
     void Renderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
-        
+        assert(isFrameStarted && "Cannot begin render pass while frame is not in progress!");
+        assert(commandBuffer == getCurrentCommandBuffer() && "Cannot begin render pass on command buffer from a different frame!");
+
+        VkRenderPassBeginInfo renderPassInfo{};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassInfo.renderPass = swapChain->getRenderPass();
+        renderPassInfo.framebuffer = swapChain->getFrameBuffer(currentImageIndex);
+        renderPassInfo.renderArea.offset = { 0, 0 };
+        renderPassInfo.renderArea.extent = swapChain->getSwapChainExtent();
+
+        if (type == "3D") {
+            std::array<VkClearValue, 2> clearValues{};
+            clearValues[0].color = { 0.01f, 0.01f, 0.01f, 1.0f };
+            clearValues[1].depthStencil = { 1.0f, 0 };
+            renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+            renderPassInfo.pClearValues = clearValues.data();
+        }
+        else {
+            std::array<VkClearValue, 1> clearValues{};
+            clearValues[0].color = { 0.01f, 0.01f, 0.01f, 1.0f };
+            renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+            renderPassInfo.pClearValues = clearValues.data();
+        }
+
+        vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+        // Create viewport
+        VkViewport viewport{};
+        // Make it centered
+        viewport.x = 0.0f;
+        viewport.y = 0.0f;
+        // Make it the size of the swap chain frame extent
+        viewport.width = static_cast<float>(swapChain->getSwapChainExtent().width);
+        viewport.height = static_cast<float>(swapChain->getSwapChainExtent().height);
+        // Depth goes from 0 to 1 in 3D and just 1 in 2D
+        if (type == "3D") {
+            viewport.minDepth = 0.0f;
+            viewport.maxDepth = 1.0f;
+        }
+        else {
+            viewport.maxDepth = 1.0f;
+            viewport.minDepth = 1.0f;
+        }
+        // Scissor is the same position and size
+        VkRect2D scissor{ {0, 0}, swapChain->getSwapChainExtent() };
+        vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+        vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     }
 
     void Renderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer) {
+        assert(isFrameStarted && "Cannot end render pass while frame is not in progress!");
+        assert(commandBuffer == getCurrentCommandBuffer() && "Cannot end render pass on command buffer from a different frame!");
 
+        vkCmdEndRenderPass(commandBuffer);
     }
 }

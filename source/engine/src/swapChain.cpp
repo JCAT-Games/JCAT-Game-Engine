@@ -75,6 +75,18 @@ namespace JCAT {
         return vsyncEnabled;
     }
 
+    VkFramebuffer SwapChain::getFrameBuffer(int index) {
+        return swapChainFramebuffers[index];
+    }
+
+    VkRenderPass SwapChain::getRenderPass() {
+        return renderPass;
+    }
+
+    VkExtent2D SwapChain::getSwapChainExtent() {
+        return swapChainExtent;
+    }
+
     void SwapChain::setVSync(bool toggle) {
         vsyncEnabled = toggle;
     }
