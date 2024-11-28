@@ -22,16 +22,21 @@ namespace JCAT {
             // Prevents the window from automatically closing
             bool shouldWindowClose();
             VkExtent2D getWindowExtent();
+            bool wasWindowResized();
+            void resetWindowResized();
 
             // Creates the window surface
             void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
         private:
+            static void framebufferResizeCallback(GLFWwindow* w, int width, int height);
+
             // Initializes the window
             void initializeWindow();
 
             // Dimensions of the window
-            const int WIDTH;
-            const int HEIGHT;
+            int width;
+            int height;
+            bool windowResized = false;
 
             // Window title
             std::string window_title;
