@@ -36,6 +36,10 @@ namespace JCAT {
         return glfwWindowShouldClose(window);
     }
 
+    VkExtent2D Window::getWindowExtent() {
+        return { static_cast<uint32_t>(WIDTH), static_cast<uint32_t>(HEIGHT) };
+    }
+
     void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) {
         if (glfwCreateWindowSurface(instance, window, nullptr, surface) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create the window surface!");

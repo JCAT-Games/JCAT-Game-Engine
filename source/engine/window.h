@@ -21,6 +21,7 @@ namespace JCAT {
 
             // Prevents the window from automatically closing
             bool shouldWindowClose();
+            VkExtent2D getWindowExtent();
 
             // Creates the window surface
             void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);

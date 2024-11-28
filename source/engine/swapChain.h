@@ -28,6 +28,8 @@ namespace JCAT {
             VkResult acquireNextImage(uint32_t* imageIndex);
             VkResult submitSwapChainCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
             VkResult presentImage(uint32_t* imageIndex);
+
+            bool compareSwapFormats(const SwapChain& otherSwapChain);
         private:
             void init();
             void createSwapChain();

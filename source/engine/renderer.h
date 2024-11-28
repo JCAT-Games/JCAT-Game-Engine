@@ -14,7 +14,7 @@
 namespace JCAT {
     class Renderer {
         public:
-            Renderer(Window& w, DeviceSetup& d, ResourceManager& r, std::string type, bool vsync);
+            Renderer(Window& w, DeviceSetup& d, ResourceManager& r, std::string gameType, bool v);
             ~Renderer();
 
             Renderer(const Renderer&) = delete;
@@ -28,11 +28,11 @@ namespace JCAT {
             void beginSwapChainRenderPass(VkCommandBuffer commandBuffer);
             void endSwapChainRenderPass(VkCommandBuffer commandBuffer);
         private:
+            void recreateSwapChain();
             void createCommandBuffers();
             void freeCommandBuffers();
-            void recreateSwapChain();
 
-            std::string gameType;
+            std::string type;
             bool vsync;
 
             Window& window;

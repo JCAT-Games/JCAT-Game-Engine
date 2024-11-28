@@ -156,6 +156,22 @@ namespace JCAT {
         return result;
     }
 
+    bool SwapChain::compareSwapFormats(const SwapChain& otherSwapChain) {
+        bool sameFormat = true;
+
+        if (swapChainImageFormat != otherSwapChain.swapChainImageFormat) {
+            sameFormat = false;
+        }
+
+        if (type == "3D") {
+            if (swapChainDepthFormat != otherSwapChain.swapChainDepthFormat) {
+                sameFormat = false;
+            }
+        }
+
+        return sameFormat;
+    }
+
     void SwapChain::createSwapChain() {
         SwapChainSupportDetails swapChainSupport = device.getSwapChainSupport();
 
