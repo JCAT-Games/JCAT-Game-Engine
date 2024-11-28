@@ -23,11 +23,16 @@ namespace JCAT {
             SwapChain& operator=(const SwapChain&) = delete;
 
             bool getVSync();
+            VkFramebuffer getFrameBuffer(int index);
+            VkRenderPass getRenderPass();
+            VkExtent2D getSwapChainExtent();
             void setVSync(bool toggle);
 
             VkResult acquireNextImage(uint32_t* imageIndex);
             VkResult submitSwapChainCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
             VkResult presentImage(uint32_t* imageIndex);
+
+            bool compareSwapFormats(const SwapChain& otherSwapChain);
         private:
             void init();
             void createSwapChain();

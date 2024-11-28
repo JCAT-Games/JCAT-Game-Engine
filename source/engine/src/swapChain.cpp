@@ -75,6 +75,18 @@ namespace JCAT {
         return vsyncEnabled;
     }
 
+    VkFramebuffer SwapChain::getFrameBuffer(int index) {
+        return swapChainFramebuffers[index];
+    }
+
+    VkRenderPass SwapChain::getRenderPass() {
+        return renderPass;
+    }
+
+    VkExtent2D SwapChain::getSwapChainExtent() {
+        return swapChainExtent;
+    }
+
     void SwapChain::setVSync(bool toggle) {
         vsyncEnabled = toggle;
     }
@@ -154,6 +166,22 @@ namespace JCAT {
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
         return result;
+    }
+
+    bool SwapChain::compareSwapFormats(const SwapChain& otherSwapChain) {
+        bool sameFormat = true;
+
+        if (swapChainImageFormat != otherSwapChain.swapChainImageFormat) {
+            sameFormat = false;
+        }
+
+        if (type == "3D") {
+            if (swapChainDepthFormat != otherSwapChain.swapChainDepthFormat) {
+                sameFormat = false;
+            }
+        }
+
+        return sameFormat;
     }
 
     void SwapChain::createSwapChain() {
