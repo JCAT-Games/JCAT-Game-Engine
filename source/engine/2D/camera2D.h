@@ -8,7 +8,20 @@
 namespace JCAT {
     class Camera2D {
         public:
+            Camera2D();
+            ~Camera2D();
+
+            void setOrthographicProjection(float left, float right, float top, float bottom, float near, float far);
+
+            void setViewDirection(glm::vec2 position, float rotation);
+            void setViewTarget(glm::vec2 position, glm::vec2 target);
+            void setViewYX(glm::vec2 position, float yaw);
+
+            const glm::mat4& getProjection() const;
+            const glm::mat4& getView() const;
         private:
+            glm::mat4 projectionMatrix{ 1.0f };
+            glm::mat4 viewMatrix{ 1.0f };
     };
 };  
 
