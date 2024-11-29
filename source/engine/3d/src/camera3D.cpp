@@ -20,7 +20,7 @@ namespace JCAT {
         projectionMatrix[3][2] = -(far * near) / (far - near);
     }
 
-    void Camera3D::setViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up = glm::vec3{ 0.f, -1.f, 0.f }) {
+    void Camera3D::setViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up) {
         const glm::vec3 w{ glm::normalize(direction) };
         const glm::vec3 u{ glm::normalize(glm::cross(w, up)) };
         const glm::vec3 v{ glm::cross(w, u) };
@@ -40,7 +40,7 @@ namespace JCAT {
         viewMatrix[3][2] = -glm::dot(w, position);
     }
 
-    void Camera3D::setViewTarget(glm::vec3 position, glm::vec3 target, glm::vec3 up = glm::vec3{ 0.f, -1.f, 0.f }) {
+    void Camera3D::setViewTarget(glm::vec3 position, glm::vec3 target, glm::vec3 up) {
         setViewDirection(position, target - position, up);
     }
 
