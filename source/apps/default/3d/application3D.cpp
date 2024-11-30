@@ -56,9 +56,8 @@ namespace JCAT {
     }
 
     // Courtesy of tutorial for this:
-    std::unique_ptr<JCATModel3D> createCubeModel(DeviceSetup& device, glm::vec3 offset) {
+    std::unique_ptr<JCATModel3D> createCubeModel(DeviceSetup& device, ResourceManager& resourceManager, glm::vec3 offset) {
         std::vector<JCATModel3D::Vertex3D> vertices{
-
             // left face (white)
             {{-.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}},
             {{-.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}},
@@ -106,17 +105,17 @@ namespace JCAT {
             {{-.5f, -.5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
             {{.5f, -.5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
             {{.5f, .5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
-
         };
 
         for (JCATModel3D::Vertex3D& v : vertices) {
             v.position += offset;
         }
-        return std::make_unique<JCATModel3D>(device, vertices);
+
+        return std::make_unique<JCATModel3D>(device, resourceManager, vertices);
     }
 
     void Application3D::loadGameObjects() {
-        std::shared_ptr<JCATModel3D> cubeModel = createCubeModel(device, { .0f, .0f, .0f });
+        std::shared_ptr<JCATModel3D> cubeModel = createCubeModel(device, resourceManager, { .0f, .0f, .0f });
 	
         GameObject cube = GameObject::createGameObject();
         cube.model3D = cubeModel;

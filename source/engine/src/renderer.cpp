@@ -10,6 +10,8 @@ namespace JCAT {
 
         recreateSwapChain();
         createCommandBuffers();
+
+        std::cout << "Initialized Renderer!" << std::endl;
     }
 
     Renderer::~Renderer() {
@@ -53,6 +55,8 @@ namespace JCAT {
         if (vkAllocateCommandBuffers(device.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
             throw std::runtime_error("Failed to allocate command buffers for renderer!");
         }
+
+        std::cout << "Created command buffers!" << std::endl;
     }
 
     void Renderer::freeCommandBuffers() {
@@ -69,11 +73,12 @@ namespace JCAT {
     }
 
     float Renderer::getAspectRatio() const {
-        swapChain->extentAspectRatio();
+        return swapChain->extentAspectRatio();
     }
 
     VkCommandBuffer Renderer::getCurrentCommandBuffer() const {
         assert(isFrameStarted && "Cannot get command buffer when a frame is not in progress!");
+
         return commandBuffers[currentFrameIndex];
     }
 
@@ -98,12 +103,20 @@ namespace JCAT {
 
         VkCommandBuffer commandBuffer = getCurrentCommandBuffer();
 
+        std::cout << "Command Buffer Acquired!" << std::endl;
+
+        if (commandBuffer == VK_NULL_HANDLE) {
+            std::cout << "Command buffer not allocated properly!" << std::endl;
+        }
+
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
         if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
             throw std::runtime_error("Command buffer failed to begin recording!");
         }
+
+        std::cout << "Command buffer successfully recording!" << std::endl;
 
         return commandBuffer;
     }

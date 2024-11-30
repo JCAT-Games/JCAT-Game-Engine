@@ -149,6 +149,8 @@ namespace JCAT {
 
         VkResult result = presentImage(imageIndex);
 
+        std::cout << "Submitted swap chain command buffers successfully!" << std::endl;
+
         return result;
     }
 

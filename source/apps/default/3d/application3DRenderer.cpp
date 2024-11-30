@@ -38,14 +38,16 @@ namespace JCAT {
     void Application3DRenderer::createPipeline(VkRenderPass renderPass) {
         assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 
-        pipeline = std::make_unique<GraphicsPipeline>(device.device(), resourceManager, "../shaders/simpleShader3D.vert", "../shaders/simpleShader3D.frag");
+        pipeline = std::make_unique<GraphicsPipeline>(device, resourceManager, "../shaders/simpleShader3D.vert.spv", "../shaders/simpleShader3D.frag.spv");
         
         std::unordered_map<GraphicsPipeline::PipelineType, PipelineConfigInfo> pipelineConfigs = {};
         pipeline->configurePipelines(pipelineConfigs);
         pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE].renderPass = renderPass;
         pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE].pipelineLayout = pipelineLayout;
 
-        pipeline->createSolidObjectPipeline("../shaders/simpleShader3D.vert", "../shaders/simpleShader3D.frag", pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE]);
+        pipeline->createSolidObjectPipeline("../shaders/simpleShader3D.vert.spv", "../shaders/simpleShader3D.frag.spv", pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE]);
+        
+        std::cout << "Created Pipeline Successfully!" << std::endl;
     }
 
     void Application3DRenderer::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<GameObject>& gameObjects, const Camera3D& camera) {
