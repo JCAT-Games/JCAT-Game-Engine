@@ -87,6 +87,10 @@ namespace JCAT {
         return swapChainExtent;
     }
 
+    float SwapChain::extentAspectRatio() {
+        return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
+    }
+
     void SwapChain::setVSync(bool toggle) {
         vsyncEnabled = toggle;
     }

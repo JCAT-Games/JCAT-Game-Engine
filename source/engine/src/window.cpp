@@ -39,6 +39,10 @@ namespace JCAT {
         return glfwWindowShouldClose(window);
     }
 
+    GLFWwindow* Window::getWindow() const {
+        return window;
+    }
+
     VkExtent2D Window::getWindowExtent() {
         return { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
     }

@@ -26,6 +26,7 @@ namespace JCAT {
             VkFramebuffer getFrameBuffer(int index);
             VkRenderPass getRenderPass();
             VkExtent2D getSwapChainExtent();
+            float extentAspectRatio();
             void setVSync(bool toggle);
 
             VkResult acquireNextImage(uint32_t* imageIndex);

@@ -20,7 +20,10 @@ namespace JCAT {
             Renderer(const Renderer&) = delete;
             Renderer& operator=(const Renderer&) = delete;
 
+            VkRenderPass getSwapChainrenderPass();
+
             bool isFrameInProgress();
+            float getAspectRatio() const;
             VkCommandBuffer getCurrentCommandBuffer() const;
 
             VkCommandBuffer beginRecordingFrame();

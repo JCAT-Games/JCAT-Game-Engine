@@ -24,6 +24,7 @@ namespace JCAT {
             VkExtent2D getWindowExtent();
             bool wasWindowResized();
             void resetWindowResized();
+            GLFWwindow* getWindow() const;
 
             // Creates the window surface
             void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
@@ -44,6 +45,6 @@ namespace JCAT {
             // Pointer to the GLFW window object
             GLFWwindow* window;
     };
-}
+};
 
 #endif

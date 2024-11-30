@@ -60,8 +60,16 @@ namespace JCAT {
         commandBuffers.clear();
     }
 
+    VkRenderPass Renderer::getSwapChainrenderPass() {
+        return swapChain->getRenderPass();
+    }
+
     bool Renderer::isFrameInProgress() {
         return isFrameStarted;
+    }
+
+    float Renderer::getAspectRatio() const {
+        swapChain->extentAspectRatio();
     }
 
     VkCommandBuffer Renderer::getCurrentCommandBuffer() const {
