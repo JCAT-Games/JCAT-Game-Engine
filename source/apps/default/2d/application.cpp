@@ -12,4 +12,8 @@ namespace JCAT {
             glfwPollEvents();
         }
     }
+
+    void Application::loadGameSprites() {
+        
+    }
 }
