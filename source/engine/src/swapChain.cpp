@@ -17,8 +17,11 @@ namespace JCAT {
         init();
     }
 
-    SwapChain::SwapChain(DeviceSetup& d, ResourceManager& r, VkExtent2D wE, std::shared_ptr<SwapChain> previousFrame) 
+    SwapChain::SwapChain(DeviceSetup& d, ResourceManager& r, VkExtent2D wE, std::string& gameType, bool v, std::shared_ptr<SwapChain> previousFrame) 
     : device{ d }, resourceManager{ r }, windowExtent{ wE }, previousSwapChain{ previousFrame } {
+        type = gameType;
+        vsyncEnabled = v;
+
         init();
 
         previousSwapChain = nullptr;
@@ -148,8 +151,6 @@ namespace JCAT {
         }
 
         VkResult result = presentImage(imageIndex);
-
-        std::cout << "Submitted swap chain command buffers successfully!" << std::endl;
 
         return result;
     }
@@ -325,12 +326,7 @@ namespace JCAT {
         colorAttachment.format = swapChainImageFormat;
 
         // Make this customizable!
-        if (type == "3D") {
-            colorAttachment.samples = VK_SAMPLE_COUNT_4_BIT;
-        }
-        else {
-            colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-        }
+        colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 
         colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -350,7 +346,7 @@ namespace JCAT {
         if (type == "3D") {
             depthAttachment.format = findSupportedDepthFormat();
             // THIS SHOULD BE CUSTOMIZABLE
-            depthAttachment.samples = VK_SAMPLE_COUNT_4_BIT;
+            depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
             depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
             // Will need to change for shadow mapping and post processing
             depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;

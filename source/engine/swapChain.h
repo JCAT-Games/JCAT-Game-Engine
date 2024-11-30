@@ -16,7 +16,7 @@ namespace JCAT {
             static constexpr int MAX_FRAMES_IN_FLIGHT = 3;
 
             SwapChain(DeviceSetup& d, ResourceManager& r, VkExtent2D wE, std::string& gameType, bool v);
-            SwapChain(DeviceSetup& d, ResourceManager& r, VkExtent2D wE, std::shared_ptr<SwapChain> previousFrame);
+            SwapChain(DeviceSetup& d, ResourceManager& r, VkExtent2D wE, std::string& gameType, bool v, std::shared_ptr<SwapChain> previousFrame);
             ~SwapChain();
 
             SwapChain(const SwapChain&) = delete;

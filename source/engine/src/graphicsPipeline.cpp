@@ -183,12 +183,12 @@ namespace JCAT {
         solidObjectRenderingInfo.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
 
         solidObjectRenderingInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
-        solidObjectRenderingInfo.rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+        solidObjectRenderingInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
         solidObjectRenderingInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
         solidObjectRenderingInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;
 
-        solidObjectRenderingInfo.multisampleInfo.sampleShadingEnable = VK_TRUE;
-        solidObjectRenderingInfo.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_4_BIT;
+        solidObjectRenderingInfo.multisampleInfo.sampleShadingEnable = VK_FALSE;
+        solidObjectRenderingInfo.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
         solidObjectRenderingInfo.multisampleInfo.minSampleShading = 1.0f;
         solidObjectRenderingInfo.multisampleInfo.pSampleMask = nullptr;
         solidObjectRenderingInfo.multisampleInfo.alphaToCoverageEnable = VK_FALSE;

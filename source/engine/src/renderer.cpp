@@ -33,7 +33,7 @@ namespace JCAT {
         }
         else {
             std::shared_ptr<SwapChain> previousSwapChain = std::move(swapChain);
-            swapChain = std::make_unique<SwapChain>(device, resourceManager, extent, previousSwapChain);
+            swapChain = std::make_unique<SwapChain>(device, resourceManager, extent, type, vsync, previousSwapChain);
 
             // Must have the same format as the previous swap chain!
             // This means that we cannot switch from a 2D swap chain to a 3D swap chain while the application is running and vice versa!
@@ -103,20 +103,12 @@ namespace JCAT {
 
         VkCommandBuffer commandBuffer = getCurrentCommandBuffer();
 
-        std::cout << "Command Buffer Acquired!" << std::endl;
-
-        if (commandBuffer == VK_NULL_HANDLE) {
-            std::cout << "Command buffer not allocated properly!" << std::endl;
-        }
-
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
         if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
             throw std::runtime_error("Command buffer failed to begin recording!");
         }
-
-        std::cout << "Command buffer successfully recording!" << std::endl;
 
         return commandBuffer;
     }

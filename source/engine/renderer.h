@@ -46,7 +46,7 @@ namespace JCAT {
             std::unique_ptr<SwapChain> swapChain;
             std::vector<VkCommandBuffer> commandBuffers;
 
-            uint32_t currentImageIndex;
+            uint32_t currentImageIndex = 0;
             int currentFrameIndex = 0;
             bool isFrameStarted;
     };
