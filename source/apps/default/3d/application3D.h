@@ -26,9 +26,10 @@ namespace JCAT {
         private:
             void loadGameObjects();
 
-            Window window{ DEFAULT_WIDTH, DEFAULT_HEIGHT, "JCAT Game Engine" };
+            Window window{ DEFAULT_WIDTH, DEFAULT_HEIGHT, "JCAT Game Engine", true };
             DeviceSetup device{window};
             ResourceManager resourceManager{device};
+            Renderer renderer{ window, device, resourceManager, "3D", false };
 
             std::vector<GameObject> gameObjects;
     };

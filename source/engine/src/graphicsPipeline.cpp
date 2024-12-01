@@ -183,12 +183,12 @@ namespace JCAT {
         solidObjectRenderingInfo.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
 
         solidObjectRenderingInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
-        solidObjectRenderingInfo.rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+        solidObjectRenderingInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
         solidObjectRenderingInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
         solidObjectRenderingInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;
 
-        solidObjectRenderingInfo.multisampleInfo.sampleShadingEnable = VK_TRUE;
-        solidObjectRenderingInfo.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_4_BIT;
+        solidObjectRenderingInfo.multisampleInfo.sampleShadingEnable = VK_FALSE;
+        solidObjectRenderingInfo.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
         solidObjectRenderingInfo.multisampleInfo.minSampleShading = 1.0f;
         solidObjectRenderingInfo.multisampleInfo.pSampleMask = nullptr;
         solidObjectRenderingInfo.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
@@ -376,15 +376,15 @@ namespace JCAT {
         createPipeline(getPipeline(PipelineType::TRANSPARENT_SPRITE_PIPELINE), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
-    void GraphicsPipeline::createSolidObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
-        assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
-        assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
+    void GraphicsPipeline::createSolidObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidObjectRenderingInfo) {
+        assert(solidObjectRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
+        assert(solidObjectRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
     
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages = createShaderStages(vertFilepath, fragfilepath);
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo = getDescriptions3D();
 
-        createPipeline(getPipeline(PipelineType::SOLID_OBJECT_PIPELINE), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
+        createPipeline(getPipeline(PipelineType::SOLID_OBJECT_PIPELINE), solidObjectRenderingInfo, shaderStages, vertexInputInfo);
     }
 
     void GraphicsPipeline::createTransparentObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
@@ -518,22 +518,31 @@ namespace JCAT {
         createShaderModule(vertexCode, &vertShaderModule);
         createShaderModule(fragmentCode, &fragShaderModule);
 
-        std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-        shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-        shaderStages[0].module = vertShaderModule;
-        shaderStages[0].pName = "main";
-        shaderStages[0].flags = 0;
-        shaderStages[0].pNext = nullptr;
-        shaderStages[0].pSpecializationInfo = nullptr;
+        std::cout << "Created Shader Modules!" << std::endl;
 
-        shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        shaderStages[1].module = fragShaderModule;
-        shaderStages[1].pName = "main";
-        shaderStages[1].flags = 0;
-        shaderStages[1].pNext = nullptr;
-        shaderStages[1].pSpecializationInfo = nullptr;
+        std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+
+        VkPipelineShaderStageCreateInfo vertexStage{};
+        vertexStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        vertexStage.stage = VK_SHADER_STAGE_VERTEX_BIT;
+        vertexStage.module = vertShaderModule;
+        vertexStage.pName = "main";
+        vertexStage.flags = 0;
+        vertexStage.pNext = nullptr;
+        vertexStage.pSpecializationInfo = nullptr;
+        shaderStages.push_back(vertexStage);
+
+        VkPipelineShaderStageCreateInfo fragmentStage{};
+        fragmentStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        fragmentStage.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        fragmentStage.module = fragShaderModule;
+        fragmentStage.pName = "main";
+        fragmentStage.flags = 0;
+        fragmentStage.pNext = nullptr;
+        fragmentStage.pSpecializationInfo = nullptr;
+        shaderStages.push_back(fragmentStage);
+
+        std::cout << "Created Shader Stages!" << std::endl;
 
         return shaderStages;
     }

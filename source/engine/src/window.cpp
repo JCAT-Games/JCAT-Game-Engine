@@ -3,8 +3,10 @@
 #include <stdexcept>
 
 namespace JCAT {
-    Window::Window(int w, int h, std::string title) : width(w), height(h) {
-        window_title = title;
+    Window::Window(int w, int h, std::string title, bool f) : width(w), height(h) {
+        window_title = title;   
+        fullscreen = f;
+
         initializeWindow();
     }
 
@@ -21,10 +23,21 @@ namespace JCAT {
             throw std::runtime_error("Failed to initialize GLFW!");
         }
 
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        if (fullscreen == false) {
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-        window = glfwCreateWindow(width, height, window_title.c_str(), nullptr, nullptr);
+            window = glfwCreateWindow(width, height, window_title.c_str(), nullptr, nullptr);
+        }
+        else {
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+            GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+            const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+            window = glfwCreateWindow(mode->width, mode->height, window_title.c_str(), monitor, nullptr);
+        }
 
         if (!window) {
             throw std::runtime_error("Failed to initialize GLFW Window!");
@@ -37,6 +50,10 @@ namespace JCAT {
 
     bool Window::shouldWindowClose() {
         return glfwWindowShouldClose(window);
+    }
+
+    GLFWwindow* Window::getWindow() const {
+        return window;
     }
 
     VkExtent2D Window::getWindowExtent() {

@@ -10,6 +10,8 @@ namespace JCAT {
 
         recreateSwapChain();
         createCommandBuffers();
+
+        std::cout << "Initialized Renderer!" << std::endl;
     }
 
     Renderer::~Renderer() {
@@ -31,7 +33,7 @@ namespace JCAT {
         }
         else {
             std::shared_ptr<SwapChain> previousSwapChain = std::move(swapChain);
-            swapChain = std::make_unique<SwapChain>(device, resourceManager, extent, previousSwapChain);
+            swapChain = std::make_unique<SwapChain>(device, resourceManager, extent, type, vsync, previousSwapChain);
 
             // Must have the same format as the previous swap chain!
             // This means that we cannot switch from a 2D swap chain to a 3D swap chain while the application is running and vice versa!
@@ -53,6 +55,8 @@ namespace JCAT {
         if (vkAllocateCommandBuffers(device.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
             throw std::runtime_error("Failed to allocate command buffers for renderer!");
         }
+
+        std::cout << "Created command buffers!" << std::endl;
     }
 
     void Renderer::freeCommandBuffers() {
@@ -60,12 +64,21 @@ namespace JCAT {
         commandBuffers.clear();
     }
 
+    VkRenderPass Renderer::getSwapChainrenderPass() {
+        return swapChain->getRenderPass();
+    }
+
     bool Renderer::isFrameInProgress() {
         return isFrameStarted;
     }
 
+    float Renderer::getAspectRatio() const {
+        return swapChain->extentAspectRatio();
+    }
+
     VkCommandBuffer Renderer::getCurrentCommandBuffer() const {
         assert(isFrameStarted && "Cannot get command buffer when a frame is not in progress!");
+
         return commandBuffers[currentFrameIndex];
     }
 

@@ -10,7 +10,7 @@ namespace JCAT {
     class Window {
         public:
             // Constructor
-            Window(int width, int height, std::string title);
+            Window(int width, int height, std::string title, bool f);
 
             // Destructor
             ~Window();
@@ -24,6 +24,7 @@ namespace JCAT {
             VkExtent2D getWindowExtent();
             bool wasWindowResized();
             void resetWindowResized();
+            GLFWwindow* getWindow() const;
 
             // Creates the window surface
             void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
@@ -37,6 +38,7 @@ namespace JCAT {
             int width;
             int height;
             bool windowResized = false;
+            bool fullscreen;
 
             // Window title
             std::string window_title;
@@ -44,6 +46,6 @@ namespace JCAT {
             // Pointer to the GLFW window object
             GLFWwindow* window;
     };
-}
+};
 
 #endif
