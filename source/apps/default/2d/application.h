@@ -33,7 +33,7 @@ namespace JCAT {
         private:
             void loadGameSprites();
 
-            Window window{ DEFAULT_WIDTH, DEFAULT_HEIGHT, "JCAT Game Engine" };
+            Window window{ DEFAULT_WIDTH, DEFAULT_HEIGHT, "JCAT Game Engine", true };
             DeviceSetup device{window};
             ResourceManager resourceManager{device};
 

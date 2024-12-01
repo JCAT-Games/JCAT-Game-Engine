@@ -10,7 +10,7 @@ namespace JCAT {
     class Window {
         public:
             // Constructor
-            Window(int width, int height, std::string title);
+            Window(int width, int height, std::string title, bool f);
 
             // Destructor
             ~Window();
@@ -38,6 +38,7 @@ namespace JCAT {
             int width;
             int height;
             bool windowResized = false;
+            bool fullscreen;
 
             // Window title
             std::string window_title;
