@@ -3,6 +3,7 @@
 #include "./appCore/keyboardController.h"
 #include "./engine/3d/camera3D.h"
 #include "./apps/default/3d/application3DRenderer.h"
+#include "./apps/default/3d/perlinNoise3D.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -140,5 +141,28 @@ namespace JCAT {
         cube4.transform.translation = { 1.75f, 0.75f, 1.5f };
         cube4.transform.scale = { 1.0f, 0.5f, 1.5f };
         gameObjects.push_back(std::move(cube4));
+
+        const int TERRAIN_WIDTH = 20;
+        const int TERRAIN_DEPTH = 20;
+        const int MAX_HEIGHT = 30;
+        const float SCALE = 0.1f;
+        const float AMPLITUDE = 10.0f;
+
+        for (int x = 0; x < TERRAIN_WIDTH; x++) {
+            for (int z = 0; z < TERRAIN_DEPTH; z++) {
+                PerlinNoise3D object;
+                int height = static_cast<int>(PerlinNoise3D::generate3DPerlinNoise(object, x, z, 0.0f, SCALE, AMPLITUDE));
+
+                height = glm::clamp(height, 0, MAX_HEIGHT);
+
+                for (int y = 0; y <= height; ++y) {
+                    auto noiseCube = GameObject::createGameObject();
+                    noiseCube.model3D = cubeModel;
+                    noiseCube.transform.translation = { x, -y, z };
+                    noiseCube.transform.scale = { 1.0f, 1.0f, 1.0f };
+                    gameObjects.push_back(std::move(noiseCube));
+                }
+            }
+        }
     }
 };
