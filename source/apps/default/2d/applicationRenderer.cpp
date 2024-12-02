@@ -55,6 +55,8 @@ namespace JCAT {
         glm::mat3 projectionView = camera.getProjection() * camera.getView();
 
         for (GameSprite& spr : gameSprites) {
+            spr.transform.rotation = glm::mod(spr.transform.rotation + 0.01f, glm::two_pi<float>());
+
             PushConstantData push{};
             push.offset = spr.transform.translation;
             push.color = spr.color;
