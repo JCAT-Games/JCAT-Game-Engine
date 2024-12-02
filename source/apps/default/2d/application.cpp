@@ -64,6 +64,7 @@ namespace JCAT {
 
 		std::shared_ptr<JCATModel2D> triangleModel = std::make_shared<JCATModel2D>(device, resourceManager, vertices);
 
+        // https://www.color-hex.com/color-palette/5361
         std::vector<glm::vec3> colors{
             {1.f, .7f, .73f},
             {1.f, .87f, .73f},
@@ -80,7 +81,7 @@ namespace JCAT {
             GameSprite triangle = GameSprite::createGameSprite();
             triangle.model2D = triangleModel;
             triangle.transform.scale = glm::vec2(0.5f) + i * 0.025f;
-            triangle.transform.rotation = i * glm::pi<float>() * .025f;
+            triangle.transform.rotation = i * glm::pi<float>() * 0.025f;
             triangle.color = colors[i % colors.size()];
             gameSprites.push_back(std::move(triangle));
         }

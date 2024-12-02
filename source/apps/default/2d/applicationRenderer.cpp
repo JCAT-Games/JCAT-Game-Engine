@@ -37,14 +37,14 @@ namespace JCAT {
     void ApplicationRenderer::createPipeline(VkRenderPass renderPass) {
         assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 
-        pipeline = std::make_unique<GraphicsPipeline>(device, resourceManager, "../shaders/simpleShader3D.vert.spv", "../shaders/simpleShader3D.frag.spv");
+        pipeline = std::make_unique<GraphicsPipeline>(device, resourceManager, "../shaders/simpleShader2D.vert.spv", "../shaders/simpleShader2D.frag.spv");
         
         std::unordered_map<GraphicsPipeline::PipelineType, PipelineConfigInfo> pipelineConfigs = {};
         pipeline->configurePipelines(pipelineConfigs);
         pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE].renderPass = renderPass;
         pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE].pipelineLayout = pipelineLayout;
 
-        pipeline->createSolidObjectPipeline("../shaders/simpleShader3D.vert.spv", "../shaders/simpleShader3D.frag.spv", pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE]);
+        pipeline->createSolidObjectPipeline("../shaders/simpleShader2D.vert.spv", "../shaders/simpleShader2D.frag.spv", pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE]);
         
         std::cout << "Created Pipeline Successfully!" << std::endl;
     }
@@ -55,7 +55,7 @@ namespace JCAT {
         glm::mat3 projectionView = camera.getProjection() * camera.getView();
 
         for (GameSprite& spr : gameSprites) {
-            spr.transform.rotation = glm::mod(spr.transform.rotation + 0.01f, glm::two_pi<float>());
+            spr.transform.rotation = glm::mod(spr.transform.rotation + 0.001f, glm::two_pi<float>());
 
             PushConstantData push{};
             push.offset = spr.transform.translation;
