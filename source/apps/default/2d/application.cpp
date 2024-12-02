@@ -39,7 +39,8 @@ namespace JCAT {
             float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
             currentTime = newTime;
 
-            // Might need to fix camera movement later on
+            cameraController.moveSprite(window.getWindow(), frameTime, viewerObject);
+            camera.setViewTarget(viewerObject.transform.translation);
 
             float aspect = renderer.getAspectRatio();
             camera.setOrthographicProjection(-aspect, aspect, -1, 1);
@@ -77,7 +78,7 @@ namespace JCAT {
             color = glm::pow(color, glm::vec3{ 2.2f });
         }
 
-        for (int i = 0; i < 40; i++) {
+        for (int i = 40; i >= 0; i--) {
             GameSprite triangle = GameSprite::createGameSprite();
             triangle.model2D = triangleModel;
             triangle.transform.scale = glm::vec2(0.5f) + i * 0.025f;

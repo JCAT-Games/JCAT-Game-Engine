@@ -41,21 +41,23 @@ namespace JCAT {
         
         std::unordered_map<GraphicsPipeline::PipelineType, PipelineConfigInfo> pipelineConfigs = {};
         pipeline->configurePipelines(pipelineConfigs);
-        pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE].renderPass = renderPass;
-        pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE].pipelineLayout = pipelineLayout;
+        pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_SPRITE_PIPELINE].renderPass = renderPass;
+        pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_SPRITE_PIPELINE].pipelineLayout = pipelineLayout;
 
-        pipeline->createSolidObjectPipeline("../shaders/simpleShader2D.vert.spv", "../shaders/simpleShader2D.frag.spv", pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE]);
+        pipeline->createSolidSpritePipeline("../shaders/simpleShader2D.vert.spv", "../shaders/simpleShader2D.frag.spv", pipelineConfigs[GraphicsPipeline::PipelineType::SOLID_SPRITE_PIPELINE]);
         
         std::cout << "Created Pipeline Successfully!" << std::endl;
     }
 
     void ApplicationRenderer::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<GameSprite>& gameSprites, const Camera2D& camera) {
-        pipeline->bindPipeline(commandBuffer, GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE);
+        pipeline->bindPipeline(commandBuffer, GraphicsPipeline::PipelineType::SOLID_SPRITE_PIPELINE);
 
         glm::mat3 projectionView = camera.getProjection() * camera.getView();
 
+        int i = 0;
         for (GameSprite& spr : gameSprites) {
-            spr.transform.rotation = glm::mod(spr.transform.rotation + 0.001f, glm::two_pi<float>());
+            i += 1;
+            spr.transform.rotation = glm::mod<float>(spr.transform.rotation + 0.0001f * i, 2.0f * glm::pi<float>());
 
             PushConstantData push{};
             push.offset = spr.transform.translation;
