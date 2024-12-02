@@ -11,15 +11,15 @@ namespace JCAT {
             Camera2D();
             ~Camera2D();
 
-            void setOrthographicProjection(float left, float right, float top, float bottom, float near, float far);
+            void setOrthographicProjection(float left, float right, float top, float bottom);
 
             void setViewTarget(glm::vec2 position);
 
-            const glm::mat4& getProjection() const;
-            const glm::mat4& getView() const;
+            const glm::mat3& getProjection() const;
+            const glm::mat3& getView() const;
         private:
-            glm::mat4 projectionMatrix{ 1.0f };
-            glm::mat4 viewMatrix{ 1.0f };
+            glm::mat3 projectionMatrix{ 1.0f };
+            glm::mat3 viewMatrix{ 1.0f };
     };
 };  
 
