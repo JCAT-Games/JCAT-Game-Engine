@@ -5,8 +5,10 @@
 
 namespace JCAT {
     Camera2D::Camera2D() {}
+
     Camera2D::~Camera2D() {}
 
+    // Used for 2D camera
     void Camera2D::setOrthographicProjection(float left, float right, float top, float bottom) {
         projectionMatrix = glm::mat3(1.0f);
         projectionMatrix[0][0] = 2.f / (right - left);

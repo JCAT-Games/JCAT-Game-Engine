@@ -8,6 +8,7 @@
 namespace JCAT {
     class KeyboardController {
         public:
+            // For 2D
             struct KeyMappings2D {
                 int moveLeft = GLFW_KEY_A;
                 int moveRight = GLFW_KEY_D;
@@ -15,6 +16,7 @@ namespace JCAT {
                 int moveDown = GLFW_KEY_S;
             };
 
+            // For 3D
             struct KeyMappings3D {
                 int moveLeft = GLFW_KEY_A;
                 int moveRight = GLFW_KEY_D;

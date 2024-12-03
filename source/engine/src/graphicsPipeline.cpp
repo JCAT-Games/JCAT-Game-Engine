@@ -138,10 +138,13 @@ namespace JCAT {
 
         solidSpriteRenderingInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
         solidSpriteRenderingInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
+        solidSpriteRenderingInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
         solidSpriteRenderingInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;
 
         solidSpriteRenderingInfo.multisampleInfo.sampleShadingEnable = VK_FALSE;
         solidSpriteRenderingInfo.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+        solidSpriteRenderingInfo.multisampleInfo.minSampleShading = 1.0f;
+        solidSpriteRenderingInfo.multisampleInfo.pSampleMask = nullptr;
         solidSpriteRenderingInfo.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
 
         solidSpriteRenderingInfo.colorBlendAttachment.blendEnable = VK_FALSE;
