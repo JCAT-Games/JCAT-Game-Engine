@@ -6,6 +6,7 @@
 #include <glm.hpp>
 
 namespace JCAT {
+    // Here we have rotation, scale, and position to worry about.
     class Camera3D {
         public:
             Camera3D();

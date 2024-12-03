@@ -7,6 +7,7 @@ namespace JCAT {
     Camera3D::Camera3D() {}
     Camera3D::~Camera3D() {}
 
+    // Used for a 3D camera
     void Camera3D::setPerspectiveProjection(float fovy, float aspect, float near, float far) {
         assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
 

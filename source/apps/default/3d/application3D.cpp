@@ -59,7 +59,7 @@ namespace JCAT {
     // Courtesy of tutorial for this:
     std::unique_ptr<JCATModel3D> createCubeModel(DeviceSetup& device, ResourceManager& resourceManager, glm::vec3 offset) {
         std::vector<JCATModel3D::Vertex3D> vertices{
-            // left face (white)
+            // left face
             {{-.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}},
             {{-.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}},
             {{-.5f, -.5f, .5f}, {0.5f, 0.3f, 0.1f}},
@@ -67,7 +67,7 @@ namespace JCAT {
             {{-.5f, .5f, -.5f}, {0.5f, 0.3f, 0.1f}},
             {{-.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}},
 
-            // right face (yellow)
+            // right face
             {{.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}},
             {{.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}},
             {{.5f, -.5f, .5f}, {0.5f, 0.3f, 0.1f}},
@@ -75,7 +75,7 @@ namespace JCAT {
             {{.5f, .5f, -.5f}, {0.5f, 0.3f, 0.1f}},
             {{.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}},
 
-            // top face (orange, remember y axis points down)
+            // top face (y axis points down)
             {{-.5f, -.5f, -.5f}, {.1f, .8f, .1f}},
             {{.5f, -.5f, .5f}, {.1f, .8f, .1f}},
             {{-.5f, -.5f, .5f}, {.1f, .8f, .1f}},
@@ -83,7 +83,7 @@ namespace JCAT {
             {{.5f, -.5f, -.5f}, {.1f, .8f, .1f}},
             {{.5f, -.5f, .5f}, {.1f, .8f, .1f}},
 
-            // bottom face (red)
+            // bottom face
             {{-.5f, .5f, -.5f}, {0.3f, 0.15f, 0.05f}},
             {{.5f, .5f, .5f}, {0.3f, 0.15f, 0.05f}},
             {{-.5f, .5f, .5f}, {0.3f, 0.15f, 0.05f}},
@@ -91,7 +91,7 @@ namespace JCAT {
             {{.5f, .5f, -.5f}, {0.3f, 0.15f, 0.05f}},
             {{.5f, .5f, .5f}, {0.3f, 0.15f, 0.05f}},
 
-            // nose face (blue)
+            // nose face
             {{-.5f, -.5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
             {{.5f, .5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
             {{-.5f, .5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
@@ -99,7 +99,7 @@ namespace JCAT {
             {{.5f, -.5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
             {{.5f, .5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
 
-            // tail face (green)
+            // tail face
             {{-.5f, -.5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
             {{.5f, .5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
             {{-.5f, .5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
@@ -155,8 +155,8 @@ namespace JCAT {
 
                 height = glm::clamp(height, 0, MAX_HEIGHT);
 
-                for (int y = 0; y <= height; ++y) {
-                    auto noiseCube = GameObject::createGameObject();
+                for (int y = 0; y <= height; y++) {
+                    GameObject noiseCube = GameObject::createGameObject();
                     noiseCube.model3D = cubeModel;
                     noiseCube.transform.translation = { x, -y, z };
                     noiseCube.transform.scale = { 1.0f, 1.0f, 1.0f };

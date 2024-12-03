@@ -26,7 +26,7 @@ namespace JCAT {
         ApplicationRenderer applicationRenderer{ device, resourceManager, renderer.getSwapChainrenderPass() };
     
         Camera2D camera{};
-        camera.setViewTarget(glm::vec2(0.f, 0.f));
+        camera.setViewTarget(glm::vec2(0.0f, 0.0f));
         GameSprite viewerObject = GameSprite::createGameSprite();
         KeyboardController cameraController{};
 

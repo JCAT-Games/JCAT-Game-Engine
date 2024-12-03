@@ -29,8 +29,7 @@ namespace JCAT {
         }
 
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
-            gameSprite.transform.translation.x += moveSpeed * dt * glm::normalize(moveDir).x;
-            gameSprite.transform.translation.y += moveSpeed * dt * glm::normalize(moveDir).y;
+            gameSprite.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
         }
     }
 
