@@ -1,0 +1,11 @@
+On 1/21/25, I helped my teammates get their environments set up for the game engine. This took 30 to 45 minutes.
+
+Things I helped them with:
+- Setting up Vulkan
+- setting up other external ibraries like GLFW and GLM
+- Setting up mingw
+- Pulling the repo from Github and setting up Github
+- Going over the proposal and explaining to them how the project works.
+- Setting up CMake
+
+I also gave them designated folders to track non-programming progress.
