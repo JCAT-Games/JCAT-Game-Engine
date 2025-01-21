@@ -1,0 +1,14 @@
+On 1/21/25, I learned a little bit more about using GitHub (as I have never used it for anything before) 
+and installed all the files and applications needed to work on this project from Christian.
+
+Some of the things I installed and got set up were:
+- The GitHub that we'll be using while working on this project
+ - I also installed GitHub Desktop to work on the project more easily
+- The CMake and Vulkan applications (for the game engine development)
+- Other library files to be used in the game engine application
+
+Finally, I marked the progress I made today in a new documentation folder in this .txt folder.
+This whole process took about 1 and a half hours (a chunk of this was related to a downloading one of the libraries).
+
+My next steps are probably going to be learning more about how to use GitHub in a collaborative setting
+as well as watching some tutorial videos on how to use Vulkan for this project.
