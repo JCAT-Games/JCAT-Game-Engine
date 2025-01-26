@@ -8,8 +8,8 @@ namespace JCAT {
         moveSpeed = newSpeed;
     }
 
-    void KeyboardController::setLookSpeed(const float newSpeed) {
-        lookSpeed = newSpeed;
+    void KeyboardController::setSensitivity(const float newSensitivity) {
+        sensitivity = newSensitivity;
     }
 
     void KeyboardController::moveSprite(GLFWwindow* window, float dt, GameSprite& gameSprite) {
@@ -34,24 +34,20 @@ namespace JCAT {
     }
 
     void KeyboardController::moveObjectInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject) {
-        glm::vec3 rotate{0};
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
 
-        if (glfwGetKey(window, keys3D.lookRight) == GLFW_PRESS) {
-            rotate.y += 1.f;
-        }
-        if (glfwGetKey(window, keys3D.lookLeft) == GLFW_PRESS) {
-            rotate.y -= 1.f;
-        }
-        if (glfwGetKey(window, keys3D.lookUp) == GLFW_PRESS) {
-            rotate.x += 1.f;
-        }
-        if (glfwGetKey(window, keys3D.lookDown) == GLFW_PRESS) {
-            rotate.x -= 1.f;
-        }
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
 
-        if (glm::dot(rotate, rotate) > std::numeric_limits<float>::epsilon()) {
-            gameObject.transform.rotation += lookSpeed * dt * glm::normalize(rotate);
-        }
+        float deltaX = static_cast<float>(xpos - lastX);
+        float deltaY = static_cast<float>(ypos - lastY);
+
+        lastX = xpos;
+        lastY = ypos;
+
+        gameObject.transform.rotation.x -= deltaY * sensitivity;
+        gameObject.transform.rotation.y += deltaX * sensitivity;
 
         gameObject.transform.rotation.x = glm::clamp(gameObject.transform.rotation.x, -1.5f, 1.5f);
         gameObject.transform.rotation.y = glm::mod(gameObject.transform.rotation.y, glm::two_pi<float>());
@@ -83,6 +79,19 @@ namespace JCAT {
 
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
             gameObject.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
+        }
+
+        // Cursor is hidden by default.
+        if (escapeCursor == 0) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+        else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+
+        // If escape key is pressed, the cursor appears again
+        if (glfwGetKey(window, keys3D.escape) == GLFW_PRESS) {
+            escapeCursor = 1;
         }
     }
 };
