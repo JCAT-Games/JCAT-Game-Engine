@@ -28,6 +28,7 @@ namespace JCAT {
                 int lookRight = GLFW_KEY_RIGHT;
                 int lookUp = GLFW_KEY_UP;
                 int lookDown = GLFW_KEY_DOWN;
+                int escape = GLFW_KEY_ESCAPE;
             };
 
             KeyboardController();
@@ -35,6 +36,7 @@ namespace JCAT {
 
             void setMoveSpeed(const float newSpeed);
             void setLookSpeed(const float newSpeed);
+            void setSensitivity(const float newSensitivity);
 
             void moveSprite(GLFWwindow* window, float dt, GameSprite& gameSprite);
             void moveObjectInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject);
@@ -42,8 +44,14 @@ namespace JCAT {
             KeyMappings2D keys2D{};
             KeyMappings3D keys3D{};
 
+            float lastX = 0.0f;
+            float lastY = 0.0f;
+
+            int escapeCursor = 0;
+
+            // Change these values to change the speed of the WASD movement and look sensitivity respectively
             float moveSpeed{ 3.f };
-            float lookSpeed{ 1.5f };
+            float sensitivity{ 0.0015f };
         private:
     };
 };
