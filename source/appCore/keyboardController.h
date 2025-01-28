@@ -53,6 +53,8 @@ namespace JCAT {
             float moveSpeed{ 3.f };
             float sensitivity{ 0.0015f };
         private:
+            bool escapeKeyPressedLastFrame = false;
+            bool leftMouseButtonPressedLastFrame = false;
     };
 };
 
