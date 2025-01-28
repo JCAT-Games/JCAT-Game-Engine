@@ -80,18 +80,30 @@ namespace JCAT {
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
             gameObject.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
         }
+    
+        bool isEscapePressed = glfwGetKey(window, keys3D.escape) == GLFW_PRESS;
+        if (isEscapePressed && !escapeKeyPressedLastFrame) {
+            escapeCursor++;
+            if (escapeCursor >= 2) {
+                glfwSetWindowShouldClose(window, GLFW_TRUE);
+            }
+        }
+        escapeKeyPressedLastFrame = isEscapePressed;
 
-        // Cursor is hidden by default.
+        // Handle LEFT MOUSE BUTTON (hide cursor when clicked)
+        bool isLeftMousePressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+        if (isLeftMousePressed && !leftMouseButtonPressedLastFrame) {
+            if (escapeCursor == 1) {
+                escapeCursor = 0; // Reset to hidden state on click
+            }
+        }
+        leftMouseButtonPressedLastFrame = isLeftMousePressed;
+
+        // Update cursor mode based on escapeCursor
         if (escapeCursor == 0) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        }
-        else {
+        } else if (escapeCursor == 1) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        }
-
-        // If escape key is pressed, the cursor appears again
-        if (glfwGetKey(window, keys3D.escape) == GLFW_PRESS) {
-            escapeCursor = 1;
         }
     }
 };
