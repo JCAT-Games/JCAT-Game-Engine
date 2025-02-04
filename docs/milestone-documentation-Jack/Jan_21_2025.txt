@@ -1,0 +1,5 @@
+Jack canalori - 1/21/2025
+
+Today I dowloaded GitHubDesktop, Vulcan, and CMake, as well as downloaded the provided zip files. 
+I also set up my VSCode envirnment. I also downloaded the compiler used for this project. I also looked through 
+a tuturial on how to use Vulcan. This took 1.5 hours to download all of the necessary components.  
