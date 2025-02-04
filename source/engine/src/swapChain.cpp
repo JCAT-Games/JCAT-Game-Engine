@@ -196,19 +196,19 @@ namespace JCAT {
     void SwapChain::createSwapChain() {
         SwapChainSupportDetails swapChainSupport = device.getSwapChainSupport();
 
-    //  Print supported surface formats
-    std::cout << "Supported Surface Formats:" << std::endl;
-    for (const auto& format : swapChainSupport.formats) 
-    {
-        std::cout << "Format: " << format.format << ", Color Space: " << format.colorSpace << std::endl;
-    }
+        //  Print supported surface formats
+        std::cout << "Supported Surface Formats:" << std::endl;
+        for (const auto& format : swapChainSupport.formats) 
+        {
+            std::cout << "Format: " << format.format << ", Color Space: " << format.colorSpace << std::endl;
+        }
 
-    // Print supported present modes
-    std::cout << "Supported Present Modes:" << std::endl;
-    for (const auto& mode : swapChainSupport.presentModes) 
-    {
-        std::cout << "Present Mode: " << mode << std::endl;
-    }
+        // Print supported present modes
+        std::cout << "Supported Present Modes:" << std::endl;
+        for (const auto& mode : swapChainSupport.presentModes) 
+        {
+            std::cout << "Present Mode: " << mode << std::endl;
+        }
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -233,8 +233,8 @@ namespace JCAT {
 
         QueueFamilyIndices indices = device.findPhysicalQueueFamilies();
 
-         // Debug: Print queue family indices
-         std::cout << "Graphics Family Index: " << indices.graphicsFamily << std::endl;
+        // Debug: Print queue family indices
+        std::cout << "Graphics Family Index: " << indices.graphicsFamily << std::endl;
         std::cout << "Present Family Index: " << indices.presentFamily << std::endl;
 
         uint32_t queueFamilyIndices[] = { indices.graphicsFamily, indices.presentFamily };
@@ -254,33 +254,33 @@ namespace JCAT {
 
 
         // Choose a supported composite alpha mode
-    VkCompositeAlphaFlagBitsKHR compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    if (!(swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)) 
-    {
-        // try other supported modes
-        if (swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) 
+        VkCompositeAlphaFlagBitsKHR compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+        if (!(swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)) 
         {
-            compositeAlpha = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
-        } 
-        else if (swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR) 
-        {
-            compositeAlpha = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
-        } 
-        else if (swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR) 
-        {
-            compositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
-        } 
-        else 
-        {
-            throw std::runtime_error("No supported composite alpha mode found!");
+            // try other supported modes
+            if (swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) 
+            {
+                compositeAlpha = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
+            } 
+            else if (swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR) 
+            {
+                compositeAlpha = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
+            } 
+            else if (swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR) 
+            {
+                compositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+            } 
+            else 
+            {
+                throw std::runtime_error("No supported composite alpha mode found!");
+            }
         }
-    }
 
-    // Use the chosen composite alpha mode
-    createInfo.compositeAlpha = compositeAlpha;
+        // Use the chosen composite alpha mode
+        createInfo.compositeAlpha = compositeAlpha;
 
         // Will need to change later to allow transparency through alpha channels.
-       // createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
+        // createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
 
         createInfo.presentMode = presentMode;
         createInfo.clipped = VK_TRUE;

@@ -22,10 +22,10 @@ namespace JCAT {
             moveDir.y -= 1.f;
         }
         if (glfwGetKey(window, keys2D.moveRight) == GLFW_PRESS) {
-            moveDir.x += 1.f;
+            moveDir.x -= 1.f;
         }
         if (glfwGetKey(window, keys2D.moveLeft) == GLFW_PRESS) {
-            moveDir.x -= 1.f;
+            moveDir.x += 1.f;
         }
 
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
@@ -81,6 +81,7 @@ namespace JCAT {
             gameObject.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
         }
     
+        // Escape functionality
         bool isEscapePressed = glfwGetKey(window, keys3D.escape) == GLFW_PRESS;
         if (isEscapePressed && !escapeKeyPressedLastFrame) {
             escapeCursor++;
