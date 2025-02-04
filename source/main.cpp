@@ -6,10 +6,10 @@
 #include <stdexcept>
 
 int main() {
-    JCAT::Application3D application3D{};
+    JCAT::Application application{};
 
     try {
-        application3D.run();
+        application.run();
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
