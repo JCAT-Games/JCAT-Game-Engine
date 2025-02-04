@@ -35,7 +35,6 @@ namespace JCAT {
             ~KeyboardController();
 
             void setMoveSpeed(const float newSpeed);
-            void setLookSpeed(const float newSpeed);
             void setSensitivity(const float newSensitivity);
 
             void moveSprite(GLFWwindow* window, float dt, GameSprite& gameSprite);
