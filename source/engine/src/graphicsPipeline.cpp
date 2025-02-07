@@ -246,7 +246,12 @@ namespace JCAT {
         UIRenderingInfo.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
         UIRenderingInfo.multisampleInfo.alphaToCoverageEnable = VK_TRUE;
 
-        UIRenderingInfo.colorBlendAttachment.blendEnable = VK_FALSE;
+        UIRenderingInfo.colorBlendAttachment.blendEnable = VK_TRUE;
+        UIRenderingInfo.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        UIRenderingInfo.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        UIRenderingInfo.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+        UIRenderingInfo.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        UIRenderingInfo.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 
         UIRenderingInfo.depthStencilInfo.depthTestEnable = VK_FALSE;
         UIRenderingInfo.depthStencilInfo.depthWriteEnable = VK_FALSE;

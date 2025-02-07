@@ -31,6 +31,9 @@ namespace JCAT {
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
             gameSprite.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
         }
+
+        // Process escape and left click inputs
+        escapeFunctionality(window);
     }
 
     void KeyboardController::moveObjectInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject) {
@@ -80,7 +83,12 @@ namespace JCAT {
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
             gameObject.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
         }
-    
+
+        // Process escape and left click inputs
+        escapeFunctionality(window);
+    }
+
+    void KeyboardController::escapeFunctionality(GLFWwindow* window){
         // Escape functionality
         bool isEscapePressed = glfwGetKey(window, keys3D.escape) == GLFW_PRESS;
         if (isEscapePressed && !escapeKeyPressedLastFrame) {
@@ -91,7 +99,7 @@ namespace JCAT {
         }
         escapeKeyPressedLastFrame = isEscapePressed;
 
-        // Handle LEFT MOUSE BUTTON (hide cursor when clicked)
+        // Hide cursor when left mouse button pressed
         bool isLeftMousePressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
         if (isLeftMousePressed && !leftMouseButtonPressedLastFrame) {
             if (escapeCursor == 1) {

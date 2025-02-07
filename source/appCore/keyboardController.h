@@ -40,6 +40,8 @@ namespace JCAT {
             void moveSprite(GLFWwindow* window, float dt, GameSprite& gameSprite);
             void moveObjectInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject);
 
+            void escapeFunctionality(GLFWwindow* window);
+
             KeyMappings2D keys2D{};
             KeyMappings3D keys3D{};
 

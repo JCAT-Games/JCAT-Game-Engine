@@ -34,6 +34,37 @@ namespace JCAT {
         return spriteAttributeDescriptions;
     }
 
+    std::vector<VkVertexInputBindingDescription> JCATModel2D::UIVertex::getBindingDescriptions() {
+        return {{
+            .binding = 0,
+            .stride = sizeof(UIVertex),
+            .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
+        }};
+    }
+
+    std::vector<VkVertexInputAttributeDescription> JCATModel2D::UIVertex::getAttributeDescriptions() {
+        return {
+            { // Position
+                .location = 0,
+                .binding = 0,
+                .format = VK_FORMAT_R32G32_SFLOAT,
+                .offset = offsetof(UIVertex, position)
+            },
+            { // UV
+                .location = 1,
+                .binding = 0,
+                .format = VK_FORMAT_R32G32_SFLOAT,
+                .offset = offsetof(UIVertex, uv)
+            },
+            { // Color (normalized UNORM)
+                .location = 2,
+                .binding = 0,
+                .format = VK_FORMAT_R8G8B8A8_UNORM,
+                .offset = offsetof(UIVertex, color)
+            }
+        };
+    }
+
     JCATModel2D::JCATModel2D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex2D>& spriteVertices) : device{d}, resourceManager{r} {
         createVertexBuffers(spriteVertices);
     }
