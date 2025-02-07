@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 int main() {
-    JCAT::Application3D application{};
+    JCAT::Application application{};
 
     try {
         application.run();
