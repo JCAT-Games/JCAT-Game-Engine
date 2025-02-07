@@ -29,14 +29,10 @@ namespace JCAT {
             moveDir.x += 1.f;
         }
         if (glfwGetKey(window, keys2D.zoomIn) == GLFW_PRESS){
-            //scaleDir.x *= 2.f;
-            //scaleDir.y *= 2.f;
             gameSprite.transform.scale.x *= 1.01f;
             gameSprite.transform.scale.y *= 1.01f;
         }
         if (glfwGetKey(window, keys2D.zoomOut) == GLFW_PRESS){
-            //scaleDir.x *= 0.5f;
-            //scaleDir.y *= 0.5f;
             gameSprite.transform.scale.x *= 0.99f;
             gameSprite.transform.scale.y *= 0.99f;
         }
@@ -44,9 +40,6 @@ namespace JCAT {
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
             gameSprite.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
         }
-        //if (glm::dot(scaleDir, scaleDir) > std::numeric_limits<float>::epsilon()) {
-         //   gameSprite.transform.scale += scaleSpeed * dt * glm::normalize(scaleDir);
-        //}
 
         // Process escape and left click inputs
         escapeFunctionality(window);
