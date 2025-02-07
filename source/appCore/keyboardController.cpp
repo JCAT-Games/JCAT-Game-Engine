@@ -14,6 +14,7 @@ namespace JCAT {
 
     void KeyboardController::moveSprite(GLFWwindow* window, float dt, GameSprite& gameSprite) {
         glm::vec2 moveDir{ 0.0f };
+        glm::vec2 scaleDir{ 1.0f };
 
         if (glfwGetKey(window, keys2D.moveUp) == GLFW_PRESS) {
             moveDir.y += 1.f;
@@ -26,6 +27,14 @@ namespace JCAT {
         }
         if (glfwGetKey(window, keys2D.moveLeft) == GLFW_PRESS) {
             moveDir.x += 1.f;
+        }
+        if (glfwGetKey(window, keys2D.zoomIn) == GLFW_PRESS){
+            gameSprite.transform.scale.x *= 1.01f;
+            gameSprite.transform.scale.y *= 1.01f;
+        }
+        if (glfwGetKey(window, keys2D.zoomOut) == GLFW_PRESS){
+            gameSprite.transform.scale.x *= 0.99f;
+            gameSprite.transform.scale.y *= 0.99f;
         }
 
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
@@ -90,7 +99,7 @@ namespace JCAT {
 
     void KeyboardController::escapeFunctionality(GLFWwindow* window){
         // Escape functionality
-        bool isEscapePressed = glfwGetKey(window, keys3D.escape) == GLFW_PRESS;
+        bool isEscapePressed = glfwGetKey(window, keysCommon.escape) == GLFW_PRESS;
         if (isEscapePressed && !escapeKeyPressedLastFrame) {
             escapeCursor++;
             if (escapeCursor >= 2) {
