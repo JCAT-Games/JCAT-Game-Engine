@@ -206,7 +206,7 @@ namespace JCAT {
         VkPhysicalDeviceProperties deviceProperties;
         vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
         std::cout << "Choosing the following GPU: " << deviceProperties.deviceName << std::endl;
-        properties = deviceProperties;
+        properties = deviceProperties; 
     }
 
     void DeviceSetup::createLogicalDevice() {
@@ -294,13 +294,30 @@ namespace JCAT {
             SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
             swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
         }
+        else
+        {
+            std::cerr << "Device does not support the required extensions!" << std::endl; //determine which part if any causes a false return
+        }
 
         VkPhysicalDeviceFeatures supportedFeatures;
         vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
         
         bool samplerAnisotropySupported = supportedFeatures.samplerAnisotropy;
+        if(!samplerAnisotropySupported)
+        {
+            std::cerr << "Device does not support sampler anisotropy!" << std::endl; //determine which part if any causes a false return
+        }
         bool sampleRateSahdingSupported = supportedFeatures.sampleRateShading;
+        if(!sampleRateSahdingSupported)
+        {
+            std::cerr << "Device does not support sample rate shading!" << std::endl;//determine which part if any causes a false return
+        }
         bool geometryShaderSupported = supportedFeatures.geometryShader;
+        if(!geometryShaderSupported)
+        {
+            std::cerr << "Device does not support geometry shaders!" << std::endl;//determine which part if any causes a false return
+        }
+        
 
         return indices.isComplete() && extensionsSupported && samplerAnisotropySupported && sampleRateSahdingSupported && geometryShaderSupported;
     }

@@ -191,8 +191,24 @@ namespace JCAT {
         return sameFormat;
     }
 
+
+    
     void SwapChain::createSwapChain() {
         SwapChainSupportDetails swapChainSupport = device.getSwapChainSupport();
+
+        //  Print supported surface formats
+        std::cout << "Supported Surface Formats:" << std::endl;
+        for (const auto& format : swapChainSupport.formats) 
+        {
+            std::cout << "Format: " << format.format << ", Color Space: " << format.colorSpace << std::endl;
+        }
+
+        // Print supported present modes
+        std::cout << "Supported Present Modes:" << std::endl;
+        for (const auto& mode : swapChainSupport.presentModes) 
+        {
+            std::cout << "Present Mode: " << mode << std::endl;
+        }
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -216,6 +232,11 @@ namespace JCAT {
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
         QueueFamilyIndices indices = device.findPhysicalQueueFamilies();
+
+        // Debug: Print queue family indices
+        std::cout << "Graphics Family Index: " << indices.graphicsFamily << std::endl;
+        std::cout << "Present Family Index: " << indices.presentFamily << std::endl;
+
         uint32_t queueFamilyIndices[] = { indices.graphicsFamily, indices.presentFamily };
 
         if (indices.graphicsFamily != indices.presentFamily) {
@@ -231,8 +252,35 @@ namespace JCAT {
 
         createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
 
+
+        // Choose a supported composite alpha mode
+        VkCompositeAlphaFlagBitsKHR compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+        if (!(swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)) 
+        {
+            // try other supported modes
+            if (swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) 
+            {
+                compositeAlpha = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
+            } 
+            else if (swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR) 
+            {
+                compositeAlpha = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
+            } 
+            else if (swapChainSupport.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR) 
+            {
+                compositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+            } 
+            else 
+            {
+                throw std::runtime_error("No supported composite alpha mode found!");
+            }
+        }
+
+        // Use the chosen composite alpha mode
+        createInfo.compositeAlpha = compositeAlpha;
+
         // Will need to change later to allow transparency through alpha channels.
-        createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
+        // createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
 
         createInfo.presentMode = presentMode;
         createInfo.clipped = VK_TRUE;
@@ -240,7 +288,10 @@ namespace JCAT {
         // Handle the previous swap chain
         createInfo.oldSwapchain = previousSwapChain == nullptr ? VK_NULL_HANDLE : previousSwapChain->swapChain;
 
-        if (vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
+        if (vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) 
+        {
+            // Print more information about the failure
+             std::cerr << "Failed to create swap chain! Error code: " << vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &swapChain) << std::endl;
             throw std::runtime_error("Failed to create the swap chain!");
         }
 
@@ -516,6 +567,8 @@ namespace JCAT {
 
             actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
             actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
+
+             std::cout << "Chosen Swap Extent: " << actualExtent.width << "x" << actualExtent.height << std::endl;
 
             return actualExtent;
         }

@@ -41,6 +41,11 @@ namespace JCAT {
 
             cameraController.moveSprite(window.getWindow(), frameTime, viewerObject);
             camera.setViewTarget(viewerObject.transform.translation);
+            
+            // Move each game sprite when eyboard movement happens
+            for (GameSprite& spr : gameSprites) {
+                cameraController.moveSprite(window.getWindow(), frameTime, spr);
+            }
 
             float aspect = renderer.getAspectRatio();
             camera.setOrthographicProjection(-aspect, aspect, -1, 1);
