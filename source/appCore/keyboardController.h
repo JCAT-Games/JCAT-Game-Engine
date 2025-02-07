@@ -14,6 +14,8 @@ namespace JCAT {
                 int moveRight = GLFW_KEY_D;
                 int moveUp = GLFW_KEY_W;
                 int moveDown = GLFW_KEY_S;
+                int zoomIn = GLFW_KEY_E;
+                int zoomOut = GLFW_KEY_Q;
             };
 
             // For 3D
@@ -28,6 +30,10 @@ namespace JCAT {
                 int lookRight = GLFW_KEY_RIGHT;
                 int lookUp = GLFW_KEY_UP;
                 int lookDown = GLFW_KEY_DOWN;
+            };
+
+            // Common Keys for both 2D and 3D
+            struct KeyMappingsCommon {
                 int escape = GLFW_KEY_ESCAPE;
             };
 
@@ -44,6 +50,7 @@ namespace JCAT {
 
             KeyMappings2D keys2D{};
             KeyMappings3D keys3D{};
+            KeyMappingsCommon keysCommon{};
 
             float lastX = 0.0f;
             float lastY = 0.0f;
@@ -52,6 +59,7 @@ namespace JCAT {
 
             // Change these values to change the speed of the WASD movement and look sensitivity respectively
             float moveSpeed{ 3.f };
+            float scaleSpeed{ 3.f };
             float sensitivity{ 0.0015f };
         private:
             bool escapeKeyPressedLastFrame = false;
