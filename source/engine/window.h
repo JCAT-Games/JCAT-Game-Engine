@@ -26,6 +26,9 @@ namespace JCAT {
             void resetWindowResized();
             GLFWwindow* getWindow() const;
 
+            // Switches window from fullscreen to windowed and vice versa
+            void swapFullscreen();
+
             // Creates the window surface
             void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
         private:

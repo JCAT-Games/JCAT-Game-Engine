@@ -32,6 +32,8 @@ namespace JCAT {
             Renderer renderer{ window, device, resourceManager, "3D", false };
 
             std::vector<GameObject> gameObjects;
+
+            bool fKeyPressedLastFrame = false;
     };
 };
 
