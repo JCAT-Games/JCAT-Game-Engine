@@ -27,6 +27,15 @@ namespace JCAT {
         if (glfwGetKey(window, keys2D.moveLeft) == GLFW_PRESS) {
             moveDir.x += 1.f;
         }
+        
+        if (glfwGetKey(window, keys2D.zoomIn) == GLFW_PRESS) {
+        gameSprite.transform.scale *= 1.0f + (0.5f * dt); 
+        }
+
+    
+        if (glfwGetKey(window, keys2D.zoomOut) == GLFW_PRESS) {
+        gameSprite.transform.scale *= 1.0f - (0.5f * dt); 
+        }
 
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
             gameSprite.transform.translation += moveSpeed * dt * glm::normalize(moveDir);

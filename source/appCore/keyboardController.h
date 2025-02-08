@@ -14,6 +14,8 @@ namespace JCAT {
                 int moveRight = GLFW_KEY_D;
                 int moveUp = GLFW_KEY_W;
                 int moveDown = GLFW_KEY_S;
+                int zoomIn = GLFW_KEY_Q;
+                int zoomOut = GLFW_KEY_E;
             };
 
             // For 3D
