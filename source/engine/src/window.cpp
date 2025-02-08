@@ -82,4 +82,18 @@ namespace JCAT {
         window->width = width;
         window->height = height;
     }
+
+    void Window::swapFullscreen() {
+        fullscreen = !fullscreen;
+        if(fullscreen) {
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+            GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+            const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+            glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
+        } else {
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+            glfwSetWindowMonitor(window, NULL, 100, 100, 1280, 720, GLFW_DONT_CARE);
+        }
+        glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+    }
 }

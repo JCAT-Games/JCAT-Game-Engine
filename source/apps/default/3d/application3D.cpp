@@ -51,6 +51,13 @@ namespace JCAT {
                 renderer.endSwapChainRenderPass(commandBuffer);
                 renderer.endRecordingFrame();
             }
+
+            //Switchs the window from fullscreen to windowed or vice versa with the F key
+            bool isFKeyPressed = glfwGetKey(window.getWindow(), GLFW_KEY_F);
+            if (isFKeyPressed && !fKeyPressedLastFrame) { 
+                window.swapFullscreen();
+            }
+            fKeyPressedLastFrame = isFKeyPressed;
         }
 
         vkDeviceWaitIdle(device.device());
