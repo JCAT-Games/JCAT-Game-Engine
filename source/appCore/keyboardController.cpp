@@ -14,6 +14,7 @@ namespace JCAT {
 
     void KeyboardController::moveSprite(GLFWwindow* window, float dt, GameSprite& gameSprite) {
         glm::vec2 moveDir{ 0.0f };
+        glm::vec2 scaleDir{ 1.0f };
 
         if (glfwGetKey(window, keys2D.moveUp) == GLFW_PRESS) {
             moveDir.y += 1.f;
@@ -27,16 +28,21 @@ namespace JCAT {
         if (glfwGetKey(window, keys2D.moveLeft) == GLFW_PRESS) {
             moveDir.x += 1.f;
         }
+
         if (glfwGetKey(window, keys2D.zoomIn) == GLFW_PRESS) {
-        gameSprite.transform.scale *= 1.0f + (0.5f * zoomSpeed * dt); 
+          gameSprite.transform.scale *= 1.0f + (0.5f * zoomSpeed * dt); 
         }
+      
         if (glfwGetKey(window, keys2D.zoomOut) == GLFW_PRESS) {
-        gameSprite.transform.scale *= 1.0f - (0.5f * dt * zoomSpeed); 
+          gameSprite.transform.scale *= 1.0f - (0.5f * dt * zoomSpeed); 
         }
 
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
             gameSprite.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
         }
+
+        // Process escape and left click inputs
+        escapeFunctionality(window);
     }
 
     void KeyboardController::moveObjectInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject) {
@@ -86,9 +92,14 @@ namespace JCAT {
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
             gameObject.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
         }
-    
+
+        // Process escape and left click inputs
+        escapeFunctionality(window);
+    }
+
+    void KeyboardController::escapeFunctionality(GLFWwindow* window){
         // Escape functionality
-        bool isEscapePressed = glfwGetKey(window, keys3D.escape) == GLFW_PRESS;
+        bool isEscapePressed = glfwGetKey(window, keysCommon.escape) == GLFW_PRESS;
         if (isEscapePressed && !escapeKeyPressedLastFrame) {
             escapeCursor++;
             if (escapeCursor >= 2) {
@@ -97,7 +108,7 @@ namespace JCAT {
         }
         escapeKeyPressedLastFrame = isEscapePressed;
 
-        // Handle LEFT MOUSE BUTTON (hide cursor when clicked)
+        // Hide cursor when left mouse button pressed
         bool isLeftMousePressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
         if (isLeftMousePressed && !leftMouseButtonPressedLastFrame) {
             if (escapeCursor == 1) {

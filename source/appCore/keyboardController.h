@@ -30,6 +30,10 @@ namespace JCAT {
                 int lookRight = GLFW_KEY_RIGHT;
                 int lookUp = GLFW_KEY_UP;
                 int lookDown = GLFW_KEY_DOWN;
+            };
+
+            // Common Keys for both 2D and 3D
+            struct KeyMappingsCommon {
                 int escape = GLFW_KEY_ESCAPE;
             };
 
@@ -42,8 +46,11 @@ namespace JCAT {
             void moveSprite(GLFWwindow* window, float dt, GameSprite& gameSprite);
             void moveObjectInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject);
 
+            void escapeFunctionality(GLFWwindow* window);
+
             KeyMappings2D keys2D{};
             KeyMappings3D keys3D{};
+            KeyMappingsCommon keysCommon{};
 
             float lastX = 0.0f;
             float lastY = 0.0f;
