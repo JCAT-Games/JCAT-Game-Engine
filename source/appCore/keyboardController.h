@@ -52,6 +52,7 @@ namespace JCAT {
 
             // Change these values to change the speed of the WASD movement and look sensitivity respectively
             float moveSpeed{ 3.f };
+            float zoomSpeed{ 25.f };
             float sensitivity{ 0.0015f };
         private:
             bool escapeKeyPressedLastFrame = false;
