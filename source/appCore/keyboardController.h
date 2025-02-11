@@ -14,8 +14,8 @@ namespace JCAT {
                 int moveRight = GLFW_KEY_D;
                 int moveUp = GLFW_KEY_W;
                 int moveDown = GLFW_KEY_S;
-                int zoomIn = GLFW_KEY_E;
-                int zoomOut = GLFW_KEY_Q;
+                int zoomIn = GLFW_KEY_Q;
+                int zoomOut = GLFW_KEY_E;
             };
 
             // For 3D
@@ -59,7 +59,7 @@ namespace JCAT {
 
             // Change these values to change the speed of the WASD movement and look sensitivity respectively
             float moveSpeed{ 3.f };
-            float scaleSpeed{ 3.f };
+            float zoomSpeed{ 25.f };
             float sensitivity{ 0.0015f };
         private:
             bool escapeKeyPressedLastFrame = false;
