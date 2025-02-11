@@ -1,0 +1,29 @@
+1/21/25 - 1/24/25
+
+I learned a little bit more about using GitHub (as I have never used it for anything before) 
+and installed all the files and applications needed to work on this project from Christian.
+
+Some of the things I installed and got set up were:
+- The GitHub that we'll be using while working on this project
+ - I also installed GitHub Desktop to work on the project more easily
+- The CMake and Vulkan applications (for the game engine development)
+- Other library files to be used in the game engine application
+
+Finally, I marked the progress I made today in a new documentation folder in this .txt folder.
+This whole process took about 1 and a half hours (a chunk of this was related to a downloading one of the libraries).
+
+I also was able to get the final project built on my laptop so now I can see the changes that I'll be making.
+
+My next steps are probably going to be learning more about how to use GitHub in a collaborative setting
+as well as watching some tutorial videos on how to use Vulkan for this project.
+
+---------------------------------------------------------------------------------------------------
+
+2/4/25 - 2/7/25
+
+Learned a bit more about using GitHub, mostly about the different kind of pull requests.
+
+I also was  able to implement a feature to swap between fullscreen and windowed modes since staying
+in fullscreen all the time annoyed me a bit. This can be done by pressing the F key (at least for now).
+
+---------------------------------------------------------------------------------------------------

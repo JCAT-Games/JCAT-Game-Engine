@@ -57,6 +57,10 @@ namespace JCAT {
         return window;
     }
 
+    bool Window::windowInFullscreen() const {
+        return fullscreen;
+    }
+
     VkExtent2D Window::getWindowExtent() {
         return { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
     }

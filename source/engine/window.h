@@ -25,6 +25,7 @@ namespace JCAT {
             bool wasWindowResized();
             void resetWindowResized();
             GLFWwindow* getWindow() const;
+            bool windowInFullscreen() const;
 
             // Creates the window surface
             void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
