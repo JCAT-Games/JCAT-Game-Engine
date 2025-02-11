@@ -35,6 +35,7 @@ namespace JCAT {
             // Common Keys for both 2D and 3D
             struct KeyMappingsCommon {
                 int escape = GLFW_KEY_ESCAPE;
+                int fullscreen = GLFW_KEY_F;
             };
 
             KeyboardController();
@@ -47,6 +48,7 @@ namespace JCAT {
             void moveObjectInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject);
 
             void escapeFunctionality(GLFWwindow* window);
+            void fFunctionality(GLFWwindow* window);
 
             KeyMappings2D keys2D{};
             KeyMappings3D keys3D{};
@@ -56,6 +58,7 @@ namespace JCAT {
             float lastY = 0.0f;
 
             int escapeCursor = 0;
+            bool inFullscreen = false;
 
             // Change these values to change the speed of the WASD movement and look sensitivity respectively
             float moveSpeed{ 3.f };
@@ -64,6 +67,7 @@ namespace JCAT {
         private:
             bool escapeKeyPressedLastFrame = false;
             bool leftMouseButtonPressedLastFrame = false;
+            bool fKeyPressedLastFrame = false;
     };
 };
 

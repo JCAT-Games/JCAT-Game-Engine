@@ -29,6 +29,7 @@ namespace JCAT {
         camera.setViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
         GameObject viewerObject = GameObject::createGameObject();
         KeyboardController cameraController{};
+        cameraController.inFullscreen = window.windowInFullscreen();
 
         std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
 
@@ -51,13 +52,6 @@ namespace JCAT {
                 renderer.endSwapChainRenderPass(commandBuffer);
                 renderer.endRecordingFrame();
             }
-
-            //Switchs the window from fullscreen to windowed or vice versa with the F key
-            bool isFKeyPressed = glfwGetKey(window.getWindow(), GLFW_KEY_F);
-            if (isFKeyPressed && !fKeyPressedLastFrame) { 
-                window.swapFullscreen();
-            }
-            fKeyPressedLastFrame = isFKeyPressed;
         }
 
         vkDeviceWaitIdle(device.device());
