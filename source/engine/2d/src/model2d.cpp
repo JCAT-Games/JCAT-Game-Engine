@@ -34,7 +34,7 @@ namespace JCAT {
         return spriteAttributeDescriptions;
     }
 
-    std::vector<VkVertexInputBindingDescription> JCATModel2D::UIVertex::getBindingDescriptions() {
+    /*std::vector<VkVertexInputBindingDescription> JCATModel2D::UIVertex::getBindingDescriptions() {
         return {{
             .binding = 0,
             .stride = sizeof(UIVertex),
@@ -63,7 +63,7 @@ namespace JCAT {
                 .offset = offsetof(UIVertex, color)
             }
         };
-    }
+    }*/
 
     JCATModel2D::JCATModel2D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex2D>& spriteVertices) : device{d}, resourceManager{r} {
         createVertexBuffers(spriteVertices);
