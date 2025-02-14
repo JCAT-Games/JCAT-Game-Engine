@@ -3,12 +3,21 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #include "./engine/deviceSetup.h"
 
 // Should be declared after deviceSetup in application.cpp
 
 namespace JCAT {
+
+    struct ImageData {
+        int width;
+        int height;
+        int channels;
+        std::vector<unsigned char> pixels;
+    };
+
     class ResourceManager {
         public:
             ResourceManager(DeviceSetup& device);
@@ -20,6 +29,8 @@ namespace JCAT {
             ResourceManager& operator=(ResourceManager&&) = delete;
 
             static std::vector<char> readFile(const std::string& filepath);
+
+            ImageData loadImage(const std::string& filepath, bool flipVertically = true);
 
             void createBuffer(VkDeviceSize size,
                               VkBufferUsageFlags usage,
