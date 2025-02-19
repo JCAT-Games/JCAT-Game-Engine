@@ -170,9 +170,11 @@ namespace JCAT {
         vkResetFences(device.device(), 1, &inFlightFences[currentFrame]);
 
         // Submit the draw command buffer
-        if (vkQueueSubmit(device.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
+        auto submit = vkQueueSubmit(device.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]);
+        if (submit != VK_SUCCESS) {
+            std::cout << submit << " <- error\n";
             throw std::runtime_error("Failed to submit the draw command buffer!");
-        }
+        } //-4 <- The error code for the NVIDIA crashes sometimes, which looks to be a VK_ERROR_DEVICE_LOST
 
         VkResult result = presentImage(imageIndex);
 
