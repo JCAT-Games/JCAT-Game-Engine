@@ -43,6 +43,9 @@ namespace JCAT {
 
         // Process escape and left click inputs
         escapeFunctionality(window);
+        
+        // Process F key presses
+        fullscreenFunctionality(window);
     }
 
     void KeyboardController::moveObjectInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject) {
@@ -97,7 +100,7 @@ namespace JCAT {
         escapeFunctionality(window);
 
         // Process F key presses
-        fFunctionality(window);
+        fullscreenFunctionality(window);
     }
 
     void KeyboardController::escapeFunctionality(GLFWwindow* window){
@@ -128,8 +131,8 @@ namespace JCAT {
         }
     }
 
-    void KeyboardController::fFunctionality(GLFWwindow* window){
-        bool isFKeyPressed = glfwGetKey(window, GLFW_KEY_F);
+    void KeyboardController::fullscreenFunctionality(GLFWwindow* window){
+        bool isFKeyPressed = glfwGetKey(window, keysCommon.fullscreen);
         if (isFKeyPressed && !fKeyPressedLastFrame) { 
             inFullscreen = !inFullscreen;
             if(inFullscreen) {
