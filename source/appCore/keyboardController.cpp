@@ -43,6 +43,9 @@ namespace JCAT {
 
         // Process escape and left click inputs
         escapeFunctionality(window);
+        
+        // Process F key presses
+        fullscreenFunctionality(window);
     }
 
     void KeyboardController::moveObjectInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject) {
@@ -95,6 +98,9 @@ namespace JCAT {
 
         // Process escape and left click inputs
         escapeFunctionality(window);
+
+        // Process F key presses
+        fullscreenFunctionality(window);
     }
 
     void KeyboardController::escapeFunctionality(GLFWwindow* window){
@@ -123,5 +129,22 @@ namespace JCAT {
         } else if (escapeCursor == 1) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
+    }
+
+    void KeyboardController::fullscreenFunctionality(GLFWwindow* window){
+        bool isFKeyPressed = glfwGetKey(window, keysCommon.fullscreen);
+        if (isFKeyPressed && !fKeyPressedLastFrame) { 
+            inFullscreen = !inFullscreen;
+            if(inFullscreen) {
+                glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+                GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+                const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+                glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
+            } else {
+                glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+                glfwSetWindowMonitor(window, NULL, 100, 100, 1280, 720, GLFW_DONT_CARE);
+            }
+        }
+        fKeyPressedLastFrame = isFKeyPressed;
     }
 };
