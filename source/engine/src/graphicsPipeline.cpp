@@ -5,7 +5,13 @@
 #include "./engine/3d/model3d.h"
 
 namespace JCAT {
+    /// @brief Constructs a GraphicsPipeline object.
+    /// @param physicalDevice Reference to the physical device setup.
+    /// @param resourceManager Reference to the resource manager.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragFilepath Path to the fragment shader file.
     GraphicsPipeline::GraphicsPipeline(DeviceSetup &physicalDevice, ResourceManager &resourceManager, const std::string& vertFilepath, const std::string& fragfilepath) : device{ physicalDevice }, resources{ resourceManager } {
+        // Initialize graphics pipelines with default VK_NULL_HANDLE values
         graphicsPipelines = {
             {PipelineType::SOLID_SPRITE_PIPELINE, VK_NULL_HANDLE},
             {PipelineType::TRANSPARENT_SPRITE_PIPELINE, VK_NULL_HANDLE},
@@ -19,6 +25,7 @@ namespace JCAT {
         };
     }
 
+    /// @brief Destructor that cleans up Vulkan shader modules and pipelines.
     GraphicsPipeline::~GraphicsPipeline() {
         vkDestroyShaderModule(device.device(), vertShaderModule, nullptr);
         vkDestroyShaderModule(device.device(), fragShaderModule, nullptr);
@@ -28,6 +35,10 @@ namespace JCAT {
         }
     }
 
+    /// @brief Retrieves the Vulkan pipeline associated with a given type.
+    /// @param type The type of pipeline to retrieve.
+    /// @return Reference to the Vulkan pipeline.
+    /// @throws std::runtime_error if the pipeline type is not found.
     VkPipeline& GraphicsPipeline::getPipeline(PipelineType type) {
         std::unordered_map<PipelineType, VkPipeline>::iterator it = graphicsPipelines.find(type);
         
@@ -38,13 +49,19 @@ namespace JCAT {
         }
     }
 
+    /// @brief Binds the specified pipeline to the given command buffer.
+    /// @param commandBuffer The command buffer to bind the pipeline to.
+    /// @param type The type of pipeline to bind.
     void GraphicsPipeline::bindPipeline(VkCommandBuffer commandBuffer, PipelineType type) {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelines[type]);
     }
 
+    /// @brief Configures Vulkan pipeline settings for various rendering tasks.
+    /// @param configInfos A map to store pipeline configurations.
     void GraphicsPipeline::configurePipelines(std::unordered_map<PipelineType, PipelineConfigInfo>& configInfos) {
         std::cout << "Configuring Pipelines" << std::endl;
 
+        // Initialize configurations for different pipeline types
         configInfos.insert({PipelineType::SOLID_SPRITE_PIPELINE, PipelineConfigInfo{}});
         configInfos.insert({PipelineType::TRANSPARENT_SPRITE_PIPELINE, PipelineConfigInfo{}});
         configInfos.insert({PipelineType::SOLID_OBJECT_PIPELINE, PipelineConfigInfo{}});
@@ -98,6 +115,7 @@ namespace JCAT {
             configInfo.second.dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(configInfo.second.dynamicStateEnables.size());
             configInfo.second.dynamicStateInfo.flags = 0;
 
+            // Configure specific pipeline settings
             switch (configInfo.first) {
                 case PipelineType::SOLID_SPRITE_PIPELINE:
                     configureSolidSpritePipeline(configInfo.second);
