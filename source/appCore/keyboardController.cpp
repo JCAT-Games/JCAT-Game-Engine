@@ -30,11 +30,11 @@ namespace JCAT {
         }
 
         if (glfwGetKey(window, keys2D.zoomIn) == GLFW_PRESS) {
-          gameSprite.transform.scale *= 1.0f + (0.5f * zoomSpeed * dt); 
+            gameSprite.transform.scale *= 1.0f + (0.5f * zoomSpeed * dt); 
         }
       
         if (glfwGetKey(window, keys2D.zoomOut) == GLFW_PRESS) {
-          gameSprite.transform.scale *= 1.0f - (0.5f * dt * zoomSpeed); 
+            gameSprite.transform.scale *= 1.0f - (0.5f * dt * zoomSpeed); 
         }
 
         if (glm::dot(moveDir, moveDir) > std::numeric_limits<float>::epsilon()) {
