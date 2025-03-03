@@ -118,30 +118,50 @@ namespace JCAT {
 
     void Application3D::loadGameObjects() {
         std::shared_ptr<JCATModel3D> cubeModel = createCubeModel(device, resourceManager, { .0f, .0f, .0f });
+        std::shared_ptr<JCATModel3D> vaseModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/smooth_vase.obj", true);
+        std::shared_ptr<JCATModel3D> donutModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/CM_Donut_Scrap.obj", true);
 	
         GameObject cube = GameObject::createGameObject();
         cube.model3D = cubeModel;
         cube.transform.translation = { .0f, .0f, 2.5f };
         cube.transform.scale = { .5f, .5f, .5f };
+        cube.hasLighting = 0;
         gameObjects.push_back(std::move(cube));
 
         GameObject cube2 = GameObject::createGameObject();
         cube2.model3D = cubeModel;
         cube2.transform.translation = { .5f, .0f, 4.0f };
         cube2.transform.scale = { 1.0f, 1.0f, 1.0f };
+        cube2.hasLighting = 0;
         gameObjects.push_back(std::move(cube2));
 
         GameObject cube3 = GameObject::createGameObject();
         cube3.model3D = cubeModel;
         cube3.transform.translation = { -.5f, -.5f, 1.0f };
         cube3.transform.scale = { 1.0f, 0.5f, 1.0f };
+        cube3.hasLighting = 0;
         gameObjects.push_back(std::move(cube3));
 
         GameObject cube4 = GameObject::createGameObject();
         cube4.model3D = cubeModel;
         cube4.transform.translation = { 1.75f, 0.75f, 1.5f };
         cube4.transform.scale = { 1.0f, 0.5f, 1.5f };
+        cube4.hasLighting = 0;
         gameObjects.push_back(std::move(cube4));
+
+        GameObject vase = GameObject::createGameObject();
+        vase.model3D = vaseModel;
+        vase.transform.translation = { -.5f, -10.5f, 1.0f };
+        vase.transform.scale = { 1.0f, 1.0f, 1.0f };
+        vase.hasLighting = 1;
+        gameObjects.push_back(std::move(vase));
+
+        GameObject donut = GameObject::createGameObject();
+        donut.model3D = donutModel;
+        donut.transform.translation = { 1.75f, -10.75f, 1.5f };
+        donut.transform.scale = { 1.0f, 1.0f, 1.0f };
+        donut.hasLighting = 1;
+        gameObjects.push_back(std::move(donut));
 
         const int TERRAIN_WIDTH = 20;
         const int TERRAIN_DEPTH = 20;
@@ -161,6 +181,7 @@ namespace JCAT {
                     noiseCube.model3D = cubeModel;
                     noiseCube.transform.translation = { x, -y, z };
                     noiseCube.transform.scale = { 1.0f, 1.0f, 1.0f };
+                    noiseCube.hasLighting = 0;
                     gameObjects.push_back(std::move(noiseCube));
                 }
             }

@@ -13,6 +13,7 @@ namespace JCAT {
         glm::vec3 rotation{};
 
         glm::mat4 transformationMatrix();
+        glm::mat3 normalMatrix();
     };
 
     class GameObject {
@@ -31,6 +32,7 @@ namespace JCAT {
             std::shared_ptr<JCATModel3D> model3D;
             glm::vec3 color{};
             TransformObject transform{};
+            uint32_t hasLighting;
         private:
             GameObject(id_t objId);
 

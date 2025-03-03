@@ -88,6 +88,16 @@ else()
     message(FATAL_ERROR "STB_PATH is not defined in .env.cmake!")
 endif()
 
+if (DEFINED TINY_OBJ_PATH)
+    message(STATUS "Using TINY_OBJ_PATH frm .env.cmake: ${TINY_OBJ_PATH}")
+    set(TINY_OBJ_INCLUDE_DIR "${TINY_OBJ_PATH}")
+
+    add_library(tiny_obj INTERFACE)
+    target_include_directories(tiny_obj INTERFACE ${TINY_OBJ_INCLUDE_DIR})
+else()
+    message(FATAL_ERROR "TINY_OBJ_PATH is not defined in .env.cmake!")
+endif()
+
 # Gathers all .cpp files in the source directory and all subdirectories and compiles hem to an executable using C++ 17
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/source/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -117,6 +127,7 @@ if (WIN32)
         ${GLFW_INCLUDE_DIRS}
         ${GLM_PATH}
         ${STB_IMAGE_INCLUDE_DIR}
+        ${TINY_OBJ_INCLUDE_DIR}
     )
  
     # Setting Up Linker Directories for compilation
@@ -126,7 +137,7 @@ if (WIN32)
     )
  
     # Linking required libraries
-    target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1 stb_image)
+    target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1 stb_image tiny_obj)
 # If use is on Linux
 elseif (UNIX)
     # Create a build for Linux
@@ -138,7 +149,7 @@ elseif (UNIX)
     )
 
     # Linking required libraries
-    target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} stb_image)
+    target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} stb_image tiny_obj)
 endif()
 
 ##### For Compiling Shader Objects #####
