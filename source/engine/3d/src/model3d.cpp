@@ -35,6 +35,68 @@ namespace JCAT {
         return objectAttributeDescriptions;
     }
 
+    bool JCATModel3D::Vertex3D::operator==(const Vertex3D& other) const {
+        return position == other.position && color == other.color && normal == other.normal && uv == other.uv;
+    }
+
+    void JCATModel3D::ModelBuilder::loadModel(const std::string& filepath) {
+        tinyobj::attrib_t attrib;
+        std::vector<tinyobj::shape_t> shapes;
+        std::vector<tinyobj::material_t> materials;
+        std::string warning;
+        std::string error;
+
+        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warning, &error, filepath.c_str())) {
+            throw std::runtime_error(warning + error);
+        }
+
+        vertices.clear();
+        indices.clear();
+
+        for (const tinyobj::shape_t& shape : shapes) {
+            for (const tinyobj::index_t& index : shape.mesh.indices) {
+                Vertex3D vertex{};
+
+                if (index.vertex_index >= 0) {
+                    vertex.position = {
+                        attrib.vertices[3 * index.vertex_index + 0],
+                        attrib.vertices[3 * index.vertex_index + 1],
+                        attrib.vertices[3 * index.vertex_index + 2]
+                    };
+                    
+                    auto colorIndex = 3 * index.vertex_index + 2;
+                    if (colorIndex < attrib.colors.size()) {
+                        vertex.color = {
+                            attrib.colors[colorIndex - 2],
+                            attrib.colors[colorIndex - 1],
+                            attrib.colors[colorIndex - 0],
+                        };
+                    }
+                    else {
+                        vertex.color = { 1.f, 1.f, 1.f };
+                    }
+                }
+
+                if (index.normal_index >= 0) {
+                    vertex.normal = {
+                        attrib.normals[3 * index.normal_index + 0],
+                        attrib.normals[3 * index.normal_index + 1],
+                        attrib.normals[3 * index.normal_index + 2],
+                    };
+                }
+
+                if (index.texcoord_index >= 0) {
+                    vertex.uv = {
+                        attrib.normals[2 * index.texcoord_index + 0],
+                        attrib.normals[2 * index.texcoord_index + 1]
+                    };
+                }
+
+                vertices.push_back(vertex);
+            }
+        }
+    }
+
     JCATModel3D::JCATModel3D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex3D>& objectVertices) : device{d}, resourceManager{r} {
         createVertexBuffers(objectVertices);
     }
@@ -52,6 +114,13 @@ namespace JCAT {
             vkDestroyBuffer(device.device(), indexBuffer, nullptr);
             vkFreeMemory(device.device(), indexBufferMemory, nullptr);
         }
+    }
+
+    std::unique_ptr<JCATModel3D> JCATModel3D::createModelFromFile(DeviceSetup& device, ResourceManager& resourceManager, const std::string& filepath) {
+        ModelBuilder builder{};
+        builder.loadModel(filepath);
+
+        return std::make_unique<JCATModel3D>(device, resourceManager, builder);
     }
 
     void JCATModel3D::createVertexBuffers(const std::vector<Vertex3D>& vertices) {

@@ -2,6 +2,7 @@
 #define MODEL_THREE_D_H
 
 #include <vector>
+#include <memory>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -16,14 +17,20 @@ namespace JCAT {
             struct Vertex3D {
                 glm::vec3 position;
                 glm::vec3 color;
+                glm::vec3 normal;
+                glm::vec2 uv;
 
                 static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
                 static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
+
+                bool operator==(const Vertex3D& other) const;
             };
 
             struct ModelBuilder {
                 std::vector<Vertex3D> vertices{};
                 std::vector<uint32_t> indices{};
+
+                void loadModel(const std::string& filepath);
             };
 
             JCATModel3D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex3D> &objectVertices);
@@ -32,6 +39,8 @@ namespace JCAT {
 
             JCATModel3D(const JCATModel3D&) = delete;
             JCATModel3D& operator=(const JCATModel3D&) = delete;
+
+            static std::unique_ptr<JCATModel3D> createModelFromFile(DeviceSetup& device, ResourceManager& resourceManager, const std::string& filepath);
 
             void bind(VkCommandBuffer commandBuffer);
             void draw(VkCommandBuffer commandBuffer);

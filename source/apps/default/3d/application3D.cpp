@@ -118,6 +118,8 @@ namespace JCAT {
 
     void Application3D::loadGameObjects() {
         std::shared_ptr<JCATModel3D> cubeModel = createCubeModel(device, resourceManager, { .0f, .0f, .0f });
+        std::shared_ptr<JCATModel3D> vaseModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/colored_cube.obj");
+        std::shared_ptr<JCATModel3D> donutModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/CM_Donut_Scrap.obj");
 	
         GameObject cube = GameObject::createGameObject();
         cube.model3D = cubeModel;
@@ -142,6 +144,18 @@ namespace JCAT {
         cube4.transform.translation = { 1.75f, 0.75f, 1.5f };
         cube4.transform.scale = { 1.0f, 0.5f, 1.5f };
         gameObjects.push_back(std::move(cube4));
+
+        GameObject vase = GameObject::createGameObject();
+        vase.model3D = vaseModel;
+        vase.transform.translation = { -.5f, -10.5f, 1.0f };
+        vase.transform.scale = { 1.0f, 1.0f, 1.0f };
+        gameObjects.push_back(std::move(vase));
+
+        GameObject donut = GameObject::createGameObject();
+        donut.model3D = donutModel;
+        donut.transform.translation = { 1.75f, -10.75f, 1.5f };
+        donut.transform.scale = { 1.0f, 1.0f, 1.0f };
+        gameObjects.push_back(std::move(donut));
 
         const int TERRAIN_WIDTH = 20;
         const int TERRAIN_DEPTH = 20;
