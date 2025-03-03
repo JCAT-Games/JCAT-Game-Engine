@@ -1,5 +1,8 @@
 #include "./engine/3D/model3d.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
 namespace JCAT {
     std::vector<VkVertexInputBindingDescription> JCATModel3D::Vertex3D::getBindingDescriptions() {
         std::vector<VkVertexInputBindingDescription> objectBindingDescriptions(1);
