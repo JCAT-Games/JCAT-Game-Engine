@@ -51,6 +51,8 @@ namespace JCAT {
             VkBuffer indexBuffer;
             VkDeviceMemory indexBufferMemory;
             uint32_t indexCount;
+
+            bool useStagingBuffers = false;
     };
 };
 
