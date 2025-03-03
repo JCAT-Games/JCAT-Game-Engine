@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -10,6 +11,7 @@
 
 #include "./engine/deviceSetup.h"
 #include "./engine/resourceManager.h"
+#include "./engine/utils.h"
 
 namespace JCAT {
     class JCATModel3D {
@@ -30,7 +32,7 @@ namespace JCAT {
                 std::vector<Vertex3D> vertices{};
                 std::vector<uint32_t> indices{};
 
-                void loadModel(const std::string& filepath);
+                void loadModel(const std::string& filepath, bool hasIndexBuffer);
             };
 
             JCATModel3D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex3D> &objectVertices);
@@ -40,7 +42,7 @@ namespace JCAT {
             JCATModel3D(const JCATModel3D&) = delete;
             JCATModel3D& operator=(const JCATModel3D&) = delete;
 
-            static std::unique_ptr<JCATModel3D> createModelFromFile(DeviceSetup& device, ResourceManager& resourceManager, const std::string& filepath);
+            static std::unique_ptr<JCATModel3D> createModelFromFile(DeviceSetup& device, ResourceManager& resourceManager, const std::string& filepath, bool hasIndexBuffers);
 
             void bind(VkCommandBuffer commandBuffer);
             void draw(VkCommandBuffer commandBuffer);
@@ -56,7 +58,7 @@ namespace JCAT {
             VkDeviceMemory vertexBufferMemory;
             uint32_t vertexCount;
 
-            bool hasIndexBuffer = false;
+            bool hasIndexBuffer;
             VkBuffer indexBuffer;
             VkDeviceMemory indexBufferMemory;
             uint32_t indexCount;

@@ -3,6 +3,20 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <gtx/hash.hpp>
+
+namespace std {
+	template <>
+	struct hash<JCAT::JCATModel3D::Vertex3D> {
+		size_t operator()(JCAT::JCATModel3D::Vertex3D const& vertex) const {
+			size_t seed = 0;
+			JCAT::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
+			return seed;
+		}
+	};
+}
+
 namespace JCAT {
     std::vector<VkVertexInputBindingDescription> JCATModel3D::Vertex3D::getBindingDescriptions() {
         std::vector<VkVertexInputBindingDescription> objectBindingDescriptions(1);
@@ -39,7 +53,7 @@ namespace JCAT {
         return position == other.position && color == other.color && normal == other.normal && uv == other.uv;
     }
 
-    void JCATModel3D::ModelBuilder::loadModel(const std::string& filepath) {
+    void JCATModel3D::ModelBuilder::loadModel(const std::string& filepath, bool hasIndexBuffer) {
         tinyobj::attrib_t attrib;
         std::vector<tinyobj::shape_t> shapes;
         std::vector<tinyobj::material_t> materials;
@@ -53,6 +67,7 @@ namespace JCAT {
         vertices.clear();
         indices.clear();
 
+        std::unordered_map<Vertex3D, uint32_t> uniqueVertices{};
         for (const tinyobj::shape_t& shape : shapes) {
             for (const tinyobj::index_t& index : shape.mesh.indices) {
                 Vertex3D vertex{};
@@ -64,7 +79,7 @@ namespace JCAT {
                         attrib.vertices[3 * index.vertex_index + 2]
                     };
                     
-                    auto colorIndex = 3 * index.vertex_index + 2;
+                    int colorIndex = 3 * index.vertex_index + 2;
                     if (colorIndex < attrib.colors.size()) {
                         vertex.color = {
                             attrib.colors[colorIndex - 2],
@@ -92,16 +107,28 @@ namespace JCAT {
                     };
                 }
 
-                vertices.push_back(vertex);
+                if (!hasIndexBuffer) {
+                    vertices.push_back(vertex);
+                }
+                else {
+                    if (uniqueVertices.count(vertex) == 0) {
+                        uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+                        vertices.push_back(vertex);
+                    }
+                    
+                    indices.push_back(uniqueVertices[vertex]);
+                }
             }
         }
     }
 
     JCATModel3D::JCATModel3D(DeviceSetup& d, ResourceManager& r, const std::vector<Vertex3D>& objectVertices) : device{d}, resourceManager{r} {
+        hasIndexBuffer = false;
         createVertexBuffers(objectVertices);
     }
 
     JCATModel3D::JCATModel3D(DeviceSetup& d, ResourceManager& r, const JCATModel3D::ModelBuilder &builder) : device{d}, resourceManager{r} {
+        hasIndexBuffer = true;
         createVertexBuffers(builder.vertices);
         createIndexBuffers(builder.indices);
     }
@@ -116,9 +143,9 @@ namespace JCAT {
         }
     }
 
-    std::unique_ptr<JCATModel3D> JCATModel3D::createModelFromFile(DeviceSetup& device, ResourceManager& resourceManager, const std::string& filepath) {
+    std::unique_ptr<JCATModel3D> JCATModel3D::createModelFromFile(DeviceSetup& device, ResourceManager& resourceManager, const std::string& filepath, bool hasIndexBuffers) {
         ModelBuilder builder{};
-        builder.loadModel(filepath);
+        builder.loadModel(filepath, hasIndexBuffers);
 
         return std::make_unique<JCATModel3D>(device, resourceManager, builder);
     }
