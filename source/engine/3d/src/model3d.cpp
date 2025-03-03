@@ -30,21 +30,12 @@ namespace JCAT {
 
     std::vector<VkVertexInputAttributeDescription> JCATModel3D::Vertex3D::getAttributeDescriptions() {
         // We need 2 attribute descriptions: one for color and one for vertices
-        std::vector<VkVertexInputAttributeDescription> objectAttributeDescriptions(2);
+        std::vector<VkVertexInputAttributeDescription> objectAttributeDescriptions{};
 
-        objectAttributeDescriptions[0].binding = 0;
-        objectAttributeDescriptions[0].location = 0;
-
-        // We need to have 3 inputs for position for 3D objects
-        // This is because there are 3 axis for coordinates: x, y, and z
-        objectAttributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-        objectAttributeDescriptions[0].offset = offsetof(Vertex3D, position);
-
-        objectAttributeDescriptions[1].binding = 0;
-        objectAttributeDescriptions[1].location = 1;
-        // We define color with 3 inputs: R, G, and B
-        objectAttributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-        objectAttributeDescriptions[1].offset = offsetof(Vertex3D, color);
+        objectAttributeDescriptions.push_back({ 0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex3D, position) });
+        objectAttributeDescriptions.push_back({ 1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex3D, color) });
+        objectAttributeDescriptions.push_back({ 2, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex3D, normal) });
+        objectAttributeDescriptions.push_back({ 3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex3D, uv) });
 
         return objectAttributeDescriptions;
     }
