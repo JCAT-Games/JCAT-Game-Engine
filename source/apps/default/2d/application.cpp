@@ -29,6 +29,7 @@ namespace JCAT {
         camera.setViewTarget(glm::vec2(0.0f, 0.0f));
         GameSprite viewerObject = GameSprite::createGameSprite();
         KeyboardController cameraController{};
+        cameraController.inFullscreen = window.windowInFullscreen();
 
         std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
 
