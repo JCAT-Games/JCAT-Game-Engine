@@ -9,6 +9,12 @@
 #include <array>
 
 namespace JCAT {
+    /// @brief Constructs a SwapChain object.
+    /// @param d Reference to the device setup.
+    /// @param r Reference to the resource manager.
+    /// @param wE The window extent.
+    /// @param gameType The type of game being rendered.
+    /// @param v Whether or not to use VSync.
     SwapChain::SwapChain(DeviceSetup& d, ResourceManager& r, VkExtent2D wE, std::string& gameType, bool v) 
     : device{ d }, resourceManager{ r }, windowExtent{ wE } {
         type = gameType;
@@ -17,6 +23,13 @@ namespace JCAT {
         init();
     }
 
+    /// @brief Constructs a SwapChain object.
+    /// @param d Reference to the device setup.
+    /// @param r Reference to the resource manager.
+    /// @param wE The window extent.
+    /// @param gameType The type of game being rendered.
+    /// @param v Whether or not to use VSync.
+    /// @param previousFrame The previous frame's swap chain.
     SwapChain::SwapChain(DeviceSetup& d, ResourceManager& r, VkExtent2D wE, std::string& gameType, bool v, std::shared_ptr<SwapChain> previousFrame) 
     : device{ d }, resourceManager{ r }, windowExtent{ wE }, previousSwapChain{ previousFrame } {
         type = gameType;
@@ -27,6 +40,7 @@ namespace JCAT {
         previousSwapChain = nullptr;
     }
 
+    /// @brief Destructor that cleans up swap chain resources.
     SwapChain::~SwapChain() {
         for (VkImageView imageView : swapChainImageViews) {
             vkDestroyImageView(device.device(), imageView, nullptr);
