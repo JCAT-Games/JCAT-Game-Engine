@@ -1,8 +1,4 @@
 #include <iostream>
-#include <cstring>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "./stb_image.h"
 
 #include "./engine/resourceManager.h"
 
@@ -24,30 +20,6 @@ namespace JCAT {
         file.close();
 
         return buffer;
-    }
-
-    ImageData ResourceManager::loadImage(const std::string& filepath, bool flipVertically) {
-        stbi_set_flip_vertically_on_load(flipVertically); // Flip image if needed
-
-        int width, height, channels;
-        unsigned char* pixels = stbi_load(
-            filepath.c_str(), 
-            &width, 
-            &height, 
-            &channels, 
-            STBI_rgb_alpha // Force 4 channels (RGBA)
-        );
-
-        if (!pixels) {
-            throw std::runtime_error("Failed to load image: " + filepath);
-        }
-
-        // Copy pixel data into a vector for automatic memory management
-        std::vector<unsigned char> pixelData(width * height * 4);
-        std::memcpy(pixelData.data(), pixels, width * height * 4);
-        stbi_image_free(pixels); // Free original data
-
-        return {width, height, 4, pixelData}; // Channels forced to 4 by STBI_rgb_alpha
     }
 
     void ResourceManager::createBuffer(VkDeviceSize size,

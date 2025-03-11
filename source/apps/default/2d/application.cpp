@@ -63,22 +63,6 @@ namespace JCAT {
     }
 
     void Application::loadGameSprites() {
-
-        std::vector<JCATModel2D::Vertex2D> imageVertices = {
-            // First triangle (bottom-left, bottom-right, top-right)
-            {{-1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},  // Bottom-left
-            {{ 1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},  // Bottom-right
-            {{ 1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}},  // Top-right
-    
-            // Second triangle (top-right, top-left, bottom-left)
-            {{ 1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}},  // Top-right (repeated)
-            {{-1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}},  // Top-left
-            {{-1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}}   // Bottom-left (repeated)
-        };
-
-        std::shared_ptr<JCATModel2D> imageModel = std::make_shared<JCATModel2D>(device, resourceManager, imageVertices);
-
-
         std::vector<JCATModel2D::Vertex2D> vertices{
             {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
             {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
