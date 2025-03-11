@@ -1,0 +1,9 @@
+Thanks to Brendan Galea for providing the following Models:
+
+colored_cube
+cube
+flat_vase
+smooth_vase
+
+Link to Tutorial: 
+https://www.youtube.com/watch?v=jdiPVfIHmEA&list=PL8327DO66nu9qYVKLDmdLW_84-yE4auCR&index=22&ab_channel=BrendanGalea 
