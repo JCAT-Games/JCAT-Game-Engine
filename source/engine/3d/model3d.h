@@ -10,6 +10,7 @@
 #include <glm.hpp>
 
 #include "./engine/deviceSetup.h"
+#include "./engine/src/buffer.h"
 #include "./engine/resourceManager.h"
 #include "./engine/utils.h"
 
@@ -54,16 +55,19 @@ namespace JCAT {
             DeviceSetup& device;
             ResourceManager& resourceManager;
 
-            VkBuffer vertexBuffer;
-            VkDeviceMemory vertexBufferMemory;
+            VkBuffer vertexBufferOld;
+            VkDeviceMemory vertexBufferOldMemory;
+            std::unique_ptr<JCATBuffer> vertexBuffer;
             uint32_t vertexCount;
 
             bool hasIndexBuffer;
-            VkBuffer indexBuffer;
-            VkDeviceMemory indexBufferMemory;
+
+            VkBuffer indexBufferOld;
+            VkDeviceMemory indexBufferOldMemory;
+            std::unique_ptr<JCATBuffer> indexBuffer;
             uint32_t indexCount;
 
-            bool useStagingBuffers = false;
+            bool useStagingBuffers = true;
     };
 };
 
