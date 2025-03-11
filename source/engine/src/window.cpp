@@ -3,6 +3,11 @@
 #include <stdexcept>
 
 namespace JCAT {
+    /// @brief Constructs a Window object.
+    /// @param w The width of the window.
+    /// @param h The height of the window.
+    /// @param title The title of the window.
+    /// @param f Whether or not the window is fullscreen.
     Window::Window(int w, int h, std::string title, bool f) : width(w), height(h) {
         window_title = title;   
         fullscreen = f;
@@ -10,6 +15,7 @@ namespace JCAT {
         initializeWindow();
     }
 
+    /// @brief Destructor that cleans up the window.
     Window::~Window() {
         if (window) {
             glfwDestroyWindow(window);
@@ -18,6 +24,8 @@ namespace JCAT {
         glfwTerminate();
     }
 
+    /// @brief Initializes the window.
+    /// @throws std::runtime_error if the window fails to initialize.
     void Window::initializeWindow() {
         if (!glfwInit()) {
             throw std::runtime_error("Failed to initialize GLFW!");
@@ -69,12 +77,20 @@ namespace JCAT {
         windowResized = false;
     }
 
+    /// @brief Creates a window surface for the Vulkan instance.
+    /// @param instance The Vulkan instance.
+    /// @param surface The surface to create.
+    /// @throws std::runtime_error If the window surface creation fails.
     void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) {
         if (glfwCreateWindowSurface(instance, window, nullptr, surface) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create the window surface!");
         }
     }
 
+    /// @brief Callback function for when the window is resized.
+    /// @param w The window that was resized.
+    /// @param width The new width of the window.
+    /// @param height The new height of the window.
     void Window::framebufferResizeCallback(GLFWwindow* w, int width, int height) {
         Window* window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(w));
 
