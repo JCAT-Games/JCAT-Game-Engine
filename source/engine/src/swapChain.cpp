@@ -104,6 +104,8 @@ namespace JCAT {
         return swapChainExtent;
     }
 
+    /// @brief Returns the aspect ratio of the swap chain extent.
+    /// @return The aspect ratio of the swap chain extent. 
     float SwapChain::extentAspectRatio() {
         return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
     }
@@ -112,6 +114,9 @@ namespace JCAT {
         vsyncEnabled = toggle;
     }
 
+    /// @brief  Acquires the next image in the swap chain.
+    /// @param imageIndex The index of the image to acquire. 
+    /// @return The result of acquiring the next image. 
     VkResult SwapChain::acquireNextImage(uint32_t* imageIndex) {
         // Might need to remove this or modify this for preformance later
         vkWaitForFences(device.device(), 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
@@ -128,6 +133,11 @@ namespace JCAT {
         return result;
     }
 
+    /// @brief Submits the swap chain command buffers.
+    /// @param buffers The command buffers to submit.
+    /// @param imageIndex The index of the image to submit.
+    /// @return The result of submitting the swap chain command buffers.
+    /// @throw std::runtime_error If the command buffer submission fails.
     VkResult SwapChain::submitSwapChainCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex) {
         // Wait for the previous frame to complete
         if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
@@ -169,6 +179,9 @@ namespace JCAT {
         return result;
     }
 
+    /// @brief Presents the image to the screen.
+    /// @param imageIndex The index of the image to present.
+    /// @return The result of presenting the image.
     VkResult SwapChain::presentImage(uint32_t* imageIndex) {
         VkPresentInfoKHR presentInfo = {};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -189,6 +202,8 @@ namespace JCAT {
         return result;
     }
 
+    /// @brief Compares the swap chain formats of two swap chains.
+    /// @param otherSwapChain The other swap chain to compare.
     bool SwapChain::compareSwapFormats(const SwapChain& otherSwapChain) {
         bool sameFormat = true;
 
@@ -206,7 +221,9 @@ namespace JCAT {
     }
 
 
-    
+    /// @brief Creates the swap chain.
+    /// @throw std::runtime_error If the swap chain creation fails.
+    /// @throw std::runtime_error If there is no compatible compisoite alpha mode.
     void SwapChain::createSwapChain() {
         SwapChainSupportDetails swapChainSupport = device.getSwapChainSupport();
 
@@ -318,6 +335,8 @@ namespace JCAT {
         swapChainExtent = swapExtent;
     }
 
+    /// @brief Creates the image views for the swap chain.
+    /// @throw std::runtime_error If the image view creation fails.
     void SwapChain::createImageViews() {
         swapChainImageViews.resize(swapChainImages.size());
 
@@ -342,6 +361,8 @@ namespace JCAT {
     }
 
     // Used to create depth and stencil images and image views for the 3D swap chain
+    /// @brief Creates the depth resources for the swap chain.
+    /// @throw std::runtime_error If the depth image view creation fails.
     void SwapChain::createDepthResources() {
         swapChainDepthFormat = findSupportedDepthFormat();
         
@@ -386,6 +407,8 @@ namespace JCAT {
         }
     }
 
+    /// @brief Creates the render pass for the swap chain.
+    /// @throw std::runtime_error If the render pass creation fails.
     void SwapChain::createRenderPass() {
         VkAttachmentDescription colorAttachment{};
         colorAttachment.format = swapChainImageFormat;
@@ -481,6 +504,8 @@ namespace JCAT {
         }
     }
 
+    /// @brief Creates the framebuffers for the swap chain.
+    /// @throw std::runtime_error If the framebuffer creation fails.
     void SwapChain::createFramebuffers() {
         swapChainFramebuffers.resize(swapChainImages.size());
 
@@ -509,6 +534,8 @@ namespace JCAT {
         }
     }
 
+    /// @brief Creates the synchronization objects for the swap chain.
+    /// @throw std::runtime_error If the synchronization object creation fails.
     void SwapChain::createSynchronizationObjects() {
         imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
         renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -531,6 +558,9 @@ namespace JCAT {
         }
     }
 
+    /// @brief Chooses the swap surface format.
+    /// @param availableFormats The available surface formats.
+    /// @return The chosen surface format.
     VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {
         for (const VkSurfaceFormatKHR& availableFormat : availableFormats) {
             if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB &&
@@ -542,6 +572,9 @@ namespace JCAT {
         return availableFormats[0];
     }
 
+    /// @brief Chooses the swap present mode.
+    /// @param availablePresentModes The available present modes.
+    /// @return The chosen present mode.
     VkPresentModeKHR SwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) {
         if (vsyncEnabled) {
             std::cout << "Refresh Mode: V-Sync" << std::endl;
@@ -572,6 +605,9 @@ namespace JCAT {
         }
     }
 
+    /// @brief Chooses the swap extent.
+    /// @param capabilities The surface capabilities.
+    /// @return The chosen swap extent.
     VkExtent2D SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
         if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
             return capabilities.currentExtent;
@@ -588,6 +624,8 @@ namespace JCAT {
         }
     }
 
+    /// @brief Finds a supported depth format.
+    /// @return The supported depth format.
     VkFormat SwapChain::findSupportedDepthFormat() {
         std::vector<VkFormat> preferredFormats = { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT };
         VkFormat foundFormat = device.findSupportedDepthFormat(preferredFormats, 
