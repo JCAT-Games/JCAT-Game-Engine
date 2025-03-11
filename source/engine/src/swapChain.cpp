@@ -223,7 +223,7 @@ namespace JCAT {
 
     /// @brief Creates the swap chain.
     /// @throw std::runtime_error If the swap chain creation fails.
-    /// @throw std::runtime_error If there is no compatible compisoite alpha mode.
+    /// @throw std::runtime_error If there is no compatible compisite alpha mode.
     void SwapChain::createSwapChain() {
         SwapChainSupportDetails swapChainSupport = device.getSwapChainSupport();
 
