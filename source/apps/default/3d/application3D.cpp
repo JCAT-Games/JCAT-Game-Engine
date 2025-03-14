@@ -4,6 +4,7 @@
 #include "./engine/3d/camera3D.h"
 #include "./apps/default/3d/application3DRenderer.h"
 #include "./apps/default/3d/perlinNoise3D.h"
+#include "./engine/buffer.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -22,7 +23,24 @@ namespace JCAT {
 
     Application3D::~Application3D() {}
 
+    struct GlobalUbo {
+        glm::mat4 projectionView{1.f};
+        glm::vec3 lightDirection = glm::normalize(glm::vec3{1.f, -3.f, -1.f});
+    };
+
     void Application3D::run() {
+
+        JCATBuffer globalUboBuffer{
+            device,
+            resourceManager,
+            sizeof(GlobalUbo),
+            SwapChain::MAX_FRAMES_IN_FLIGHT,
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+            device.properties.limits.minUniformBufferOffsetAlignment,
+        };
+        globalUboBuffer.map();
+
         Application3DRenderer applicationRenderer{ device, resourceManager, renderer.getSwapChainrenderPass() };
     
         Camera3D camera{};
@@ -47,8 +65,23 @@ namespace JCAT {
             camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
 
             if (VkCommandBuffer commandBuffer = renderer.beginRecordingFrame()) {
+                int frameIndex = renderer.getFrameIndex();
+                FrameInfo frameInfo{
+                    frameIndex,
+                    frameTime,
+                    commandBuffer,
+                    camera
+                };
+
+                // update
+                GlobalUbo ubo{};
+                ubo.projectionView = camera.getProjection() * camera.getView();
+                globalUboBuffer.writeToIndex(&ubo, frameIndex);
+                globalUboBuffer.flushIndex(frameIndex);
+
+                // render
                 renderer.beginSwapChainRenderPass(commandBuffer);
-                applicationRenderer.renderGameObjects(commandBuffer, gameObjects, camera);
+                applicationRenderer.renderGameObjects(frameInfo, gameObjects);
                 renderer.endSwapChainRenderPass(commandBuffer);
                 renderer.endRecordingFrame();
             }

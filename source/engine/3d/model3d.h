@@ -10,7 +10,7 @@
 #include <glm.hpp>
 
 #include "./engine/deviceSetup.h"
-#include "./engine/src/buffer.h"
+#include "./engine/buffer.h"
 #include "./engine/resourceManager.h"
 #include "./engine/utils.h"
 
