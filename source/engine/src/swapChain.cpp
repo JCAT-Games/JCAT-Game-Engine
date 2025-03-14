@@ -166,11 +166,57 @@ namespace JCAT {
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
 
+        // Convert above information to structs to be used in a call to vkSubmitQueue2()
+        // Current implementation only causes vkSubmitQueue2() to crash program with no error message
+        /* const int waitArrayLength = sizeof(waitSemaphores)/sizeof(VkSemaphore);
+        VkSemaphoreSubmitInfo waitSemaphores2[waitArrayLength];
+        VkPipelineStageFlags2 waitStages2[] = { VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT };
+        for(int i = 0; i < waitArrayLength; ++i) {
+            waitSemaphores2[i].sType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO;
+            waitSemaphores2[i].pNext = nullptr;
+            waitSemaphores2[i].semaphore = waitSemaphores[i];
+            waitSemaphores2[i].stageMask = waitStages2[i];
+            waitSemaphores2[i].deviceIndex = 0;
+            waitSemaphores2[i].value = 1;
+        }
+        
+        const int bufferArrayLength = sizeof(buffers)/sizeof(VkCommandBuffer);
+        VkCommandBufferSubmitInfo buffers2[1];
+        for(int i = 0; i < bufferArrayLength; ++i) {
+            buffers2[i].sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO;
+            buffers2[i].pNext = nullptr;
+            buffers2[i].commandBuffer = buffers[i];
+            buffers2[i].deviceMask = 0;
+        }
+        
+        const int signalArrayLength = sizeof(signalSemaphores)/sizeof(VkSemaphore);
+        VkSemaphoreSubmitInfo signalSemaphores2[1];
+        VkPipelineStageFlags2 signalStages2[] = { VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT };
+        for(int i = 0; i < signalArrayLength; ++i) {
+            waitSemaphores2[i].sType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO;
+            waitSemaphores2[i].pNext = nullptr;
+            waitSemaphores2[i].semaphore = signalSemaphores[i];
+            waitSemaphores2[i].stageMask = signalStages2[i];
+            waitSemaphores2[i].deviceIndex = 0;
+            waitSemaphores2[i].value = 1;
+        }
+
+        VkSubmitInfo2 submitInfo2 = {};
+        submitInfo2.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO_2;
+        submitInfo2.pNext = nullptr;
+        submitInfo2.waitSemaphoreInfoCount = 1;
+        submitInfo2.pWaitSemaphoreInfos = waitSemaphores2;
+        submitInfo2.signalSemaphoreInfoCount = 1;
+        submitInfo2.pSignalSemaphoreInfos = signalSemaphores2;
+        submitInfo2.commandBufferInfoCount = 1;
+        submitInfo2.pCommandBufferInfos = buffers2; */
+
         // Reset the fence for synchronization
         vkResetFences(device.device(), 1, &inFlightFences[currentFrame]);
 
         // Submit the draw command buffer
         auto submit = vkQueueSubmit(device.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]);
+        //auto submit = vkQueueSubmit2(device.graphicsQueue(), 1, &submitInfo2, inFlightFences[currentFrame]);
         if (submit != VK_SUCCESS) {
             std::cout << submit << " <- error\n";
             throw std::runtime_error("Failed to submit the draw command buffer!");
