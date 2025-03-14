@@ -33,27 +33,28 @@
  }
  
  JCATBuffer::JCATBuffer(
-     DeviceSetup &device,
-
+     DeviceSetup &d,
+     ResourceManager &r,
      VkDeviceSize instanceSize,
      uint32_t instanceCount,
      VkBufferUsageFlags usageFlags,
      VkMemoryPropertyFlags memoryPropertyFlags,
      VkDeviceSize minOffsetAlignment)
-     : DeviceSetup{device},
+     : device{d},
+       resourceManager{r},
        instanceSize{instanceSize},
        instanceCount{instanceCount},
        usageFlags{usageFlags},
        memoryPropertyFlags{memoryPropertyFlags} {
    alignmentSize = getAlignment(instanceSize, minOffsetAlignment);
    bufferSize = alignmentSize * instanceCount;
-   device.createBuffer(bufferSize, usageFlags, memoryPropertyFlags, buffer, memory);
+   resourceManager.createBuffer(bufferSize, usageFlags, memoryPropertyFlags, buffer, memory);
  }
  
  JCATBuffer::~JCATBuffer() {
    unmap();
-   vkDestroyBuffer(DeviceSetup.device(), buffer, nullptr);
-   vkFreeMemory(DeviceSetup.device(), memory, nullptr);
+   vkDestroyBuffer(device.device(), buffer, nullptr);
+   vkFreeMemory(device.device(), memory, nullptr);
  }
  
  /**
@@ -67,7 +68,7 @@
   */
  VkResult JCATBuffer::map(VkDeviceSize size, VkDeviceSize offset) {
    assert(buffer && memory && "Called map on buffer before create");
-   return vkMapMemory(DeviceSetup.device(), memory, offset, size, 0, &mapped);
+   return vkMapMemory(device.device(), memory, offset, size, 0, &mapped);
  }
  
  /**
@@ -77,7 +78,7 @@
   */
  void JCATBuffer::unmap() {
    if (mapped) {
-     vkUnmapMemory(DeviceSetup.device(), memory);
+     vkUnmapMemory(device.device(), memory);
      mapped = nullptr;
    }
  }
@@ -120,7 +121,7 @@
    mappedRange.memory = memory;
    mappedRange.offset = offset;
    mappedRange.size = size;
-   return vkFlushMappedMemoryRanges(DeviceSetup.device(), 1, &mappedRange);
+   return vkFlushMappedMemoryRanges(device.device(), 1, &mappedRange);
  }
  
  /**
@@ -140,7 +141,7 @@
    mappedRange.memory = memory;
    mappedRange.offset = offset;
    mappedRange.size = size;
-   return vkInvalidateMappedMemoryRanges(DeviceSetup.device(), 1, &mappedRange);
+   return vkInvalidateMappedMemoryRanges(device.device(), 1, &mappedRange);
  }
  
  /**

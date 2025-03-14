@@ -13,8 +13,8 @@ namespace JCAT {
 class JCATBuffer {
  public:
   JCATBuffer(
-      DeviceSetup& device,
-      //ResourceManager& resourceManager,
+      DeviceSetup& d,
+      ResourceManager& r,
       VkDeviceSize instanceSize,
       uint32_t instanceCount,
       VkBufferUsageFlags usageFlags,

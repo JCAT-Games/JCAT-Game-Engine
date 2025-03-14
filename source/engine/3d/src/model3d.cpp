@@ -169,6 +169,7 @@ namespace JCAT {
             // );
 
             JCATBuffer stagingBuffer{
+                device,
                 resourceManager,
                 vertexSize,
                 vertexCount,
@@ -186,6 +187,7 @@ namespace JCAT {
 
 
             vertexBuffer = std::make_unique<JCATBuffer>(
+                device,
                 resourceManager,
                 vertexSize,
                 vertexCount,
@@ -237,6 +239,7 @@ namespace JCAT {
             uint32_t indexSize = sizeof(indices[0]);
 
             JCATBuffer stagingBuffer{
+                device,
                 resourceManager,
                 indexSize,
                 indexCount,
@@ -254,7 +257,7 @@ namespace JCAT {
             //     stagingBufferMemory
             // );
 
-            stagingBuffer.map()
+            stagingBuffer.map();
             stagingBuffer.writeToBuffer((void*) indices.data());
 
             // void* modelData;
@@ -263,6 +266,7 @@ namespace JCAT {
             // vkUnmapMemory(device.device(), stagingBufferMemory);
 
             indexBuffer = std::make_unique<JCATBuffer>(
+                device,
                 resourceManager,
                 indexSize,
                 indexCount,
