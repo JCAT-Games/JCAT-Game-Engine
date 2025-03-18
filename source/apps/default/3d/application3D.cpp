@@ -30,6 +30,7 @@ namespace JCAT {
 
     void Application3D::run() {
 
+        // Create a global uniform buffer
         JCATBuffer globalUboBuffer{
             device,
             resourceManager,
@@ -65,6 +66,8 @@ namespace JCAT {
             camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
 
             if (VkCommandBuffer commandBuffer = renderer.beginRecordingFrame()) {
+
+                // Create new FrameInfo object that stores relevant frame information
                 int frameIndex = renderer.getFrameIndex();
                 FrameInfo frameInfo{
                     frameIndex,
@@ -73,7 +76,7 @@ namespace JCAT {
                     camera
                 };
 
-                // update
+                // update uniform buffer
                 GlobalUbo ubo{};
                 ubo.projectionView = camera.getProjection() * camera.getView();
                 globalUboBuffer.writeToIndex(&ubo, frameIndex);
