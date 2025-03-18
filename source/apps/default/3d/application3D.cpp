@@ -4,6 +4,7 @@
 #include "./engine/3d/camera3D.h"
 #include "./apps/default/3d/application3DRenderer.h"
 #include "./apps/default/3d/perlinNoise3D.h"
+#include "./engine/buffer.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -22,7 +23,27 @@ namespace JCAT {
 
     Application3D::~Application3D() {}
 
+    struct GlobalUbo {
+        glm::mat4 projectionView{1.f};
+        glm::vec3 lightDirection = glm::normalize(glm::vec3{1.f, -3.f, -1.f});
+    };
+
     void Application3D::run() {
+
+        // Create and map global uniform buffers
+        std::vector<std::unique_ptr<JCATBuffer> > uboBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
+        for(int i = 0; i < uboBuffers.size(); i++){
+            uboBuffers[i] = std::make_unique<JCATBuffer>(
+                device,
+                resourceManager,
+                sizeof(GlobalUbo),
+                1,
+                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+            );
+            uboBuffers[i]->map();
+        }
+
         Application3DRenderer applicationRenderer{ device, resourceManager, renderer.getSwapChainrenderPass() };
     
         Camera3D camera{};
@@ -47,8 +68,25 @@ namespace JCAT {
             camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
 
             if (VkCommandBuffer commandBuffer = renderer.beginRecordingFrame()) {
+
+                // Create new FrameInfo object that stores relevant frame information
+                int frameIndex = renderer.getFrameIndex();
+                FrameInfo frameInfo{
+                    frameIndex,
+                    frameTime,
+                    commandBuffer,
+                    camera
+                };
+
+                // update uniform buffers
+                GlobalUbo ubo{};
+                ubo.projectionView = camera.getProjection() * camera.getView();
+                uboBuffers[frameIndex]->writeToBuffer(&ubo);
+                uboBuffers[frameIndex]->flush();
+
+                // render
                 renderer.beginSwapChainRenderPass(commandBuffer);
-                applicationRenderer.renderGameObjects(commandBuffer, gameObjects, camera);
+                applicationRenderer.renderGameObjects(frameInfo, gameObjects);
                 renderer.endSwapChainRenderPass(commandBuffer);
                 renderer.endRecordingFrame();
             }

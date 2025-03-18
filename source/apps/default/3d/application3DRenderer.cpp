@@ -51,10 +51,10 @@ namespace JCAT {
         std::cout << "Created Pipeline Successfully!" << std::endl;
     }
 
-    void Application3DRenderer::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<GameObject>& gameObjects, const Camera3D& camera) {
-        pipeline->bindPipeline(commandBuffer, GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE);
+    void Application3DRenderer::renderGameObjects(FrameInfo &frameInfo, std::vector<GameObject>& gameObjects) {
+        pipeline->bindPipeline(frameInfo.commandBuffer, GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE);
 
-        glm::mat4 projectionView = camera.getProjection() * camera.getView();
+        glm::mat4 projectionView = frameInfo.camera.getProjection() * frameInfo.camera.getView();
 
         for (GameObject& obj : gameObjects) {
             PushConstantData push{};
@@ -62,15 +62,15 @@ namespace JCAT {
             push.normalMatrix = obj.transform.normalMatrix();
             push.hasLighting = obj.hasLighting;
 
-            vkCmdPushConstants(commandBuffer, 
+            vkCmdPushConstants(frameInfo.commandBuffer, 
                                pipelineLayout, 
                                VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 
                                0, 
                                sizeof(PushConstantData), 
                                &push);
 
-            obj.model3D->bind(commandBuffer);
-            obj.model3D->draw(commandBuffer);
+            obj.model3D->bind(frameInfo.commandBuffer);
+            obj.model3D->draw(frameInfo.commandBuffer);
         }
     }
 };
