@@ -30,17 +30,19 @@ namespace JCAT {
 
     void Application3D::run() {
 
-        // Create a global uniform buffer
-        JCATBuffer globalUboBuffer{
-            device,
-            resourceManager,
-            sizeof(GlobalUbo),
-            SwapChain::MAX_FRAMES_IN_FLIGHT,
-            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-            device.properties.limits.minUniformBufferOffsetAlignment,
-        };
-        globalUboBuffer.map();
+        // Create and map global uniform buffers
+        std::vector<std::unique_ptr<JCATBuffer> > uboBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
+        for(int i = 0; i < uboBuffers.size(); i++){
+            uboBuffers[i] = std::make_unique<JCATBuffer>(
+                device,
+                resourceManager,
+                sizeof(GlobalUbo),
+                1,
+                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+            );
+            uboBuffers[i]->map();
+        }
 
         Application3DRenderer applicationRenderer{ device, resourceManager, renderer.getSwapChainrenderPass() };
     
@@ -76,11 +78,11 @@ namespace JCAT {
                     camera
                 };
 
-                // update uniform buffer
+                // update uniform buffers
                 GlobalUbo ubo{};
                 ubo.projectionView = camera.getProjection() * camera.getView();
-                globalUboBuffer.writeToIndex(&ubo, frameIndex);
-                globalUboBuffer.flushIndex(frameIndex);
+                uboBuffers[frameIndex]->writeToBuffer(&ubo);
+                uboBuffers[frameIndex]->flush();
 
                 // render
                 renderer.beginSwapChainRenderPass(commandBuffer);
