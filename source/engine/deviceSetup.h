@@ -230,7 +230,7 @@ namespace JCAT {
             /* ### Helper functions for main functions ### */
 
 
-            bool isDeviceSuitable(VkPhysicalDevice device);
+            bool isDeviceSuitable(VkPhysicalDevice device, int& score);
             std::vector<const char*> getRequiredGLFWExtensions();
             bool checkValidationLayerSupport();
             void hasGLFWRequiredInstanceExtensions();
