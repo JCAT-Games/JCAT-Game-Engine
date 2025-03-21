@@ -11,7 +11,9 @@ how the game engine works.
 
 ## Project Set Up
 
-- [Setting up project for Windows](docs/project-setup/WindowsSetup.md)
+- [Project set up for Windows](docs/project-setup/WindowsSetup.md)
+- [Project set up for macOS](docs/project-setup/MacSetup.md)
+- [Project set up for Linux](docs/project-setup/LinuxSetup.md)
 
 ## License
 

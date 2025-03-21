@@ -13,7 +13,7 @@ To edit and run the project on a Windows computer, follow these steps:
 
 <img src="https://github.com/user-attachments/assets/aebd4e93-685b-4f94-beec-6fcf263f6815" width="700">
 
-4. Install the Vulkan SDK version 1.3.290 [here](https://vulkan.lunarg.com/sdk/home) (under Windows listed as "SDK Installer")
+4. Install the Vulkan SDK version **1.3.290** [here](https://vulkan.lunarg.com/sdk/home) (under Windows listed as "SDK Installer")
    - Follow any instructions provided by the SDK Installer
 
 <img src="https://github.com/user-attachments/assets/b732da29-5df2-4d9d-9a6b-26de9c9b50ce" width="700">
@@ -29,6 +29,7 @@ To edit and run the project on a Windows computer, follow these steps:
 10. Go to the folder where you cloned the GitHub Repository to (perhaps named JCAT Game Engine) and make a copy of the envWindowsTemplate.cmake file and name it ".env.cmake" (in Visual Studio Code, the file icon may change to a green dollar sign)
 11. Change the file paths in this .env.cmake file to be the locations of the previously downloaded files and folders
     - Follow the instructions in the comments and the example file paths ("Path/To/Your...")
+    - If you used the default location for Vulkan installation, your VULKAN_SDK_PATH will be "C:/VulkanSDK/1.3.290.0"
 12. Add the mingw bin folder to your Path Environment Variable
     - Find "Edit the system environment variables" by searching for it in your Windows search bar.
     - In the window that pops up, click the button that says "Environment Variables" at the bottom
