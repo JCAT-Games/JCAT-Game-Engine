@@ -12,7 +12,7 @@ namespace JCAT {
         glm::vec3 scale{ 1.0f, 1.0f, 1.0f };
         glm::vec3 rotation{};
 
-        glm::mat4 transformationMatrix();
+        glm::mat4 modelMatrix();
         glm::mat3 normalMatrix();
     };
 

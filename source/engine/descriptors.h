@@ -36,7 +36,7 @@ namespace JCAT
         };
 
         JCATDescriptorSetLayout(
-            LveDevice &lveDevice, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
+            DeviceSetup &device, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
         ~JCATDescriptorSetLayout();
         JCATDescriptorSetLayout(const JCATDescriptorSetLayout &) = delete;
         JCATDescriptorSetLayout &operator=(const JCATDescriptorSetLayout &) = delete;
@@ -51,7 +51,7 @@ namespace JCAT
         friend class JCATDescriptorWriter;
     };
 
-    class LveDescriptorPool
+    class JCATDescriptorPool
     {
     public:
         class Builder
@@ -62,7 +62,7 @@ namespace JCAT
             Builder &addPoolSize(VkDescriptorType descriptorType, uint32_t count);
             Builder &setPoolFlags(VkDescriptorPoolCreateFlags flags);
             Builder &setMaxSets(uint32_t count);
-            std::unique_ptr<LveDescriptorPool> build() const;
+            std::unique_ptr<JCATDescriptorPool> build() const;
 
         private:
             DeviceSetup &device;
@@ -76,9 +76,9 @@ namespace JCAT
             uint32_t maxSets,
             VkDescriptorPoolCreateFlags poolFlags,
             const std::vector<VkDescriptorPoolSize> &poolSizes);
-        ~LveDescriptorPool();
-        LveDescriptorPool(const LveDescriptorPool &) = delete;
-        LveDescriptorPool &operator=(const LveDescriptorPool &) = delete;
+        ~JCATDescriptorPool();
+        JCATDescriptorPool(const JCATDescriptorPool &) = delete;
+        JCATDescriptorPool &operator=(const JCATDescriptorPool &) = delete;
 
         bool allocateDescriptor(
             const VkDescriptorSetLayout descriptorSetLayout, VkDescriptorSet &descriptor) const;
@@ -94,7 +94,7 @@ namespace JCAT
         friend class JCATDescriptorWriter;
     };
 
-    class LveDescriptorWriter
+    class JCATDescriptorWriter
     {
     public:
         JCATDescriptorWriter(JCATDescriptorSetLayout &setLayout, JCATDescriptorPool &pool);

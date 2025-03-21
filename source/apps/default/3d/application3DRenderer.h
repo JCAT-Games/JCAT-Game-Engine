@@ -14,7 +14,8 @@
 namespace JCAT {
     class Application3DRenderer {
         public:
-            Application3DRenderer(DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass);
+            Application3DRenderer(
+                DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
             ~Application3DRenderer();
 
             Application3DRenderer(const Application3DRenderer&) = delete;
@@ -22,7 +23,7 @@ namespace JCAT {
 
             void renderGameObjects(FrameInfo &frameInfo, std::vector<GameObject>& gameObjects);
         private:
-            void createPipelineLayout();
+            void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
             void createPipeline(VkRenderPass renderPass);
 
             DeviceSetup& device;

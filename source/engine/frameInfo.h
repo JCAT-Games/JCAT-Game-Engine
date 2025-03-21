@@ -10,6 +10,7 @@ namespace JCAT {
         float frameTime;
         VkCommandBuffer commandBuffer;
         Camera3D &camera;
+        VkDescriptorSet globalDescriptorSet;
     };
 }
 

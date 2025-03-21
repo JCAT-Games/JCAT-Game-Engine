@@ -18,6 +18,10 @@
 
 namespace JCAT {
     Application3D::Application3D() {
+        globalPool = JCATDescriptorPool::Builder(device)
+            .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+            .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+            .build();
         loadGameObjects();
     }
 
@@ -44,7 +48,24 @@ namespace JCAT {
             uboBuffers[i]->map();
         }
 
-        Application3DRenderer applicationRenderer{ device, resourceManager, renderer.getSwapChainrenderPass() };
+        auto globalSetLayout = JCATDescriptorSetLayout::Builder(device)
+            .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+            .build();
+        
+        std::vector<VkDescriptorSet> globalDescriptorSets(SwapChain::MAX_FRAMES_IN_FLIGHT);
+        for(int i = 0; i < globalDescriptorSets.size(); i++){
+            auto bufferInfo = uboBuffers[i]->descriptorInfo();
+            JCATDescriptorWriter(*globalSetLayout, *globalPool)
+                .writeBuffer(0, &bufferInfo)
+                .build(globalDescriptorSets[i]);
+        }
+
+        Application3DRenderer applicationRenderer{ 
+            device,
+            resourceManager,
+            renderer.getSwapChainrenderPass(),
+            globalSetLayout->getDescriptorSetLayout() 
+        };
     
         Camera3D camera{};
         camera.setViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
@@ -75,7 +96,8 @@ namespace JCAT {
                     frameIndex,
                     frameTime,
                     commandBuffer,
-                    camera
+                    camera,
+                    globalDescriptorSets[frameIndex]
                 };
 
                 // update uniform buffers

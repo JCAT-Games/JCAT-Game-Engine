@@ -3,6 +3,8 @@
  * https://youtu.be/d5p44idnZLQ?si=jU5LJCSK7UFbBJDT
  */
 
+#include "./engine/descriptors.h"
+
 // std
 #include <cassert>
 #include <stdexcept>
@@ -27,7 +29,7 @@ JCATDescriptorSetLayout::Builder &JCATDescriptorSetLayout::Builder::addBinding(
 }
  
 std::unique_ptr<JCATDescriptorSetLayout> JCATDescriptorSetLayout::Builder::build() const {
-  return std::make_unique<LveDescriptorSetLayout>(device, bindings);
+  return std::make_unique<JCATDescriptorSetLayout>(device, bindings);
 }
 
 
@@ -102,7 +104,7 @@ JCATDescriptorPool::JCATDescriptorPool(
   }
 }
  
-LveDescriptorPool::~LveDescriptorPool() {
+JCATDescriptorPool::~JCATDescriptorPool() {
   vkDestroyDescriptorPool(device.device(), descriptorPool, nullptr);
 }
  
