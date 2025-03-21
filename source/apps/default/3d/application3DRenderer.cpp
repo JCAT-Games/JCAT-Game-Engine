@@ -5,7 +5,8 @@
 namespace JCAT {
     struct PushConstantData {
         glm::mat4 transform { 1.0f };
-        alignas(16) glm::vec3 color;
+        glm::mat4 normalMatrix { 1.0f };
+        uint32_t hasLighting = 0;
     };
 
     Application3DRenderer::Application3DRenderer(DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass) : device{d}, resourceManager{r} {
@@ -57,8 +58,9 @@ namespace JCAT {
 
         for (GameObject& obj : gameObjects) {
             PushConstantData push{};
-            push.color = obj.color;
             push.transform = projectionView * obj.transform.transformationMatrix();
+            push.normalMatrix = obj.transform.normalMatrix();
+            push.hasLighting = obj.hasLighting;
 
             vkCmdPushConstants(commandBuffer, 
                                pipelineLayout, 

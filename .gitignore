@@ -5,6 +5,7 @@ Build/
 # Ignore object files
 *.o
 *.obj
+!models/*.obj
 
 # Ignore binary executables
 *.exe

@@ -116,6 +116,8 @@ namespace JCAT {
         copyRegion.size = size;
 
         vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+
+        endSingleTimeCommands(commandBuffer);
     }
 
     /// @brief Creates a Vulkan image.
