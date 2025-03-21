@@ -3,8 +3,14 @@
 #include "./engine/resourceManager.h"
 
 namespace JCAT {
+    /// @brief Constructs a ResourceManager object.
+    /// @param device Reference to the device setup.
     ResourceManager::ResourceManager(DeviceSetup& device) : device_{ device } {}
 
+    /// @brief Reads a file and returns its contents as a vector of characters.
+    /// @param filepath The path to the file.
+    /// @return A vector containing the file's contents.
+    /// @throws std::runtime_error if the file fails to open.
     std::vector<char> ResourceManager::readFile(const std::string& filepath) {
         std::ifstream file{ filepath, std::ios::ate | std::ios::binary };
 
@@ -22,6 +28,14 @@ namespace JCAT {
         return buffer;
     }
 
+    /// @brief Creates a Vulkan buffer.
+    /// @param size The size of the buffer.
+    /// @param usage The usage of the buffer.
+    /// @param properties The memory properties of the buffer.
+    /// @param buffer The buffer to create.
+    /// @param bufferMemory The buffer memory to create.
+    /// @throws std::runtime_error if the buffer fails to create.
+    /// @throws std::runtime_error if the buffer memory fails to allocate.
     void ResourceManager::createBuffer(VkDeviceSize size,
                                         VkBufferUsageFlags usage,
                                         VkMemoryPropertyFlags properties,
@@ -52,6 +66,8 @@ namespace JCAT {
         vkBindBufferMemory(device_.device(), buffer, bufferMemory, 0);
     }
 
+    /// @brief Creates a Vulkan image.
+    /// @return The image to create.
     VkCommandBuffer ResourceManager::beginSingleTimeCommands() {
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -71,6 +87,8 @@ namespace JCAT {
         return commandBuffer;
     }
 
+    /// @brief Ends recording a single time command.
+    /// @param commandBuffer The command buffer to end.
     void ResourceManager::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
         vkEndCommandBuffer(commandBuffer);
 
@@ -85,6 +103,10 @@ namespace JCAT {
         vkFreeCommandBuffers(device_.device(), device_.getCommandPool(), 1, &commandBuffer);
     }
 
+    /// @brief Copies a buffer to another buffer.
+    /// @param srcBuffer The source buffer.
+    /// @param dstBuffer The destination buffer.
+    /// @param size The size of the buffer.
     void ResourceManager::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
         VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
@@ -98,6 +120,12 @@ namespace JCAT {
         endSingleTimeCommands(commandBuffer);
     }
 
+    /// @brief Creates a Vulkan image.
+    /// @param width The width of the image.
+    /// @param height The height of the image.
+    /// @param buffer The buffer to create the image from.
+    /// @param image The image to create.
+    /// @param layerCount The number of layers in the image.
     void ResourceManager::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount) {
         VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
@@ -119,6 +147,13 @@ namespace JCAT {
         endSingleTimeCommands(commandBuffer);
     }
 
+    /// @brief Creates a Vulkan image.
+    /// @param imageInfo The information to create the image.
+    /// @param properties The memory properties of the image.
+    /// @param image The image to create.
+    /// @param imageMemory The image memory to create.
+    /// @throws std::runtime_error if the image fails to create.
+    /// @throws std::runtime_error if the image memory fails to allocate.
     void ResourceManager::createImageWithInfo(const VkImageCreateInfo& imageInfo,
                                                 VkMemoryPropertyFlags properties,
                                                 VkImage& image,

@@ -152,17 +152,21 @@ namespace JCAT {
         vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
         std::cout << "Device Count: " << deviceCount << std::endl;
-
+        int discreteScore = 0;
+        int integratedScore = 0;
         for (const VkPhysicalDevice& device : devices) {
             VkPhysicalDeviceProperties deviceProperties;
             vkGetPhysicalDeviceProperties(device, &deviceProperties);
+            int current_score = 0;
 
-            if (isDeviceSuitable(device)) {
+            if (isDeviceSuitable(device, current_score)) {
                 if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && discreteGPU == VK_NULL_HANDLE) {
                     discreteGPU = device;
+                    discreteScore = current_score;
                 }
                 else if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU && integratedGPU == VK_NULL_HANDLE) {
                     integratedGPU = device;
+                    integratedScore = current_score;
                 }
             }
         }
@@ -170,19 +174,28 @@ namespace JCAT {
         // Should add more sophisticated checking in the future such as shader support
         if (isOnBatteryPower()) {
             if (integratedGPU != VK_NULL_HANDLE) {
-                physicalDevice = integratedGPU;
+                integratedScore += 400;
             }
             else {
-                physicalDevice = discreteGPU;
+                discreteScore += 100;
             }
         }
         else {
             if (discreteGPU != VK_NULL_HANDLE) {
-                physicalDevice = discreteGPU;
+                discreteScore += 100;
             }
             else {
-                physicalDevice = integratedGPU;
+                integratedScore += 100;
             }
+        }
+
+        if(integratedScore > discreteScore) {
+            physicalDevice = integratedGPU;
+            std::cout << "integrated GPU chosen" << std::endl; 
+        }
+        else {
+            physicalDevice = discreteGPU;
+            std::cout << "discrete GPU chosen" << std::endl;
         }
 
         if (physicalDevice == VK_NULL_HANDLE) {
@@ -283,7 +296,7 @@ namespace JCAT {
         }
     }
 
-    bool DeviceSetup::isDeviceSuitable(VkPhysicalDevice device) {
+    bool DeviceSetup::isDeviceSuitable(VkPhysicalDevice device, int& score) {
         QueueFamilyIndices indices = findQueueFamilies(device);
         
         bool extensionsSupported = checkDeviceExtensionSupport(device);
@@ -293,33 +306,52 @@ namespace JCAT {
         if (extensionsSupported) {
             SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
             swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+            if(score >= 0){
+                score += 100;
+            }
         }
-        else
-        {
+        else {
             std::cerr << "Device does not support the required extensions!" << std::endl; //determine which part if any causes a false return
+            score = -1;
         }
 
         VkPhysicalDeviceFeatures supportedFeatures;
         vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
         
         bool samplerAnisotropySupported = supportedFeatures.samplerAnisotropy;
-        if(!samplerAnisotropySupported)
-        {
+        if (!samplerAnisotropySupported) {
             std::cerr << "Device does not support sampler anisotropy!" << std::endl; //determine which part if any causes a false return
+            score = -1;
         }
-        bool sampleRateSahdingSupported = supportedFeatures.sampleRateShading;
-        if(!sampleRateSahdingSupported)
-        {
-            std::cerr << "Device does not support sample rate shading!" << std::endl;//determine which part if any causes a false return
+        else {
+            if (score >= 0) {
+                score += 100;
+            }
         }
-        bool geometryShaderSupported = supportedFeatures.geometryShader;
-        if(!geometryShaderSupported)
-        {
-            std::cerr << "Device does not support geometry shaders!" << std::endl;//determine which part if any causes a false return
-        }
-        
 
-        return indices.isComplete() && extensionsSupported && samplerAnisotropySupported && sampleRateSahdingSupported && geometryShaderSupported;
+        bool sampleRateShadingSupported = supportedFeatures.sampleRateShading;
+        if(!sampleRateShadingSupported) {
+            std::cerr << "Device does not support sample rate shading!" << std::endl;//determine which part if any causes a false return
+            score = -1;
+        }
+        else {
+            if (score >= 0) {
+                score += 100;
+            }
+        }
+
+        bool geometryShaderSupported = supportedFeatures.geometryShader;
+        if (!geometryShaderSupported) {
+            std::cerr << "Device does not support geometry shaders!" << std::endl;//determine which part if any causes a false return
+            score = -1;
+        }
+        else {
+            if (score >= 0) {
+                score += 100;
+            }
+        }
+
+        return indices.isComplete() && extensionsSupported && samplerAnisotropySupported && sampleRateShadingSupported && geometryShaderSupported;
     }
 
     std::vector<const char*> DeviceSetup::getRequiredGLFWExtensions() {

@@ -3,6 +3,12 @@
 #include "./engine/renderer.h"
 
 namespace JCAT {
+    /// @brief Constructs a Renderer object.
+    /// @param w Reference to the window.
+    /// @param d Reference to the device setup.
+    /// @param r Reference to the resource manager.
+    /// @param gameType The type of game being rendered.
+    /// @param v Whether or not to use VSync.
     Renderer::Renderer(Window& w, DeviceSetup& d, ResourceManager& r, std::string gameType, bool v) 
     : device{ d }, resourceManager{ r }, window{ w } {
         type = gameType;
@@ -14,10 +20,13 @@ namespace JCAT {
         std::cout << "Initialized Renderer!" << std::endl;
     }
 
+    /// @brief Destructor that cleans up command buffers and swap chain.
     Renderer::~Renderer() {
         freeCommandBuffers();
     }
 
+    /// @brief Recreates the swap chain if the window has been resized.
+    /// @throws std::runtime_error if the swap chain image format has changed.
     void Renderer::recreateSwapChain() {
         VkExtent2D extent = window.getWindowExtent();
 
@@ -43,6 +52,8 @@ namespace JCAT {
         }
     }
 
+    /// @brief Creates the command buffers for the swap chain.
+    /// @throws std::runtime_error if the command buffers fail to allocate.
     void Renderer::createCommandBuffers() {
         commandBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
 
@@ -59,29 +70,41 @@ namespace JCAT {
         std::cout << "Created command buffers!" << std::endl;
     }
 
+    /// @brief Frees the command buffers.
     void Renderer::freeCommandBuffers() {
         vkFreeCommandBuffers(device.device(), device.getCommandPool(), static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
         commandBuffers.clear();
     }
 
+    /// @brief Renders the scene.
     VkRenderPass Renderer::getSwapChainrenderPass() {
         return swapChain->getRenderPass();
     }
 
+    /// @brief Checks if a frame is currently in progress.
+    /// @return True if a frame is in progress, false otherwise.
     bool Renderer::isFrameInProgress() {
         return isFrameStarted;
     }
 
+    /// @brief Retrieves the aspect ratio of the swap chain.
+    /// @return The aspect ratio of the swap chain.
     float Renderer::getAspectRatio() const {
         return swapChain->extentAspectRatio();
     }
 
+    /// @brief Retrieves the current command buffer.
+    /// @return The current command buffer.
     VkCommandBuffer Renderer::getCurrentCommandBuffer() const {
         assert(isFrameStarted && "Cannot get command buffer when a frame is not in progress!");
 
         return commandBuffers[currentFrameIndex];
     }
 
+    /// @brief Begins recording a frame.
+    /// @return The command buffer for the frame.
+    /// @throws std::runtime_error if the command buffer fails to begin recording.
+    /// @throws std::runtime_error if the swap chain image fails to acquire.
     VkCommandBuffer Renderer::beginRecordingFrame() {
         assert(!isFrameStarted && "Cannot begin recording frame while a frame is already in progress!");
 
@@ -113,6 +136,9 @@ namespace JCAT {
         return commandBuffer;
     }
 
+    /// @brief Ends recording a frame.
+    /// @throws std::runtime_error if the command buffer fails to end recording.
+    /// @throws std::runtime_error if the swap chain image fails to present.
     void Renderer::endRecordingFrame() {
         assert(isFrameStarted && "Can not end recording frame while a frame is not in progress!");
 
@@ -138,6 +164,8 @@ namespace JCAT {
         currentFrameIndex = (currentFrameIndex + 1) % SwapChain::MAX_FRAMES_IN_FLIGHT;
     }
 
+    /// @brief Begins the render pass for the swap chain.
+    /// @param commandBuffer The command buffer to begin the render pass on.
     void Renderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
         assert(isFrameStarted && "Cannot begin render pass while frame is not in progress!");
         assert(commandBuffer == getCurrentCommandBuffer() && "Cannot begin render pass on command buffer from a different frame!");

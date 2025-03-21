@@ -5,7 +5,13 @@
 #include "./engine/3d/model3d.h"
 
 namespace JCAT {
+    /// @brief Constructs a GraphicsPipeline object.
+    /// @param physicalDevice Reference to the physical device setup.
+    /// @param resourceManager Reference to the resource manager.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragFilepath Path to the fragment shader file.
     GraphicsPipeline::GraphicsPipeline(DeviceSetup &physicalDevice, ResourceManager &resourceManager, const std::string& vertFilepath, const std::string& fragfilepath) : device{ physicalDevice }, resources{ resourceManager } {
+        // Initialize graphics pipelines with default VK_NULL_HANDLE values
         graphicsPipelines = {
             {PipelineType::SOLID_SPRITE_PIPELINE, VK_NULL_HANDLE},
             {PipelineType::TRANSPARENT_SPRITE_PIPELINE, VK_NULL_HANDLE},
@@ -19,6 +25,7 @@ namespace JCAT {
         };
     }
 
+    /// @brief Destructor that cleans up Vulkan shader modules and pipelines.
     GraphicsPipeline::~GraphicsPipeline() {
         vkDestroyShaderModule(device.device(), vertShaderModule, nullptr);
         vkDestroyShaderModule(device.device(), fragShaderModule, nullptr);
@@ -28,6 +35,10 @@ namespace JCAT {
         }
     }
 
+    /// @brief Retrieves the Vulkan pipeline associated with a given type.
+    /// @param type The type of pipeline to retrieve.
+    /// @return Reference to the Vulkan pipeline.
+    /// @throws std::runtime_error if the pipeline type is not found.
     VkPipeline& GraphicsPipeline::getPipeline(PipelineType type) {
         std::unordered_map<PipelineType, VkPipeline>::iterator it = graphicsPipelines.find(type);
         
@@ -38,13 +49,19 @@ namespace JCAT {
         }
     }
 
+    /// @brief Binds the specified pipeline to the given command buffer.
+    /// @param commandBuffer The command buffer to bind the pipeline to.
+    /// @param type The type of pipeline to bind.
     void GraphicsPipeline::bindPipeline(VkCommandBuffer commandBuffer, PipelineType type) {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelines[type]);
     }
 
+    /// @brief Configures Vulkan pipeline settings for various rendering tasks.
+    /// @param configInfos A map to store pipeline configurations.
     void GraphicsPipeline::configurePipelines(std::unordered_map<PipelineType, PipelineConfigInfo>& configInfos) {
         std::cout << "Configuring Pipelines" << std::endl;
 
+        // Initialize configurations for different pipeline types
         configInfos.insert({PipelineType::SOLID_SPRITE_PIPELINE, PipelineConfigInfo{}});
         configInfos.insert({PipelineType::TRANSPARENT_SPRITE_PIPELINE, PipelineConfigInfo{}});
         configInfos.insert({PipelineType::SOLID_OBJECT_PIPELINE, PipelineConfigInfo{}});
@@ -98,6 +115,7 @@ namespace JCAT {
             configInfo.second.dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(configInfo.second.dynamicStateEnables.size());
             configInfo.second.dynamicStateInfo.flags = 0;
 
+            // Configure specific pipeline settings
             switch (configInfo.first) {
                 case PipelineType::SOLID_SPRITE_PIPELINE:
                     configureSolidSpritePipeline(configInfo.second);
@@ -130,6 +148,8 @@ namespace JCAT {
         }
     }
 
+    /// @brief Configures the pipeline settings for rendering solid sprites.
+    /// @param solidSpriteRenderingInfo Reference to the pipeline configuration. 
     void GraphicsPipeline::configureSolidSpritePipeline(PipelineConfigInfo& solidSpriteRenderingInfo) {
         std::cout << "Configuring Solid Sprite Pipeline" << std::endl;
 
@@ -153,6 +173,8 @@ namespace JCAT {
         solidSpriteRenderingInfo.depthStencilInfo.depthWriteEnable = VK_FALSE;
     }
 
+    /// @brief Configures the pipeline settings for rendering transparent sprites.
+    /// @param transparentSpriteRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::configureTransparentSpritePipeline(PipelineConfigInfo& transparentSpriteRenderingInfo) {
         std::cout << "Configuring Transparent Sprite Pipeline" << std::endl;
 
@@ -179,6 +201,8 @@ namespace JCAT {
         transparentSpriteRenderingInfo.depthStencilInfo.depthWriteEnable = VK_FALSE;
     }
 
+    /// @brief Configures the pipeline settings for rendering solid objects.
+    /// @param solidObjectRenderingInfo Reference to the pipeline configuration. 
     void GraphicsPipeline::configureSolidObjectPipeline(PipelineConfigInfo& solidObjectRenderingInfo) {
         std::cout << "Configuring Solid Object Pipeline" << std::endl;
 
@@ -202,6 +226,8 @@ namespace JCAT {
         solidObjectRenderingInfo.depthStencilInfo.depthWriteEnable = VK_TRUE;
     }
 
+    /// @brief Configures the pipeline settings for rendering transparent objects.
+    /// @param transparentObjectRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::configureTransparentObjectPipeline(PipelineConfigInfo& transparentObjectRenderingInfo) {
         std::cout << "Configuring Transparent Object Pipeline" << std::endl;
 
@@ -231,6 +257,8 @@ namespace JCAT {
         transparentObjectRenderingInfo.depthStencilInfo.depthWriteEnable = VK_TRUE;
     }
 
+    /// @brief Configures the pipeline settings for rendering UI elements.
+    /// @param UIRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::configureUIRenderingPipeline(PipelineConfigInfo& UIRenderingInfo) {
         std::cout << "Configuring UI Rendering Pipeline" << std::endl;
 
@@ -257,6 +285,8 @@ namespace JCAT {
         UIRenderingInfo.depthStencilInfo.depthWriteEnable = VK_FALSE;
     }
 
+    /// @brief Configures the pipeline settings for shadow mapping.
+    /// @param shadowMappingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::configureShadowMappingPipeline(PipelineConfigInfo& shadowMappingInfo) {
         std::cout << "Configuring Shadow Mapping Pipeline" << std::endl;
 
@@ -281,6 +311,8 @@ namespace JCAT {
         shadowMappingInfo.depthStencilInfo.depthWriteEnable = VK_TRUE;
     }
 
+    /// @brief Configures the pipeline settings for rendering skyboxes.
+    /// @param skyboxRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::configureSkyboxRenderingPipeline(PipelineConfigInfo& skyboxRenderingInfo) {
         std::cout << "Configuring Skybox Rendering Pipeline" << std::endl;
 
@@ -302,6 +334,8 @@ namespace JCAT {
         skyboxRenderingInfo.depthStencilInfo.depthWriteEnable = VK_FALSE;
     }
 
+    /// @brief Configures the pipeline settings for rendering particles.
+    /// @param particleRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::configureParticleRenderingPipeline(PipelineConfigInfo& particleRenderingInfo) {
         std::cout << "Configuring Particle Rendering Pipeline" << std::endl;
 
@@ -331,6 +365,8 @@ namespace JCAT {
         particleRenderingInfo.depthStencilInfo.depthWriteEnable = VK_FALSE;
     }
 
+    /// @brief Configures the pipeline settings for post-processing effects.
+    /// @param postProcessingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::configurePostProcessingPipeline(PipelineConfigInfo& postProcessingInfo) {
         std::cout << "Configuring Post Processing Pipeline" << std::endl;
 
@@ -360,6 +396,10 @@ namespace JCAT {
     // Eventually will need to add support for other file types, not just shaders
     // We will be loading textures, blender files, may have computational shaders for physics, etc...
 
+    /// @brief Creates a graphics pipeline for rendering solid sprites.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragfilepath Path to the fragment shader file.
+    /// @param solidSpriteRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::createSolidSpritePipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
         // Pipeline layout defined in actual application due to the customization of aspects like the PushConstantRange.
         assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
@@ -373,6 +413,10 @@ namespace JCAT {
         createPipeline(getPipeline(PipelineType::SOLID_SPRITE_PIPELINE), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
+    /// @brief Creates a graphics pipeline for rendering transparent sprites.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragfilepath Path to the fragment shader file.
+    /// @param solidSpriteRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::createTransparentSpritePipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
         assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
@@ -384,6 +428,10 @@ namespace JCAT {
         createPipeline(getPipeline(PipelineType::TRANSPARENT_SPRITE_PIPELINE), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
+    /// @brief Creates a graphics pipeline for rendering solid objects.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragfilepath Path to the fragment shader file.
+    /// @param solidObjectRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::createSolidObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidObjectRenderingInfo) {
         assert(solidObjectRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
         assert(solidObjectRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
@@ -395,6 +443,10 @@ namespace JCAT {
         createPipeline(getPipeline(PipelineType::SOLID_OBJECT_PIPELINE), solidObjectRenderingInfo, shaderStages, vertexInputInfo);
     }
 
+    /// @brief Creates a graphics pipeline for rendering transparent objects.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragfilepath Path to the fragment shader file.
+    /// @param solidSpriteRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::createTransparentObjectPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
         assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
@@ -406,6 +458,10 @@ namespace JCAT {
         createPipeline(getPipeline(PipelineType::TRANSPARENT_OBJECT_PIPELINE), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
+    /// @brief Creates a graphics pipeline for rendering UI elements.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragfilepath Path to the fragment shader file.
+    /// @param solidSpriteRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::createUIRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
         assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
@@ -417,6 +473,10 @@ namespace JCAT {
         createPipeline(getPipeline(PipelineType::UI_RENDERING_PIPELINE), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
+    /// @brief Creates a graphics pipeline for shadow mapping.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragfilepath Path to the fragment shader file.
+    /// @param solidSpriteRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::createShadowMappingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
         assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
@@ -428,6 +488,10 @@ namespace JCAT {
         createPipeline(getPipeline(PipelineType::SHADOW_MAPPING_PIPELINE), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
+    /// @brief Creates a graphics pipeline for rendering skyboxes.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragfilepath Path to the fragment shader file.
+    /// @param solidSpriteRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::createSkyboxRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
         assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
@@ -439,6 +503,10 @@ namespace JCAT {
         createPipeline(getPipeline(PipelineType::SKYBOX_RENDERING_PIPELINE), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
+    /// @brief Creates a graphics pipeline for rendering particles.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragfilepath Path to the fragment shader file.
+    /// @param solidSpriteRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::createParticleRenderingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
         assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
@@ -450,6 +518,10 @@ namespace JCAT {
         createPipeline(getPipeline(PipelineType::PARTICLE_RENDERING_PIPELINE), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
+    /// @brief Creates a graphics pipeline for post-processing effects.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragfilepath Path to the fragment shader file.
+    /// @param solidSpriteRenderingInfo Reference to the pipeline configuration.
     void GraphicsPipeline::createPostProcessingPipeline(const std::string& vertFilepath, const std::string& fragfilepath, PipelineConfigInfo& solidSpriteRenderingInfo) {
         assert(solidSpriteRenderingInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipelineLayout provided in configInfo!");
         assert(solidSpriteRenderingInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo!");
@@ -461,6 +533,12 @@ namespace JCAT {
         createPipeline(getPipeline(PipelineType::POST_PROCESSING_PIPELINE), solidSpriteRenderingInfo, shaderStages, vertexInputInfo);
     }
 
+    /// @brief Creates a Vulkan graphics pipeline.
+    /// @param graphicsPipeline Reference to the Vulkan pipeline.
+    /// @param configInfo Reference to the pipeline configuration.
+    /// @param shaderStages Reference to the shader stages.
+    /// @param vertexInputInfo Reference to the vertex input state.
+    /// @throws std::runtime_error if the pipeline creation fails.
     void GraphicsPipeline::createPipeline(VkPipeline& graphicsPipeline, PipelineConfigInfo& configInfo, std::vector<VkPipelineShaderStageCreateInfo>& shaderStages, VkPipelineVertexInputStateCreateInfo& vertexInputInfo) {
         VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -488,6 +566,8 @@ namespace JCAT {
         }
     }
 
+    /// @brief Retrieves the vertex input descriptions for 2D models.
+    /// @return The vertex input descriptions.
     VkPipelineVertexInputStateCreateInfo GraphicsPipeline::getDescriptions2D() {
         std::vector<VkVertexInputBindingDescription> bindingDescriptions = JCATModel2D::Vertex2D::getBindingDescriptions();
         std::vector<VkVertexInputAttributeDescription> attributeDescriptions = JCATModel2D::Vertex2D::getAttributeDescriptions();
@@ -502,6 +582,8 @@ namespace JCAT {
         return vertexInputInfo;
     }
 
+    /// @brief Retrieves the vertex input descriptions for 3D models.
+    /// @return The vertex input descriptions.
     VkPipelineVertexInputStateCreateInfo GraphicsPipeline::getDescriptions3D() {
         std::vector<VkVertexInputBindingDescription> bindingDescriptions = JCATModel3D::Vertex3D::getBindingDescriptions();
         std::vector<VkVertexInputAttributeDescription> attributeDescriptions = JCATModel3D::Vertex3D::getAttributeDescriptions();
@@ -516,6 +598,10 @@ namespace JCAT {
         return vertexInputInfo;
     }
 
+    /// @brief Creates shader modules for the vertex and fragment shaders.
+    /// @param vertFilepath Path to the vertex shader file.
+    /// @param fragFilepath Path to the fragment shader file.
+    /// @return A vector containing the shader stages.
     std::vector<VkPipelineShaderStageCreateInfo> GraphicsPipeline::createShaderStages(const std::string& vertFilepath, const std::string& fragFilepath) {
         std::vector<char> vertexCode = ResourceManager::readFile(vertFilepath);
         std::vector<char> fragmentCode = ResourceManager::readFile(fragFilepath);
@@ -555,6 +641,10 @@ namespace JCAT {
         return shaderStages;
     }
 
+    /// @brief Creates a shader module from the given binary code.
+    /// @param shaderBinaryCode The binary code of the shader.
+    /// @param shaderModule The shader module to create.
+    /// @throws std::runtime_error if the shader module creation fails.
     void GraphicsPipeline::createShaderModule(const std::vector<char>& shaderBinaryCode, VkShaderModule* shaderModule) {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
