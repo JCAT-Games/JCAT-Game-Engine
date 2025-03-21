@@ -9,9 +9,14 @@ primitive level. The goal by the end of this semester is to have a functional ga
 could use to develop a game with. We also want to be able to have a deep understanding of
 how the game engine works.
 
+## Project Set Up
+
+- [Project set up for Windows](docs/project-setup/WindowsSetup.md)
+- [Project set up for macOS](docs/project-setup/MacSetup.md)
+- [Project set up for Linux](docs/project-setup/LinuxSetup.md)
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
