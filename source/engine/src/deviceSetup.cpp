@@ -160,11 +160,11 @@ namespace JCAT {
             int current_score = 0;
 
             if (isDeviceSuitable(device, current_score)) {
-                if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && discreteGPU == VK_NULL_HANDLE) {
+                if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && discreteGPU == VK_NULL_HANDLE && current_score > discreteScore) {
                     discreteGPU = device;
                     discreteScore = current_score;
                 }
-                else if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU && integratedGPU == VK_NULL_HANDLE) {
+                else if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU && integratedGPU == VK_NULL_HANDLE && current_score > integratedScore) {
                     integratedGPU = device;
                     integratedScore = current_score;
                 }
@@ -325,7 +325,7 @@ namespace JCAT {
         if(!samplerAnisotropySupported)
         {
             std::cerr << "Device does not support sampler anisotropy!" << std::endl; //determine which part if any causes a false return
-            score = -1;
+            score -= 50;
         }
         else
         {
@@ -334,8 +334,8 @@ namespace JCAT {
                 score += 100;
             }
         }
-        bool sampleRateSahdingSupported = supportedFeatures.sampleRateShading;
-        if(!sampleRateSahdingSupported)
+        bool sampleRateShadingSupported = supportedFeatures.sampleRateShading;
+        if(!sampleRateShadingSupported)
         {
             std::cerr << "Device does not support sample rate shading!" << std::endl;//determine which part if any causes a false return
             score = -1;
@@ -361,7 +361,7 @@ namespace JCAT {
             }
         }
 
-        return indices.isComplete() && extensionsSupported && samplerAnisotropySupported && sampleRateSahdingSupported && geometryShaderSupported;
+        return indices.isComplete() && extensionsSupported && sampleRateShadingSupported && geometryShaderSupported;
     }
 
     std::vector<const char*> DeviceSetup::getRequiredGLFWExtensions() {
