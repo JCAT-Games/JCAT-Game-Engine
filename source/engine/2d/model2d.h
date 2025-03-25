@@ -41,12 +41,20 @@ namespace JCAT {
 
         private:
             void createVertexBuffers(const std::vector<Vertex2D>& vertices);
+            void createIndexBuffers(const std::vector<uint32_t>& indices);
 
             DeviceSetup& device;
             ResourceManager& resourceManager;
             VkBuffer vertexBuffer;
             VkDeviceMemory vertexBufferMemory;
             uint32_t vertexCount;
+
+            bool hasIndexBuffer;
+            VkBuffer indexBuffer;
+            VkDeviceMemory indexBufferMemory;
+            uint32_t indexCount;
+
+            bool useStagingBuffers = false;
     };
 };
 
