@@ -6,6 +6,8 @@
 #include "./apps/default/3d/perlinNoise3D.h"
 #include "./engine/buffer.h"
 
+#include "./engine/texture.h"
+
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm.hpp>
@@ -21,6 +23,7 @@ namespace JCAT {
         globalPool = JCATDescriptorPool::Builder(device)
             .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
             .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+            //.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, SwapChain::MAX_FRAMES_IN_FLIGHT)
             .build();
         loadGameObjects();
     }
@@ -50,13 +53,22 @@ namespace JCAT {
 
         auto globalSetLayout = JCATDescriptorSetLayout::Builder(device)
             .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+            //.addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
             .build();
+
+        // Texture texture = Texture(device, resourceManager, "../textures/gradient.png");
+
+        // VkDescriptorImageInfo imageInfo {};
+        // imageInfo.sampler = texture.getSampler();
+        // imageInfo.imageView = texture.getImageView();
+        // imageInfo.imageLayout = texture.getImageLayout();
         
         std::vector<VkDescriptorSet> globalDescriptorSets(SwapChain::MAX_FRAMES_IN_FLIGHT);
         for(int i = 0; i < globalDescriptorSets.size(); i++){
             auto bufferInfo = uboBuffers[i]->descriptorInfo();
             JCATDescriptorWriter(*globalSetLayout, *globalPool)
                 .writeBuffer(0, &bufferInfo)
+                //.writeImage(1, &imageInfo)
                 .build(globalDescriptorSets[i]);
         }
 
@@ -179,7 +191,7 @@ namespace JCAT {
     void Application3D::loadGameObjects() {
         std::shared_ptr<JCATModel3D> cubeModel = createCubeModel(device, resourceManager, { .0f, .0f, .0f });
         std::shared_ptr<JCATModel3D> vaseModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/smooth_vase.obj", true);
-        std::shared_ptr<JCATModel3D> donutModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/CM_Donut_Scrap.obj", true);
+        std::shared_ptr<JCATModel3D> donutModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/cube.obj", true);
 	
         GameObject cube = GameObject::createGameObject();
         cube.model3D = cubeModel;
