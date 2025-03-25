@@ -189,13 +189,11 @@ namespace JCAT {
             }
         }
 
-        if(integratedScore > discreteScore)
-        {
+        if(integratedScore > discreteScore) {
             physicalDevice = integratedGPU;
             std::cout << "integrated GPU chosen" << std::endl; 
         }
-        else
-        {
+        else {
             physicalDevice = discreteGPU;
             std::cout << "discrete GPU chosen" << std::endl;
         }
@@ -312,8 +310,7 @@ namespace JCAT {
                 score += 100;
             }
         }
-        else
-        {
+        else {
             std::cerr << "Device does not support the required extensions!" << std::endl; //determine which part if any causes a false return
             score = -1;
         }
@@ -322,8 +319,7 @@ namespace JCAT {
         vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
         
         bool samplerAnisotropySupported = supportedFeatures.samplerAnisotropy;
-        if(!samplerAnisotropySupported)
-        {
+        if (!samplerAnisotropySupported) {
             std::cerr << "Device does not support sampler anisotropy!" << std::endl; //determine which part if any causes a false return
             score -= 50;
         }
