@@ -35,5 +35,5 @@ void main() {
 		fragColor = color;
 	}
 
-	fragUV = uv;
+	fragUV = vec2(uv.x, 1.0 - uv.y);
 }

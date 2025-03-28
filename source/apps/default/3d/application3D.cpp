@@ -23,7 +23,7 @@ namespace JCAT {
         globalPool = JCATDescriptorPool::Builder(device)
             .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
             .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
-            //.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+            .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, SwapChain::MAX_FRAMES_IN_FLIGHT) //
             .build();
         loadGameObjects();
     }
@@ -53,22 +53,24 @@ namespace JCAT {
 
         auto globalSetLayout = JCATDescriptorSetLayout::Builder(device)
             .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
-            //.addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+            .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT) //
             .build();
 
-        // Texture texture = Texture(device, resourceManager, "../textures/gradient.png");
+        //
+        Texture texture = Texture(device, resourceManager, "../textures/image.jpg");
 
-        // VkDescriptorImageInfo imageInfo {};
-        // imageInfo.sampler = texture.getSampler();
-        // imageInfo.imageView = texture.getImageView();
-        // imageInfo.imageLayout = texture.getImageLayout();
+        VkDescriptorImageInfo imageInfo {};
+        imageInfo.sampler = texture.getSampler();
+        imageInfo.imageView = texture.getImageView();
+        imageInfo.imageLayout = texture.getImageLayout();
+        //
         
         std::vector<VkDescriptorSet> globalDescriptorSets(SwapChain::MAX_FRAMES_IN_FLIGHT);
         for(int i = 0; i < globalDescriptorSets.size(); i++){
             auto bufferInfo = uboBuffers[i]->descriptorInfo();
             JCATDescriptorWriter(*globalSetLayout, *globalPool)
                 .writeBuffer(0, &bufferInfo)
-                //.writeImage(1, &imageInfo)
+                .writeImage(1, &imageInfo) //
                 .build(globalDescriptorSets[i]);
         }
 
@@ -132,53 +134,53 @@ namespace JCAT {
     // Courtesy of tutorial for this:
     std::unique_ptr<JCATModel3D> createCubeModel(DeviceSetup& device, ResourceManager& resourceManager, glm::vec3 offset) {
         std::vector<JCATModel3D::Vertex3D> vertices{
-            // left face
-            {{-.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}},
-            {{-.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}},
-            {{-.5f, -.5f, .5f}, {0.5f, 0.3f, 0.1f}},
-            {{-.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}},
-            {{-.5f, .5f, -.5f}, {0.5f, 0.3f, 0.1f}},
-            {{-.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}},
-
-            // right face
-            {{.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}},
-            {{.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}},
-            {{.5f, -.5f, .5f}, {0.5f, 0.3f, 0.1f}},
-            {{.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}},
-            {{.5f, .5f, -.5f}, {0.5f, 0.3f, 0.1f}},
-            {{.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}},
-
-            // top face (y axis points down)
-            {{-.5f, -.5f, -.5f}, {.1f, .8f, .1f}},
-            {{.5f, -.5f, .5f}, {.1f, .8f, .1f}},
-            {{-.5f, -.5f, .5f}, {.1f, .8f, .1f}},
-            {{-.5f, -.5f, -.5f}, {.1f, .8f, .1f}},
-            {{.5f, -.5f, -.5f}, {.1f, .8f, .1f}},
-            {{.5f, -.5f, .5f}, {.1f, .8f, .1f}},
-
-            // bottom face
-            {{-.5f, .5f, -.5f}, {0.3f, 0.15f, 0.05f}},
-            {{.5f, .5f, .5f}, {0.3f, 0.15f, 0.05f}},
-            {{-.5f, .5f, .5f}, {0.3f, 0.15f, 0.05f}},
-            {{-.5f, .5f, -.5f}, {0.3f, 0.15f, 0.05f}},
-            {{.5f, .5f, -.5f}, {0.3f, 0.15f, 0.05f}},
-            {{.5f, .5f, .5f}, {0.3f, 0.15f, 0.05f}},
-
-            // nose face
-            {{-.5f, -.5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
-            {{.5f, .5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
-            {{-.5f, .5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
-            {{-.5f, -.5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
-            {{.5f, -.5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
-            {{.5f, .5f, 0.5f}, {0.6f, 0.4f, 0.2f}},
-
-            // tail face
-            {{-.5f, -.5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
-            {{.5f, .5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
-            {{-.5f, .5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
-            {{-.5f, -.5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
-            {{.5f, -.5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
-            {{.5f, .5f, -0.5f}, {0.4f, 0.2f, 0.1f}},
+            // Left face (X = -0.5)
+            {{-.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}, {-1.f, 0.f, 0.f}, {0.0f, 0.0f}},
+            {{-.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}, {-1.f, 0.f, 0.f}, {1.0f, 1.0f}},
+            {{-.5f, -.5f, .5f}, {0.5f, 0.3f, 0.1f}, {-1.f, 0.f, 0.f}, {1.0f, 0.0f}},
+            {{-.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}, {-1.f, 0.f, 0.f}, {0.0f, 0.0f}},
+            {{-.5f, .5f, -.5f}, {0.5f, 0.3f, 0.1f}, {-1.f, 0.f, 0.f}, {0.0f, 1.0f}},
+            {{-.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}, {-1.f, 0.f, 0.f}, {1.0f, 1.0f}},
+    
+            // Right face (X = 0.5)
+            {{.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}, {1.f, 0.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}, {1.f, 0.f, 0.f}, {1.0f, 1.0f}},
+            {{.5f, -.5f, .5f}, {0.5f, 0.3f, 0.1f}, {1.f, 0.f, 0.f}, {1.0f, 0.0f}},
+            {{.5f, -.5f, -.5f}, {0.5f, 0.3f, 0.1f}, {1.f, 0.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, -.5f}, {0.5f, 0.3f, 0.1f}, {1.f, 0.f, 0.f}, {0.0f, 1.0f}},
+            {{.5f, .5f, .5f}, {0.5f, 0.3f, 0.1f}, {1.f, 0.f, 0.f}, {1.0f, 1.0f}},
+    
+            // Top face (Y = -0.5, assuming Y-down)
+            {{-.5f, -.5f, -.5f}, {.1f, .8f, .1f}, {0.f, -1.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, -.5f, .5f}, {.1f, .8f, .1f}, {0.f, -1.f, 0.f}, {1.0f, 1.0f}},
+            {{-.5f, -.5f, .5f}, {.1f, .8f, .1f}, {0.f, -1.f, 0.f}, {0.0f, 1.0f}},
+            {{-.5f, -.5f, -.5f}, {.1f, .8f, .1f}, {0.f, -1.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, -.5f, -.5f}, {.1f, .8f, .1f}, {0.f, -1.f, 0.f}, {1.0f, 0.0f}},
+            {{.5f, -.5f, .5f}, {.1f, .8f, .1f}, {0.f, -1.f, 0.f}, {1.0f, 1.0f}},
+    
+            // Bottom face (Y = 0.5)
+            {{-.5f, .5f, -.5f}, {0.3f, 0.15f, 0.05f}, {0.f, 1.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, .5f}, {0.3f, 0.15f, 0.05f}, {0.f, 1.f, 0.f}, {1.0f, 1.0f}},
+            {{-.5f, .5f, .5f}, {0.3f, 0.15f, 0.05f}, {0.f, 1.f, 0.f}, {0.0f, 1.0f}},
+            {{-.5f, .5f, -.5f}, {0.3f, 0.15f, 0.05f}, {0.f, 1.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, -.5f}, {0.3f, 0.15f, 0.05f}, {0.f, 1.f, 0.f}, {1.0f, 0.0f}},
+            {{.5f, .5f, .5f}, {0.3f, 0.15f, 0.05f}, {0.f, 1.f, 0.f}, {1.0f, 1.0f}},
+    
+            // Front face (Z = 0.5)
+            {{-.5f, -.5f, 0.5f}, {0.6f, 0.4f, 0.2f}, {0.f, 0.f, 1.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, 0.5f}, {0.6f, 0.4f, 0.2f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f}},
+            {{-.5f, .5f, 0.5f}, {0.6f, 0.4f, 0.2f}, {0.f, 0.f, 1.f}, {0.0f, 1.0f}},
+            {{-.5f, -.5f, 0.5f}, {0.6f, 0.4f, 0.2f}, {0.f, 0.f, 1.f}, {0.0f, 0.0f}},
+            {{.5f, -.5f, 0.5f}, {0.6f, 0.4f, 0.2f}, {0.f, 0.f, 1.f}, {1.0f, 0.0f}},
+            {{.5f, .5f, 0.5f}, {0.6f, 0.4f, 0.2f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f}},
+    
+            // Back face (Z = -0.5)
+            {{-.5f, -.5f, -0.5f}, {0.4f, 0.2f, 0.1f}, {0.f, 0.f, -1.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, -0.5f}, {0.4f, 0.2f, 0.1f}, {0.f, 0.f, -1.f}, {1.0f, 1.0f}},
+            {{-.5f, .5f, -0.5f}, {0.4f, 0.2f, 0.1f}, {0.f, 0.f, -1.f}, {0.0f, 1.0f}},
+            {{-.5f, -.5f, -0.5f}, {0.4f, 0.2f, 0.1f}, {0.f, 0.f, -1.f}, {0.0f, 0.0f}},
+            {{.5f, -.5f, -0.5f}, {0.4f, 0.2f, 0.1f}, {0.f, 0.f, -1.f}, {1.0f, 0.0f}},
+            {{.5f, .5f, -0.5f}, {0.4f, 0.2f, 0.1f}, {0.f, 0.f, -1.f}, {1.0f, 1.0f}},
         };
 
         for (JCATModel3D::Vertex3D& v : vertices) {
@@ -191,7 +193,7 @@ namespace JCAT {
     void Application3D::loadGameObjects() {
         std::shared_ptr<JCATModel3D> cubeModel = createCubeModel(device, resourceManager, { .0f, .0f, .0f });
         std::shared_ptr<JCATModel3D> vaseModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/smooth_vase.obj", true);
-        std::shared_ptr<JCATModel3D> donutModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/cube.obj", true);
+        std::shared_ptr<JCATModel3D> donutModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/CM_Donut_Scrap.obj", true);
 	
         GameObject cube = GameObject::createGameObject();
         cube.model3D = cubeModel;
