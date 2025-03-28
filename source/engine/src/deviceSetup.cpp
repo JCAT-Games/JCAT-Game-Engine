@@ -8,6 +8,8 @@
 #include <unordered_set>
 
 namespace JCAT {
+    /// @brief constructor for the DeviceSetup class.
+    /// @param window reference to the window object.
     DeviceSetup::DeviceSetup(Window& window) : window(window) {
         createVulkanInstance();
         setupDebugMessenger();
@@ -17,6 +19,8 @@ namespace JCAT {
         createCommandPool();
     }
 
+    /// @brief Destructor for the DeviceSetup class.
+    /// Cleans up Vulkan resources and the window surface.
     DeviceSetup::~DeviceSetup() {
         vkDestroyCommandPool(device_, commandPool, nullptr);
         vkDestroyDevice(device_, nullptr);
@@ -29,14 +33,17 @@ namespace JCAT {
         vkDestroyInstance(instance, nullptr);
     }
 
+    /// @brief Returns the commandPool instance.
     VkCommandPool DeviceSetup::getCommandPool() {
         return commandPool;
     }
 
+    /// @brief Returns the Device instance.
     VkDevice DeviceSetup::device() {
         return device_;
     }
 
+    /// @brief Returns the windowSurface instance.
     VkSurfaceKHR DeviceSetup::windowSurface() {
         return windowSurface_;
     }
@@ -49,10 +56,17 @@ namespace JCAT {
         return presentQueue_;
     }
 
+    /// @brief Returns the details about the swap chain support.
     SwapChainSupportDetails DeviceSetup::getSwapChainSupport() {
         return querySwapChainSupport(physicalDevice);
     }
 
+    /// @brief Finds a supported depth format from the given candidates.
+    /// @param candidates The list of candidate formats.
+    /// @param tiling The image tiling type (linear or optimal).
+    /// @param features The format feature flags to check against.
+    /// @return The first supported depth format found.
+    /// @throws std::runtime_error if no supported depth format is found.
     VkFormat DeviceSetup::findSupportedDepthFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
         for (VkFormat format : candidates) {
             VkFormatProperties props;
@@ -69,6 +83,11 @@ namespace JCAT {
         throw std::runtime_error("Failed to find supported depth format for swap chain!");
     }
 
+    /// @brief Finds a suitable memory type for the given type filter and properties.
+    /// @param typeFilter The type filter for the memory type.
+    /// @param properties The required memory properties (e.g., host visible, device local).
+    /// @return The index of the suitable memory type.
+    /// @throws std::runtime_error if no suitable memory type is found.
     uint32_t DeviceSetup::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
         VkPhysicalDeviceMemoryProperties memProperties;
         vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
@@ -82,10 +101,15 @@ namespace JCAT {
         throw std::runtime_error("Failed to find suitable memory type!");
     }
 
+    /// @brief Finds the queue families for the physical device.
+    /// @return A QueueFamilyIndices structure containing the indices of the graphics and present families.
     QueueFamilyIndices DeviceSetup::findPhysicalQueueFamilies() {
         return findQueueFamilies(physicalDevice);
     }
 
+    /// @brief Creates a Vulkan instance.
+    /// @throws std::runtime_error if the instance creation fails.
+    /// @throws std::runtime_error if validation layers are requested but not supported.
     void DeviceSetup::createVulkanInstance() {
         // Check if validation layers are requested
         if (enableValidationLayers && !checkValidationLayerSupport()) {
@@ -133,10 +157,14 @@ namespace JCAT {
         hasGLFWRequiredInstanceExtensions();
     }
 
+    /// @brief creates a window surface for the Vulkan instance.
     void DeviceSetup::createWindowSurface() {
         window.createWindowSurface(instance, &windowSurface_);
     }
 
+    /// @brief picks the physical device for the Vulkan instance.
+    /// @throws std::runtime_error if no suitable GPU is found.
+    /// @throws std::runtime_error if the GPU does not support the required extensions.
     void DeviceSetup::pickPhysicalDevice() {
         VkPhysicalDevice integratedGPU = VK_NULL_HANDLE;
         VkPhysicalDevice discreteGPU = VK_NULL_HANDLE;
@@ -222,6 +250,8 @@ namespace JCAT {
         properties = deviceProperties; 
     }
 
+    /// @brief Creates a logical device for the physical device.
+    /// @throws std::runtime_error if the logical device creation fails.
     void DeviceSetup::createLogicalDevice() {
         QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
@@ -268,6 +298,8 @@ namespace JCAT {
         vkGetDeviceQueue(device_, indices.presentFamily, 0, &presentQueue_);
     }
 
+    /// @brief Creates a command pool for the logical device.
+    /// @throws std::runtime_error if the command pool creation fails.
     void DeviceSetup::createCommandPool() {
         QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
 
@@ -281,6 +313,8 @@ namespace JCAT {
         }
     }
 
+    /// @brief Populates the debug messenger create info structure.
+    /// @throws std::runtime_error if the debug messenger creation fails.
     void DeviceSetup::setupDebugMessenger() {
         if (!enableValidationLayers) {
             return;
@@ -296,6 +330,10 @@ namespace JCAT {
         }
     }
 
+    /// @brief determines if the device is suitable for the application.
+    /// @param device The physical device to check.
+    /// @param score The score of the device.
+    /// @return True if the device is suitable, false otherwise.
     bool DeviceSetup::isDeviceSuitable(VkPhysicalDevice device, int& score) {
         QueueFamilyIndices indices = findQueueFamilies(device);
         
@@ -360,6 +398,8 @@ namespace JCAT {
         return indices.isComplete() && extensionsSupported && sampleRateShadingSupported && geometryShaderSupported;
     }
 
+    /// @brief finds the required GLFW extensions for the Vulkan instance.
+    /// @return returns the required GLFW extensions.
     std::vector<const char*> DeviceSetup::getRequiredGLFWExtensions() {
         uint32_t glfwRequiredExtensionCount = 0;
         const char** glfwExtensions;
@@ -374,6 +414,8 @@ namespace JCAT {
         return glfwRequiredExtensions;
     }
 
+    /// @brief checks if the validation layers are supported by the instance.
+    /// @return returns true if the validation layers are supported, false otherwise.
     bool DeviceSetup::checkValidationLayerSupport() {
         uint32_t layerCount;
         vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -399,6 +441,8 @@ namespace JCAT {
         return true;
     }
 
+    /// @brief checks if the required GLFW extensions are available.
+    /// @throws std::runtime_error if any required GLFW extension is missing.
     void DeviceSetup::hasGLFWRequiredInstanceExtensions() {
         uint32_t glfwExtensionCount = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &glfwExtensionCount, nullptr);
@@ -473,6 +517,9 @@ namespace JCAT {
         createInfo.pUserData = nullptr;
     }
 
+    /// @brief checks if the device supports the required extensions.
+    /// @param device the physical device to check.
+    /// @return true if the device supports the required extensions, false otherwise. 
     bool DeviceSetup::checkDeviceExtensionSupport(VkPhysicalDevice device) {
         uint32_t extensionCount = 0;
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
@@ -502,6 +549,9 @@ namespace JCAT {
         return true;
     }
 
+    /// @brief queries the swap chain support for the given physical device.
+    /// @param device The physical device to query.
+    /// @return A SwapChainSupportDetails structure containing the swap chain support details.
     SwapChainSupportDetails DeviceSetup::querySwapChainSupport(VkPhysicalDevice device) {
         SwapChainSupportDetails swapChainDetails;
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, windowSurface_, &swapChainDetails.capabilities);
@@ -530,6 +580,8 @@ namespace JCAT {
         return swapChainDetails;
     }
 
+    /// @brief checks if the system is on battery power.
+    /// @return true if the system is on battery power, false otherwise.
     bool DeviceSetup::isOnBatteryPower() {
         #if defined(_WIN32) || defined(_WIN64)
             SYSTEM_POWER_STATUS powerStatus;
@@ -553,6 +605,12 @@ namespace JCAT {
         #endif
     }
 
+    /// @brief creates a debug utils messenger for the Vulkan instance.
+    /// @param instance The Vulkan instance.
+    /// @param pCreateInfo The create info for the debug messenger.
+    /// @param pAllocator The allocator for the debug messenger.
+    /// @param pDebugMessenger The debug messenger to create.
+    /// @return VK_SUCCESS if the debug messenger is created successfully, otherwise an error code.
     VkResult DeviceSetup::createDebugUtilsMessenger(VkInstance instance, 
                                                 const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, 
                                                 const VkAllocationCallbacks* pAllocator, 
@@ -570,6 +628,11 @@ namespace JCAT {
         }
     }
 
+    /// @brief destroys the debug utils messenger for the Vulkan instance.
+    /// @param instance The Vulkan instance.
+    /// @param debugMessenger The debug messenger to destroy.
+    /// @param pAllocator The allocator for the debug messenger.
+    /// @throws std::runtime_error if the debug messenger destruction fails.
     void DeviceSetup::destroyDebugUtilsMessengerEXT(VkInstance instance, 
                                                     VkDebugUtilsMessengerEXT debugMessenger, 
                                                     const VkAllocationCallbacks* pAllocator) {
@@ -584,6 +647,12 @@ namespace JCAT {
         }
     }
 
+    /// @brief the debug callback function for the debug messenger.
+    /// @param messageSeverity The severity of the message.
+    /// @param messageType The type of the message.
+    /// @param pCallbackData The callback data for the message.
+    /// @param pUserData The user data for the callback.
+    /// @return VK_FALSE to indicate that the message should not be handled further.
     VKAPI_ATTR VkBool32 VKAPI_CALL DeviceSetup::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                                                               VkDebugUtilsMessageTypeFlagsEXT messageType,
                                                               const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
