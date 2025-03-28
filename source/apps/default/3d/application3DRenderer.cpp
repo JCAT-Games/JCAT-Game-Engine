@@ -7,6 +7,7 @@ namespace JCAT {
         glm::mat4 modelMatrix { 1.0f };
         glm::mat4 normalMatrix { 1.0f };
         uint32_t hasLighting = 0;
+        uint32_t hasTexture = 0;
     };
 
     Application3DRenderer::Application3DRenderer(
@@ -73,6 +74,7 @@ namespace JCAT {
             push.modelMatrix = obj.transform.modelMatrix();
             push.normalMatrix = obj.transform.normalMatrix();
             push.hasLighting = obj.hasLighting;
+            push.hasTexture = obj.hasTexture;
 
             vkCmdPushConstants(frameInfo.commandBuffer, 
                                pipelineLayout, 
