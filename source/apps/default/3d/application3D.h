@@ -9,6 +9,7 @@
 #include "./engine/resourceManager.h"
 #include "./engine/3d/gameObject.h"
 #include "./engine/renderer.h"
+#include "./engine/descriptors.h"
 
 namespace JCAT {
     class Application3D {
@@ -31,6 +32,7 @@ namespace JCAT {
             ResourceManager resourceManager{device};
             Renderer renderer{ window, device, resourceManager, "3D", false };
 
+            std::unique_ptr<JCATDescriptorPool> globalPool{};
             std::vector<GameObject> gameObjects;
     };
 };
