@@ -200,6 +200,7 @@ namespace JCAT {
         cube.transform.translation = { .0f, .0f, 2.5f };
         cube.transform.scale = { .5f, .5f, .5f };
         cube.hasLighting = 0;
+        cube.hasTexture = 0;
         gameObjects.push_back(std::move(cube));
 
         GameObject cube2 = GameObject::createGameObject();
@@ -207,6 +208,7 @@ namespace JCAT {
         cube2.transform.translation = { .5f, .0f, 4.0f };
         cube2.transform.scale = { 1.0f, 1.0f, 1.0f };
         cube2.hasLighting = 0;
+        cube2.hasTexture = 0;
         gameObjects.push_back(std::move(cube2));
 
         GameObject cube3 = GameObject::createGameObject();
@@ -214,6 +216,7 @@ namespace JCAT {
         cube3.transform.translation = { -.5f, -.5f, 1.0f };
         cube3.transform.scale = { 1.0f, .5f, 1.0f };
         cube3.hasLighting = 0;
+        cube3.hasTexture = 0;
         gameObjects.push_back(std::move(cube3));
 
         GameObject cube4 = GameObject::createGameObject();
@@ -221,6 +224,7 @@ namespace JCAT {
         cube4.transform.translation = { 1.75f, 0.75f, 1.5f };
         cube4.transform.scale = { 1.0f, 0.5f, 1.5f };
         cube4.hasLighting = 0;
+        cube4.hasTexture = 0;
         gameObjects.push_back(std::move(cube4));
 
         GameObject vase = GameObject::createGameObject();
@@ -228,6 +232,7 @@ namespace JCAT {
         vase.transform.translation = { -.5f, -10.5f, 1.0f };
         vase.transform.scale = { 1.0f, 1.0f, 1.0f };
         vase.hasLighting = 1;
+        vase.hasTexture = 1;
         gameObjects.push_back(std::move(vase));
 
         GameObject donut = GameObject::createGameObject();
@@ -235,6 +240,7 @@ namespace JCAT {
         donut.transform.translation = { 1.75f, -10.75f, 1.5f };
         donut.transform.scale = { 1.0f, 1.0f, 1.0f };
         donut.hasLighting = 1;
+        donut.hasTexture = 1;
         gameObjects.push_back(std::move(donut));
 
         const int TERRAIN_WIDTH = 20;
@@ -256,6 +262,7 @@ namespace JCAT {
                     noiseCube.transform.translation = { x, -y, z };
                     noiseCube.transform.scale = { 1.0f, 1.0f, 1.0f };
                     noiseCube.hasLighting = 0;
+                    noiseCube.hasTexture = 0;
                     gameObjects.push_back(std::move(noiseCube));
                 }
             }

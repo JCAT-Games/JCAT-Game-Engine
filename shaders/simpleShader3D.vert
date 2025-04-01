@@ -17,6 +17,7 @@ layout(push_constant) uniform Push {
 	mat4 modelMatrix;
 	mat4 normalMatrix;
 	uint hasLighting;
+	uint hasTexture;
 } push;
 
 const float AMBIENT = 0.05;
