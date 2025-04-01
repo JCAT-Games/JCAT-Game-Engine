@@ -148,6 +148,8 @@ namespace JCAT {
             uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
             QueueFamilyIndices findPhysicalQueueFamilies();
 
+            VkPhysicalDevice getPhysicalDevice() { return physicalDevice; }
+
             VkPhysicalDeviceProperties properties;
         private:
             #ifndef NDEBUG

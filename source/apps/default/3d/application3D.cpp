@@ -57,7 +57,7 @@ namespace JCAT {
             .build();
 
         //
-        Texture texture = Texture(device, resourceManager, "../textures/gradient.png");
+        Texture texture = Texture(device, resourceManager, "../textures/grass.jpg");
 
         VkDescriptorImageInfo imageInfo {};
         imageInfo.sampler = texture.getSampler();
@@ -214,7 +214,7 @@ namespace JCAT {
         GameObject cube3 = GameObject::createGameObject();
         cube3.model3D = cubeModel;
         cube3.transform.translation = { -.5f, -.5f, 1.0f };
-        cube3.transform.scale = { 1.0f, 0.5f, 1.0f };
+        cube3.transform.scale = { 1.0f, .5f, 1.0f };
         cube3.hasLighting = 0;
         cube3.hasTexture = 0;
         gameObjects.push_back(std::move(cube3));
