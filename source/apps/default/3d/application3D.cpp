@@ -57,7 +57,7 @@ namespace JCAT {
             .build();
 
         //
-        Texture texture = Texture(device, resourceManager, "../textures/image.jpg");
+        Texture texture = Texture(device, resourceManager, "../textures/grass.jpg");
 
         VkDescriptorImageInfo imageInfo {};
         imageInfo.sampler = texture.getSampler();
@@ -193,7 +193,7 @@ namespace JCAT {
     void Application3D::loadGameObjects() {
         std::shared_ptr<JCATModel3D> cubeModel = createCubeModel(device, resourceManager, { .0f, .0f, .0f });
         std::shared_ptr<JCATModel3D> vaseModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/smooth_vase.obj", true);
-        std::shared_ptr<JCATModel3D> donutModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/cube.obj", true);
+        std::shared_ptr<JCATModel3D> donutModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/CM_Donut_Scrap.obj", true);
 	
         GameObject cube = GameObject::createGameObject();
         cube.model3D = cubeModel;
@@ -212,7 +212,7 @@ namespace JCAT {
         GameObject cube3 = GameObject::createGameObject();
         cube3.model3D = cubeModel;
         cube3.transform.translation = { -.5f, -.5f, 1.0f };
-        cube3.transform.scale = { 1.0f, 0.5f, 1.0f };
+        cube3.transform.scale = { 1.0f, .5f, 1.0f };
         cube3.hasLighting = 0;
         gameObjects.push_back(std::move(cube3));
 

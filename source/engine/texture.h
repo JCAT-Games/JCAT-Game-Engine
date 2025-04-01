@@ -22,7 +22,9 @@ namespace JCAT {
 
         private:
             void transitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout);
+            void generateMipmaps();
 
+            int width, height, mipLevels;
             DeviceSetup& device;
             ResourceManager& resourceManager;
             VkImage image;
