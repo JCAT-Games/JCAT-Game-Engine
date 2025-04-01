@@ -57,7 +57,7 @@ namespace JCAT {
             .build();
 
         //
-        Texture texture = Texture(device, resourceManager, "../textures/grass.jpg");
+        Texture texture = Texture(device, resourceManager, "../textures/cobble.png");
 
         VkDescriptorImageInfo imageInfo {};
         imageInfo.sampler = texture.getSampler();
@@ -190,8 +190,70 @@ namespace JCAT {
         return std::make_unique<JCATModel3D>(device, resourceManager, vertices);
     }
 
+    std::unique_ptr<JCATModel3D> createWhiteCubeModel(DeviceSetup& device, ResourceManager& resourceManager, glm::vec3 offset) {
+        std::vector<JCATModel3D::Vertex3D> vertices{
+            // Left face (X = -0.5)
+            {{-.5f, -.5f, -.5f}, {1.0f, 1.0f, 1.0f}, {-1.f, 0.f, 0.f}, {0.0f, 0.0f}},
+            {{-.5f, .5f, .5f}, {1.0f, 1.0f, 1.0f}, {-1.f, 0.f, 0.f}, {1.0f, 1.0f}},
+            {{-.5f, -.5f, .5f}, {1.0f, 1.0f, 1.0f}, {-1.f, 0.f, 0.f}, {1.0f, 0.0f}},
+            {{-.5f, -.5f, -.5f}, {1.0f, 1.0f, 1.0f}, {-1.f, 0.f, 0.f}, {0.0f, 0.0f}},
+            {{-.5f, .5f, -.5f}, {1.0f, 1.0f, 1.0f}, {-1.f, 0.f, 0.f}, {0.0f, 1.0f}},
+            {{-.5f, .5f, .5f}, {1.0f, 1.0f, 1.0f}, {-1.f, 0.f, 0.f}, {1.0f, 1.0f}},
+    
+            // Right face (X = 0.5)
+            {{.5f, -.5f, -.5f}, {1.0f, 1.0f, 1.0f}, {1.f, 0.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, .5f}, {1.0f, 1.0f, 1.0f}, {1.f, 0.f, 0.f}, {1.0f, 1.0f}},
+            {{.5f, -.5f, .5f}, {1.0f, 1.0f, 1.0f}, {1.f, 0.f, 0.f}, {1.0f, 0.0f}},
+            {{.5f, -.5f, -.5f}, {1.0f, 1.0f, 1.0f}, {1.f, 0.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, -.5f}, {1.0f, 1.0f, 1.0f}, {1.f, 0.f, 0.f}, {0.0f, 1.0f}},
+            {{.5f, .5f, .5f}, {1.0f, 1.0f, 1.0f}, {1.f, 0.f, 0.f}, {1.0f, 1.0f}},
+    
+            // Top face (Y = -0.5, assuming Y-down)
+            {{-.5f, -.5f, -.5f}, {1.0f, 1.0f, 1.0f}, {0.f, -1.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, -.5f, .5f}, {1.0f, 1.0f, 1.0f}, {0.f, -1.f, 0.f}, {1.0f, 1.0f}},
+            {{-.5f, -.5f, .5f}, {1.0f, 1.0f, 1.0f}, {0.f, -1.f, 0.f}, {0.0f, 1.0f}},
+            {{-.5f, -.5f, -.5f}, {1.0f, 1.0f, 1.0f}, {0.f, -1.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, -.5f, -.5f}, {1.0f, 1.0f, 1.0f}, {0.f, -1.f, 0.f}, {1.0f, 0.0f}},
+            {{.5f, -.5f, .5f}, {1.0f, 1.0f, 1.0f}, {0.f, -1.f, 0.f}, {1.0f, 1.0f}},
+    
+            // Bottom face (Y = 0.5)
+            {{-.5f, .5f, -.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 1.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, .5f}, {1.0f, 1.0f, 1.0f}, {0.f, 1.f, 0.f}, {1.0f, 1.0f}},
+            {{-.5f, .5f, .5f}, {1.0f, 1.0f, 1.0f}, {0.f, 1.f, 0.f}, {0.0f, 1.0f}},
+            {{-.5f, .5f, -.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 1.f, 0.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, -.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 1.f, 0.f}, {1.0f, 0.0f}},
+            {{.5f, .5f, .5f}, {1.0f, 1.0f, 1.0f}, {0.f, 1.f, 0.f}, {1.0f, 1.0f}},
+    
+            // Front face (Z = 0.5)
+            {{-.5f, -.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, 1.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f}},
+            {{-.5f, .5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, 1.f}, {0.0f, 1.0f}},
+            {{-.5f, -.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, 1.f}, {0.0f, 0.0f}},
+            {{.5f, -.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, 1.f}, {1.0f, 0.0f}},
+            {{.5f, .5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f}},
+    
+            // Back face (Z = -0.5)
+            {{-.5f, -.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, -1.f}, {0.0f, 0.0f}},
+            {{.5f, .5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, -1.f}, {1.0f, 1.0f}},
+            {{-.5f, .5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, -1.f}, {0.0f, 1.0f}},
+            {{-.5f, -.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, -1.f}, {0.0f, 0.0f}},
+            {{.5f, -.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, -1.f}, {1.0f, 0.0f}},
+            {{.5f, .5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.f, 0.f, -1.f}, {1.0f, 1.0f}},
+        };
+    
+        // Just in case, force them to be white again
+        for (JCATModel3D::Vertex3D& v : vertices) {
+            v.position += offset;
+            v.color = {1.0f, 1.0f, 1.0f};  // Make sure every vertex is white
+        }
+    
+        return std::make_unique<JCATModel3D>(device, resourceManager, vertices);
+    }
+
     void Application3D::loadGameObjects() {
         std::shared_ptr<JCATModel3D> cubeModel = createCubeModel(device, resourceManager, { .0f, .0f, .0f });
+        std::shared_ptr<JCATModel3D> whiteCubeModel = createWhiteCubeModel(device, resourceManager, { .0f, .0f, .0f });
+        std::shared_ptr<JCATModel3D> betterCubeModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/cube.obj", true);
         std::shared_ptr<JCATModel3D> vaseModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/smooth_vase.obj", true);
         std::shared_ptr<JCATModel3D> donutModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/CM_Donut_Scrap.obj", true);
 	
@@ -243,8 +305,8 @@ namespace JCAT {
         donut.hasTexture = 1;
         gameObjects.push_back(std::move(donut));
 
-        const int TERRAIN_WIDTH = 20;
-        const int TERRAIN_DEPTH = 20;
+        const int TERRAIN_WIDTH = 100;
+        const int TERRAIN_DEPTH = 100;
         const int MAX_HEIGHT = 30;
         const float SCALE = 0.1f;
         const float AMPLITUDE = 10.0f;
@@ -258,11 +320,11 @@ namespace JCAT {
 
                 for (int y = 0; y <= height; y++) {
                     GameObject noiseCube = GameObject::createGameObject();
-                    noiseCube.model3D = cubeModel;
+                    noiseCube.model3D = whiteCubeModel;
                     noiseCube.transform.translation = { x, -y, z };
                     noiseCube.transform.scale = { 1.0f, 1.0f, 1.0f };
-                    noiseCube.hasLighting = 0;
-                    noiseCube.hasTexture = 0;
+                    noiseCube.hasLighting = 1;
+                    noiseCube.hasTexture = 1;
                     gameObjects.push_back(std::move(noiseCube));
                 }
             }
