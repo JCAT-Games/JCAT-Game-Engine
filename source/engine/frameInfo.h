@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FRAME_INFO_H
+#define FRAME_INFO_H
 
 #include "./3d/camera3D.h"
 
@@ -13,4 +14,6 @@ namespace JCAT {
         VkDescriptorSet globalDescriptorSet;
     };
 }
+
+#endif
 

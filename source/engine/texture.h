@@ -1,11 +1,11 @@
-#pragma once
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
 #include "./deviceSetup.h"
 #include "./resourceManager.h"
 #include <string>
 
 namespace JCAT {
-
     class Texture {
         public:
             Texture(DeviceSetup &device, ResourceManager &resourceManager, const std::string &filepath);
@@ -35,5 +35,6 @@ namespace JCAT {
             VkImageLayout imageLayout;
 
     };
-
 }
+
+#endif

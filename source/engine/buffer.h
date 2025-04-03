@@ -3,7 +3,8 @@
  *  https://youtu.be/may_GMkfs5k?si=MeXVJNJYlBR6u8HZ
  */
 
-#pragma once
+#ifndef BUFFER_H
+#define BUFFER_H
 
 #include "./engine/deviceSetup.h"
 #include "./engine/resourceManager.h"
@@ -164,5 +165,6 @@ namespace JCAT
         VkBufferUsageFlags usageFlags;
         VkMemoryPropertyFlags memoryPropertyFlags;
     };
-
 }
+
+#endif
