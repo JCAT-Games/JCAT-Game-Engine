@@ -5,7 +5,7 @@ namespace JCAT {
 
     glm::mat4 TransformObject::modelMatrix() {
         /*
-            How the transformation matrix is structured:
+            How the model matrix is structured:
 
         */
 
@@ -21,7 +21,7 @@ namespace JCAT {
         const float cy = glm::cos(rotation.y);
         const float sy = glm::sin(rotation.y);
 
-        // Creating transformation matrix
+        // Creating model matrix
         glm::mat4 modelMatrix = {
             {
                 scale.x * (cy * cz + sy * sx * sz), scale.x * (cx * sz), scale.x * (cy * sx * sz - cz * sy), 0.0f,

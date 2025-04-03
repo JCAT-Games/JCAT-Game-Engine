@@ -14,8 +14,7 @@
 namespace JCAT {
     class Application3DRenderer {
         public:
-            Application3DRenderer(
-                DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+            Application3DRenderer(DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
             ~Application3DRenderer();
 
             Application3DRenderer(const Application3DRenderer&) = delete;

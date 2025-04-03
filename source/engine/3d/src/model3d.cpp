@@ -157,17 +157,6 @@ namespace JCAT {
             vkUnmapMemory(device.device(), vertexBufferOldMemory);
         }
         else {
-            // VkBuffer stagingBuffer;
-            // VkDeviceMemory stagingBufferMemory;
-
-            // resourceManager.createBuffer(
-            //     bufferSize,
-            //     VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-            //     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-            //     stagingBuffer,
-            //     stagingBufferMemory
-            // );
-
             // Create new staging Buffer in place of a vertex buffer
             JCATBuffer stagingBuffer{
                 device,
@@ -181,11 +170,6 @@ namespace JCAT {
             stagingBuffer.map();
             stagingBuffer.writeToBuffer((void *)vertices.data());
 
-            // void* modelData;
-            // vkMapMemory(device.device(), stagingBufferMemory, 0, bufferSize, 0, &modelData);
-            // memcpy(modelData, vertices.data(), static_cast<size_t>(bufferSize));
-            // vkUnmapMemory(device.device(), stagingBufferMemory);
-
             // Define the vertex buffer
             vertexBuffer = std::make_unique<JCATBuffer>(
                 device,
@@ -196,18 +180,7 @@ namespace JCAT {
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
             );
 
-            // resourceManager.createBuffer(
-            //     bufferSize,
-            //     VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-            //     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            //     vertexBuffer,
-            //     vertexBufferMemory
-            // );
-
             resourceManager.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), bufferSize);
-        
-            // vkDestroyBuffer(device.device(), stagingBuffer, nullptr);
-            // vkFreeMemory(device.device(), stagingBufferMemory, nullptr);
         }
     }
 
@@ -249,23 +222,8 @@ namespace JCAT {
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
             };
 
-            // VkBuffer stagingBuffer;
-            // VkDeviceMemory stagingBufferMemory;
-            // resourceManager.createBuffer(
-            //     bufferSize,
-            //     VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-            //     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-            //     stagingBuffer,
-            //     stagingBufferMemory
-            // );
-
             stagingBuffer.map();
             stagingBuffer.writeToBuffer((void*) indices.data());
-
-            // void* modelData;
-            // vkMapMemory(device.device(), stagingBufferMemory, 0, bufferSize, 0, &modelData);
-            // memcpy(modelData, indices.data(), static_cast<size_t>(bufferSize));
-            // vkUnmapMemory(device.device(), stagingBufferMemory);
 
             // Define index Buffer
             indexBuffer = std::make_unique<JCATBuffer>(
@@ -277,18 +235,7 @@ namespace JCAT {
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
             );
 
-            // resourceManager.createBuffer(
-            //     bufferSize,
-            //     VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-            //     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            //     indexBuffer,
-            //     indexBufferMemory
-            // );
-
             resourceManager.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), bufferSize);
-
-            // vkDestroyBuffer(device.device(), stagingBuffer, nullptr);
-            // vkFreeMemory(device.device(), stagingBufferMemory, nullptr);
         }
     }
 

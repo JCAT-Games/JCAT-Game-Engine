@@ -10,10 +10,7 @@ namespace JCAT {
         uint32_t hasTexture = 0;
     };
 
-    Application3DRenderer::Application3DRenderer(
-        DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
-         : device{d}, resourceManager{r}
-    {
+    Application3DRenderer::Application3DRenderer(DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout) : device{d}, resourceManager{r} {
         createPipelineLayout(globalSetLayout);
         createPipeline(renderPass);
     }

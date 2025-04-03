@@ -5,7 +5,6 @@
 #include "./apps/default/3d/application3DRenderer.h"
 #include "./apps/default/3d/perlinNoise3D.h"
 #include "./engine/buffer.h"
-
 #include "./engine/texture.h"
 
 #define GLM_FORCE_RADIANS
@@ -19,6 +18,11 @@
 #include <cassert>
 
 namespace JCAT {
+    struct GlobalUbo {
+        glm::mat4 projectionView{1.f};
+        glm::vec3 lightDirection = glm::normalize(glm::vec3{1.f, -3.f, -1.f});
+    };
+
     Application3D::Application3D() {
         globalPool = JCATDescriptorPool::Builder(device)
             .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
@@ -30,13 +34,7 @@ namespace JCAT {
 
     Application3D::~Application3D() {}
 
-    struct GlobalUbo {
-        glm::mat4 projectionView{1.f};
-        glm::vec3 lightDirection = glm::normalize(glm::vec3{1.f, -3.f, -1.f});
-    };
-
     void Application3D::run() {
-
         // Create and map global uniform buffers
         std::vector<std::unique_ptr<JCATBuffer> > uboBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
         for(int i = 0; i < uboBuffers.size(); i++){
@@ -48,29 +46,30 @@ namespace JCAT {
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
             );
+
             uboBuffers[i]->map();
         }
 
-        auto globalSetLayout = JCATDescriptorSetLayout::Builder(device)
+        std::unique_ptr<JCATDescriptorSetLayout> globalSetLayout = JCATDescriptorSetLayout::Builder(device)
             .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
-            .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT) //
+            .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
             .build();
 
-        //
+        // For adding textures (We need to add the ability to add mutiple textures in the future)
         Texture texture = Texture(device, resourceManager, "../textures/cobble.png");
 
+        // Bind texture to descriptor set
         VkDescriptorImageInfo imageInfo {};
         imageInfo.sampler = texture.getSampler();
         imageInfo.imageView = texture.getImageView();
         imageInfo.imageLayout = texture.getImageLayout();
-        //
         
         std::vector<VkDescriptorSet> globalDescriptorSets(SwapChain::MAX_FRAMES_IN_FLIGHT);
         for(int i = 0; i < globalDescriptorSets.size(); i++){
             auto bufferInfo = uboBuffers[i]->descriptorInfo();
             JCATDescriptorWriter(*globalSetLayout, *globalPool)
                 .writeBuffer(0, &bufferInfo)
-                .writeImage(1, &imageInfo) //
+                .writeImage(1, &imageInfo)
                 .build(globalDescriptorSets[i]);
         }
 
@@ -276,7 +275,7 @@ namespace JCAT {
         GameObject cube3 = GameObject::createGameObject();
         cube3.model3D = cubeModel;
         cube3.transform.translation = { -.5f, -.5f, 1.0f };
-        cube3.transform.scale = { 1.0f, .5f, 1.0f };
+        cube3.transform.scale = { 1.0f, 0.5f, 1.0f };
         cube3.hasLighting = 0;
         cube3.hasTexture = 0;
         gameObjects.push_back(std::move(cube3));
