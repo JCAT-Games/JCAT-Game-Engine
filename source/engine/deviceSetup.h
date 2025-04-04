@@ -147,6 +147,7 @@ namespace JCAT {
             VkFormat findSupportedDepthFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
             uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
             QueueFamilyIndices findPhysicalQueueFamilies();
+            VkPhysicalDevice getPhysicalDevice();
 
             VkPhysicalDeviceProperties properties;
         private:

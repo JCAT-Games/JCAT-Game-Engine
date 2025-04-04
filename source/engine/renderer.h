@@ -31,6 +31,8 @@ namespace JCAT {
 
             void beginSwapChainRenderPass(VkCommandBuffer commandBuffer);
             void endSwapChainRenderPass(VkCommandBuffer commandBuffer);
+
+            int getFrameIndex();
         private:
             void recreateSwapChain();
             void createCommandBuffers();

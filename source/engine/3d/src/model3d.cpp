@@ -93,8 +93,8 @@ namespace JCAT {
 
                 if (index.texcoord_index >= 0) {
                     vertex.uv = {
-                        attrib.normals[2 * index.texcoord_index + 0],
-                        attrib.normals[2 * index.texcoord_index + 1]
+                        attrib.texcoords[2 * index.texcoord_index + 0],
+                        attrib.texcoords[2 * index.texcoord_index + 1]
                     };
                 }
 
@@ -124,15 +124,7 @@ namespace JCAT {
         createIndexBuffers(builder.indices);
     }
 
-    JCATModel3D::~JCATModel3D() {
-        vkDestroyBuffer(device.device(), vertexBuffer, nullptr);
-        vkFreeMemory(device.device(), vertexBufferMemory, nullptr);
-
-        if (hasIndexBuffer) {
-            vkDestroyBuffer(device.device(), indexBuffer, nullptr);
-            vkFreeMemory(device.device(), indexBufferMemory, nullptr);
-        }
-    }
+    JCATModel3D::~JCATModel3D() {}
 
     std::unique_ptr<JCATModel3D> JCATModel3D::createModelFromFile(DeviceSetup& device, ResourceManager& resourceManager, const std::string& filepath, bool hasIndexBuffers) {
         ModelBuilder builder{};
@@ -148,50 +140,47 @@ namespace JCAT {
         assert(vertexCount >= 3 && "Vertex count must be at least 3!");
 
         VkDeviceSize bufferSize = sizeof(vertices[0]) * vertexCount;
+        uint32_t vertexSize = sizeof(vertices[0]);
 
         if (useStagingBuffers == false) {
             resourceManager.createBuffer(
                 bufferSize,
                 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                vertexBuffer,
-                vertexBufferMemory
+                vertexBufferOld,
+                vertexBufferOldMemory
             );
 
             void* modelData;
-            vkMapMemory(device.device(), vertexBufferMemory, 0, bufferSize, 0, &modelData);
+            vkMapMemory(device.device(), vertexBufferOldMemory, 0, bufferSize, 0, &modelData);
             memcpy(modelData, vertices.data(), static_cast<size_t>(bufferSize));
-            vkUnmapMemory(device.device(), vertexBufferMemory);
+            vkUnmapMemory(device.device(), vertexBufferOldMemory);
         }
         else {
-            VkBuffer stagingBuffer;
-            VkDeviceMemory stagingBufferMemory;
-
-            resourceManager.createBuffer(
-                bufferSize,
+            // Create new staging Buffer in place of a vertex buffer
+            JCATBuffer stagingBuffer{
+                device,
+                resourceManager,
+                vertexSize,
+                vertexCount,
                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                stagingBuffer,
-                stagingBufferMemory
-            );
+            };
 
-            void* modelData;
-            vkMapMemory(device.device(), stagingBufferMemory, 0, bufferSize, 0, &modelData);
-            memcpy(modelData, vertices.data(), static_cast<size_t>(bufferSize));
-            vkUnmapMemory(device.device(), stagingBufferMemory);
+            stagingBuffer.map();
+            stagingBuffer.writeToBuffer((void *)vertices.data());
 
-            resourceManager.createBuffer(
-                bufferSize,
+            // Define the vertex buffer
+            vertexBuffer = std::make_unique<JCATBuffer>(
+                device,
+                resourceManager,
+                vertexSize,
+                vertexCount,
                 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                vertexBuffer,
-                vertexBufferMemory
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
             );
 
-            resourceManager.copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
-        
-            vkDestroyBuffer(device.device(), stagingBuffer, nullptr);
-            vkFreeMemory(device.device(), stagingBufferMemory, nullptr);
+            resourceManager.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), bufferSize);
         }
     }
 
@@ -210,53 +199,53 @@ namespace JCAT {
                 bufferSize,
                 VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                indexBuffer,
-                indexBufferMemory
+                indexBufferOld,
+                indexBufferOldMemory
             );
 
             void* modelData;
-            vkMapMemory(device.device(), indexBufferMemory, 0, bufferSize, 0, &modelData);
+            vkMapMemory(device.device(), indexBufferOldMemory, 0, bufferSize, 0, &modelData);
             memcpy(modelData, indices.data(), static_cast<size_t>(bufferSize));
-            vkUnmapMemory(device.device(), indexBufferMemory);
+            vkUnmapMemory(device.device(), indexBufferOldMemory);
         }
         else {
-            VkBuffer stagingBuffer;
-            VkDeviceMemory stagingBufferMemory;
-            resourceManager.createBuffer(
-                bufferSize,
+
+            uint32_t indexSize = sizeof(indices[0]);
+
+            // Create new staging Buffer in place of index buffer
+            JCATBuffer stagingBuffer{
+                device,
+                resourceManager,
+                indexSize,
+                indexCount,
                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                stagingBuffer,
-                stagingBufferMemory
-            );
+            };
 
-            void* modelData;
-            vkMapMemory(device.device(), stagingBufferMemory, 0, bufferSize, 0, &modelData);
-            memcpy(modelData, indices.data(), static_cast<size_t>(bufferSize));
-            vkUnmapMemory(device.device(), stagingBufferMemory);
+            stagingBuffer.map();
+            stagingBuffer.writeToBuffer((void*) indices.data());
 
-            resourceManager.createBuffer(
-                bufferSize,
+            // Define index Buffer
+            indexBuffer = std::make_unique<JCATBuffer>(
+                device,
+                resourceManager,
+                indexSize,
+                indexCount,
                 VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                indexBuffer,
-                indexBufferMemory
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
             );
 
-            resourceManager.copyBuffer(stagingBuffer, indexBuffer, bufferSize);
-
-            vkDestroyBuffer(device.device(), stagingBuffer, nullptr);
-            vkFreeMemory(device.device(), stagingBufferMemory, nullptr);
+            resourceManager.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), bufferSize);
         }
     }
 
     void JCATModel3D::bind(VkCommandBuffer commandBuffer) {
-        VkBuffer buffers[] = { vertexBuffer };
+        VkBuffer buffers[] = { vertexBuffer->getBuffer() };
         VkDeviceSize offsets[] = { 0 };
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
     
         if (hasIndexBuffer) {
-            vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+            vkCmdBindIndexBuffer(commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
         }
     }
 
