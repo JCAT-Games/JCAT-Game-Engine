@@ -222,4 +222,8 @@ namespace JCAT {
 
         vkCmdEndRenderPass(commandBuffer);
     }
+
+    int Renderer::getFrameIndex() {
+        return currentFrameIndex;
+    }
 }

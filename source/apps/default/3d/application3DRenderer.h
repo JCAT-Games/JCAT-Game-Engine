@@ -9,19 +9,20 @@
 #include "./engine/deviceSetup.h"
 #include "./engine/resourceManager.h"
 #include "./engine/3d/gameObject.h"
+#include "./engine/frameInfo.h"
 
 namespace JCAT {
     class Application3DRenderer {
         public:
-            Application3DRenderer(DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass);
+            Application3DRenderer(DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
             ~Application3DRenderer();
 
             Application3DRenderer(const Application3DRenderer&) = delete;
             Application3DRenderer& operator=(const Application3DRenderer&) = delete;
 
-            void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<GameObject>& gameObjects, const Camera3D& camera);
+            void renderGameObjects(FrameInfo &frameInfo, std::vector<GameObject>& gameObjects);
         private:
-            void createPipelineLayout();
+            void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
             void createPipeline(VkRenderPass renderPass);
 
             DeviceSetup& device;

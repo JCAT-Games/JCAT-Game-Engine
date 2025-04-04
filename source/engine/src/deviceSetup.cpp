@@ -86,6 +86,10 @@ namespace JCAT {
         return findQueueFamilies(physicalDevice);
     }
 
+    VkPhysicalDevice DeviceSetup::getPhysicalDevice() {
+        return physicalDevice;
+    }
+
     void DeviceSetup::createVulkanInstance() {
         // Check if validation layers are requested
         if (enableValidationLayers && !checkValidationLayerSupport()) {

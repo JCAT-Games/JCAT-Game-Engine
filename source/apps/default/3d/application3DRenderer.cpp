@@ -4,13 +4,14 @@
 
 namespace JCAT {
     struct PushConstantData {
-        glm::mat4 transform { 1.0f };
+        glm::mat4 modelMatrix { 1.0f };
         glm::mat4 normalMatrix { 1.0f };
         uint32_t hasLighting = 0;
+        uint32_t hasTexture = 0;
     };
 
-    Application3DRenderer::Application3DRenderer(DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass) : device{d}, resourceManager{r} {
-        createPipelineLayout();
+    Application3DRenderer::Application3DRenderer(DeviceSetup& d, ResourceManager& r, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout) : device{d}, resourceManager{r} {
+        createPipelineLayout(globalSetLayout);
         createPipeline(renderPass);
     }
 
@@ -18,16 +19,18 @@ namespace JCAT {
         vkDestroyPipelineLayout(device.device(), pipelineLayout, nullptr);
     }
 
-    void Application3DRenderer::createPipelineLayout() {
+    void Application3DRenderer::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
         VkPushConstantRange pushConstantRange{};
         pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
         pushConstantRange.offset = 0;
         pushConstantRange.size = sizeof(PushConstantData);
 
+        std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
+
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutInfo.setLayoutCount = 0;
-        pipelineLayoutInfo.pSetLayouts = nullptr;
+        pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+        pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
         pipelineLayoutInfo.pushConstantRangeCount = 1;
         pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
@@ -51,26 +54,34 @@ namespace JCAT {
         std::cout << "Created Pipeline Successfully!" << std::endl;
     }
 
-    void Application3DRenderer::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<GameObject>& gameObjects, const Camera3D& camera) {
-        pipeline->bindPipeline(commandBuffer, GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE);
+    void Application3DRenderer::renderGameObjects(FrameInfo &frameInfo, std::vector<GameObject>& gameObjects) {
+        pipeline->bindPipeline(frameInfo.commandBuffer, GraphicsPipeline::PipelineType::SOLID_OBJECT_PIPELINE);
 
-        glm::mat4 projectionView = camera.getProjection() * camera.getView();
+        vkCmdBindDescriptorSets(
+            frameInfo.commandBuffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            pipelineLayout,
+            0, 1, 
+            &frameInfo.globalDescriptorSet,
+            0, nullptr
+        );
 
         for (GameObject& obj : gameObjects) {
             PushConstantData push{};
-            push.transform = projectionView * obj.transform.transformationMatrix();
+            push.modelMatrix = obj.transform.modelMatrix();
             push.normalMatrix = obj.transform.normalMatrix();
             push.hasLighting = obj.hasLighting;
+            push.hasTexture = obj.hasTexture;
 
-            vkCmdPushConstants(commandBuffer, 
+            vkCmdPushConstants(frameInfo.commandBuffer, 
                                pipelineLayout, 
                                VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 
                                0, 
                                sizeof(PushConstantData), 
                                &push);
 
-            obj.model3D->bind(commandBuffer);
-            obj.model3D->draw(commandBuffer);
+            obj.model3D->bind(frameInfo.commandBuffer);
+            obj.model3D->draw(frameInfo.commandBuffer);
         }
     }
 };

@@ -3,9 +3,9 @@
 namespace JCAT {
     using id_t = unsigned int;
 
-    glm::mat4 TransformObject::transformationMatrix() {
+    glm::mat4 TransformObject::modelMatrix() {
         /*
-            How the transformation matrix is structured:
+            How the model matrix is structured:
 
         */
 
@@ -21,8 +21,8 @@ namespace JCAT {
         const float cy = glm::cos(rotation.y);
         const float sy = glm::sin(rotation.y);
 
-        // Creating transformation matrix
-        glm::mat4 transformationMatrix = {
+        // Creating model matrix
+        glm::mat4 modelMatrix = {
             {
                 scale.x * (cy * cz + sy * sx * sz), scale.x * (cx * sz), scale.x * (cy * sx * sz - cz * sy), 0.0f,
             },
@@ -37,7 +37,7 @@ namespace JCAT {
             }
         };
 
-        return transformationMatrix;
+        return modelMatrix;
     }
 
     glm::mat3 TransformObject::normalMatrix() {
