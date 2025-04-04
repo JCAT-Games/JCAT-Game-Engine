@@ -133,7 +133,6 @@ namespace JCAT {
         vkCmdPipelineBarrier(commandBuffer, sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
         resourceManager.endSingleTimeCommands(commandBuffer);
-
     }
 
     void Texture::generateMipmaps() {
@@ -206,5 +205,4 @@ namespace JCAT {
 
         resourceManager.endSingleTimeCommands(commandBuffer);
     }
-
 }

@@ -50,21 +50,20 @@ namespace JCAT {
 
     class JCATDescriptorPool {
         public:
-            class Builder
-            {
-            public:
-                Builder(DeviceSetup &device) : device{device} {}
+            class Builder {
+                public:
+                    Builder(DeviceSetup &device) : device{device} {}
 
-                Builder &addPoolSize(VkDescriptorType descriptorType, uint32_t count);
-                Builder &setPoolFlags(VkDescriptorPoolCreateFlags flags);
-                Builder &setMaxSets(uint32_t count);
-                std::unique_ptr<JCATDescriptorPool> build() const;
+                    Builder &addPoolSize(VkDescriptorType descriptorType, uint32_t count);
+                    Builder &setPoolFlags(VkDescriptorPoolCreateFlags flags);
+                    Builder &setMaxSets(uint32_t count);
+                    std::unique_ptr<JCATDescriptorPool> build() const;
 
-            private:
-                DeviceSetup &device;
-                std::vector<VkDescriptorPoolSize> poolSizes{};
-                uint32_t maxSets = 1000;
-                VkDescriptorPoolCreateFlags poolFlags = 0;
+                private:
+                    DeviceSetup &device;
+                    std::vector<VkDescriptorPoolSize> poolSizes{};
+                    uint32_t maxSets = 1000;
+                    VkDescriptorPoolCreateFlags poolFlags = 0;
             };
 
             JCATDescriptorPool(
@@ -73,11 +72,11 @@ namespace JCAT {
                 VkDescriptorPoolCreateFlags poolFlags,
                 const std::vector<VkDescriptorPoolSize> &poolSizes);
             ~JCATDescriptorPool();
+
             JCATDescriptorPool(const JCATDescriptorPool &) = delete;
             JCATDescriptorPool &operator=(const JCATDescriptorPool &) = delete;
 
-            bool allocateDescriptor(
-                const VkDescriptorSetLayout descriptorSetLayout, VkDescriptorSet &descriptor) const;
+            bool allocateDescriptor(const VkDescriptorSetLayout descriptorSetLayout, VkDescriptorSet &descriptor) const;
 
             void freeDescriptors(std::vector<VkDescriptorSet> &descriptors) const;
 
