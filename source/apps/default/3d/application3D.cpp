@@ -16,6 +16,7 @@
 #include <chrono>
 #include <array>
 #include <cassert>
+#include <random>
 
 namespace JCAT {
     struct GlobalUbo {
@@ -306,13 +307,16 @@ namespace JCAT {
 
         const int TERRAIN_WIDTH = 100;
         const int TERRAIN_DEPTH = 100;
-        const int MAX_HEIGHT = 30;
-        const float SCALE = 0.1f;
-        const float AMPLITUDE = 10.0f;
+        const int MAX_HEIGHT = 50;
+        const float SCALE = 0.01f;
+        const float AMPLITUDE = 20.0f;
+
+        std::random_device rd;
+        unsigned int seed = rd();
 
         for (int x = 0; x < TERRAIN_WIDTH; x++) {
             for (int z = 0; z < TERRAIN_DEPTH; z++) {
-                PerlinNoise3D object;
+                PerlinNoise3D object(seed);
                 int height = static_cast<int>(PerlinNoise3D::generate3DPerlinNoise(object, x, z, 0.0f, SCALE, AMPLITUDE));
 
                 height = glm::clamp(height, 0, MAX_HEIGHT);

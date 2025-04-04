@@ -1,7 +1,25 @@
+#include <vector>
+#include <random>
+#include <numeric>
+#include <algorithm>
+
 #include "./apps/default/3d/perlinNoise3D.h"
 
 namespace JCAT {
-    PerlinNoise3D::PerlinNoise3D() {}
+    PerlinNoise3D::PerlinNoise3D(unsigned int seed = 0) {
+        std::vector<int> p(256);
+
+        // Fill with values from 0 to 255
+        std::iota(p.begin(), p.end(), 0);
+
+        std::default_random_engine engine(seed);
+        std::shuffle(p.begin(), p.end(), engine);
+
+        // Duplicate the permutation vector
+        for (int i = 0; i < 256; ++i) {
+            permutation[i] = permutation[i + 256] = p[i];
+        }
+    }
 
     PerlinNoise3D::~PerlinNoise3D() {}
 
@@ -13,8 +31,8 @@ namespace JCAT {
         auto lerp = [](float a, float b, float t) { return a + t * (b - a); };
 
         // Hash function for gradient indexing
-        auto hash = [](const std::array<int, 512> permutation, int x, int y, int z) {
-            return permutation[(permutation[(permutation[x % 256] + y) % 256] + z) % 256];
+        auto hash = [](const std::array<int, 512>& permutation, int x, int y, int z) {
+            return permutation[(permutation[(permutation[x & 255] + y) & 255] + z) & 255];
         };
 
         // Gradient calculation based on hash
