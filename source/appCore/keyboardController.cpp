@@ -1,17 +1,26 @@
 #include "./appCore/keyboardController.h"
 
 namespace JCAT {
+    /// Constructor and Destructor
     KeyboardController::KeyboardController() {}
     KeyboardController::~KeyboardController() {}
 
+    /// @brief Sets the move speed for the sprite. 
+    /// @param newSpeed The new move speed to set. 
     void KeyboardController::setMoveSpeed(const float newSpeed) {
         moveSpeed = newSpeed;
     }
 
+    /// @brief sets the sensitivity for the mouse movement.
+    /// @param newSensitivity The new sensitivity to set.
     void KeyboardController::setSensitivity(const float newSensitivity) {
         sensitivity = newSensitivity;
     }
 
+    /// @brief Uses user keystrokes to move the sprite in 2D space.
+    /// @param window the GLFW window used in the interface 
+    /// @param dt the delta time between frames 
+    /// @param gameSprite the sprite to be moved 
     void KeyboardController::moveSprite(GLFWwindow* window, float dt, GameSprite& gameSprite) {
         glm::vec2 moveDir{ 0.0f };
         glm::vec2 scaleDir{ 1.0f };
@@ -48,6 +57,10 @@ namespace JCAT {
         fullscreenFunctionality(window);
     }
 
+    /// @brief Uses user keystrokes to move the object in 3D space.
+    /// @param window the GLFW window used in the interface
+    /// @param dt the delta time between frames
+    /// @param gameObject the object to be moved
     void KeyboardController::moveObjectInPlaneXZ(GLFWwindow* window, float dt, GameObject& gameObject) {
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
@@ -103,6 +116,8 @@ namespace JCAT {
         fullscreenFunctionality(window);
     }
 
+    /// @brief used to hide, or reveal the cursor when the escape key is pressed.
+    /// @param window the GLFW window used in the interface
     void KeyboardController::escapeFunctionality(GLFWwindow* window){
         // Escape functionality
         bool isEscapePressed = glfwGetKey(window, keysCommon.escape) == GLFW_PRESS;
@@ -131,6 +146,8 @@ namespace JCAT {
         }
     }
 
+    /// @brief used to toggle fullscreen mode when the F key is pressed.
+    /// @param window the GLFW window used in the interface
     void KeyboardController::fullscreenFunctionality(GLFWwindow* window){
         bool isFKeyPressed = glfwGetKey(window, keysCommon.fullscreen);
         if (isFKeyPressed && !fKeyPressedLastFrame) { 
