@@ -37,3 +37,5 @@ To edit and run the project on a Windows computer, follow these steps:
     - Finally, click "New" and then paste the file path to your mingw folder's bin folder (".../mingw/bin")
 13. To run the game engine application, go to the folder where you cloned the repository , select mingwBuild (a .bat file) and when that finishes running, go to the "build" folder and finally select the application file named "JCATEngine.exe"
     - The application is running correctly if a new window named "JCAT Game Engine" shows a non-blank screen
+    - If your computer has an Nvidia GPU and either is plugged in or has no other GPU, the game engine may 
+    crash on start up. If this happens, keep running the application and it should eventually work.
