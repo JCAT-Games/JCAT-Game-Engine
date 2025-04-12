@@ -7,7 +7,7 @@
 
 int main() {
     JCAT::Application3D application{};
-    //    ^ Set to "Application3D" for 3D / "Application" for 2D
+    //    ^ Set to "Application3D" for 3D Demo Application / "Application" for 2D Demo Application
 
     try {
         application.run();

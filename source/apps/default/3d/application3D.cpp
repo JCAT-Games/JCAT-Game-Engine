@@ -58,12 +58,15 @@ namespace JCAT {
 
         // For adding textures (We need to add the ability to add mutiple textures in the future)
         Texture texture = Texture(device, resourceManager, "../textures/cobble.png");
+        Texture stone = Texture(device, resourceManager, "../textures/close-up-rock-with-lichen.jpg");
+        Texture stone2 = Texture(device, resourceManager, "../textures/cracked-plaster-wall.jpg");
+        Texture sand = Texture(device, resourceManager, "../textures/metallic-gold-paper-background.jpg");
 
         // Bind texture to descriptor set
         VkDescriptorImageInfo imageInfo {};
-        imageInfo.sampler = texture.getSampler();
-        imageInfo.imageView = texture.getImageView();
-        imageInfo.imageLayout = texture.getImageLayout();
+        imageInfo.sampler = stone.getSampler();
+        imageInfo.imageView = stone.getImageView();
+        imageInfo.imageLayout = stone.getImageLayout();
         
         std::vector<VkDescriptorSet> globalDescriptorSets(SwapChain::MAX_FRAMES_IN_FLIGHT);
         for(int i = 0; i < globalDescriptorSets.size(); i++){
