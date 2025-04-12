@@ -256,10 +256,23 @@ namespace JCAT {
         std::shared_ptr<JCATModel3D> betterCubeModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/cube.obj", true);
         std::shared_ptr<JCATModel3D> vaseModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/smooth_vase.obj", true);
         std::shared_ptr<JCATModel3D> donutModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/CM_Donut_Scrap.obj", true);
+        std::shared_ptr<JCATModel3D> bearModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/3legBear.obj", true);
+        std::shared_ptr<JCATModel3D> chairModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/adirondackChair.obj", true);
+        std::shared_ptr<JCATModel3D> cacomistleModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/cacomistle.obj", true);
+        std::shared_ptr<JCATModel3D> cupModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/cup.obj", true);
+        std::shared_ptr<JCATModel3D> deerModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/deer.obj", true);
+        std::shared_ptr<JCATModel3D> giraffeModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/giraffe.obj", true);
+        std::shared_ptr<JCATModel3D> mongolianGerbilModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/mongolianGerbil.obj", true);
+        std::shared_ptr<JCATModel3D> mudpuppyModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/mudpuppy.obj", true);
+        std::shared_ptr<JCATModel3D> osakaModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/osaka.obj", true);
+        std::shared_ptr<JCATModel3D> penguinModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/penguin.obj", true);
+        std::shared_ptr<JCATModel3D> pigModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/pizzaPig.obj", true);
+        std::shared_ptr<JCATModel3D> saltChairModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/saltChair.obj", true);
+        std::shared_ptr<JCATModel3D> seagullModel = JCATModel3D::createModelFromFile(device, resourceManager, "../models/seagull.obj", true);
 	
         GameObject cube = GameObject::createGameObject();
         cube.model3D = cubeModel;
-        cube.transform.translation = { .0f, .0f, 2.5f };
+        cube.transform.translation = { .0f, -15.75f, 2.5f };
         cube.transform.scale = { .5f, .5f, .5f };
         cube.hasLighting = 0;
         cube.hasTexture = 0;
@@ -267,7 +280,7 @@ namespace JCAT {
 
         GameObject cube2 = GameObject::createGameObject();
         cube2.model3D = cubeModel;
-        cube2.transform.translation = { .5f, .0f, 4.0f };
+        cube2.transform.translation = { .5f, -15.75f, 4.0f };
         cube2.transform.scale = { 1.0f, 1.0f, 1.0f };
         cube2.hasLighting = 0;
         cube2.hasTexture = 0;
@@ -275,7 +288,7 @@ namespace JCAT {
 
         GameObject cube3 = GameObject::createGameObject();
         cube3.model3D = cubeModel;
-        cube3.transform.translation = { -.5f, -.5f, 1.0f };
+        cube3.transform.translation = { -.5f, -17.5f, 1.0f };
         cube3.transform.scale = { 1.0f, 0.5f, 1.0f };
         cube3.hasLighting = 0;
         cube3.hasTexture = 0;
@@ -283,7 +296,7 @@ namespace JCAT {
 
         GameObject cube4 = GameObject::createGameObject();
         cube4.model3D = cubeModel;
-        cube4.transform.translation = { 1.75f, 0.75f, 1.5f };
+        cube4.transform.translation = { 1.75f, -14.75f, 1.5f };
         cube4.transform.scale = { 1.0f, 0.5f, 1.5f };
         cube4.hasLighting = 0;
         cube4.hasTexture = 0;
@@ -291,7 +304,7 @@ namespace JCAT {
 
         GameObject vase = GameObject::createGameObject();
         vase.model3D = vaseModel;
-        vase.transform.translation = { -.5f, -10.5f, 1.0f };
+        vase.transform.translation = { -.5f, -18.5f, 1.0f };
         vase.transform.scale = { 1.0f, 1.0f, 1.0f };
         vase.hasLighting = 1;
         vase.hasTexture = 1;
@@ -299,11 +312,118 @@ namespace JCAT {
 
         GameObject donut = GameObject::createGameObject();
         donut.model3D = donutModel;
-        donut.transform.translation = { 1.75f, -10.75f, 1.5f };
+        donut.transform.translation = { 1.75f, -18.75f, 1.5f };
         donut.transform.scale = { 1.0f, 1.0f, 1.0f };
         donut.hasLighting = 1;
         donut.hasTexture = 1;
         gameObjects.push_back(std::move(donut));
+
+        float startX = 1.75f;
+        float spacing = 10.0f;
+
+        GameObject bear = GameObject::createGameObject();
+        bear.model3D = bearModel;
+        bear.transform.translation = { startX + 0 * spacing, -15.75f, 10.5f };
+        bear.transform.scale = { 1.0f, -1.0f, 1.0f };
+        bear.hasLighting = 1;
+        bear.hasTexture = 0;
+        gameObjects.push_back(std::move(bear));
+
+        GameObject chair = GameObject::createGameObject();
+        chair.model3D = chairModel;
+        chair.transform.translation = { startX + 1 * spacing, -15.75f, 10.5f };
+        chair.transform.scale = { 1.0f, -1.0f, 1.0f };
+        chair.hasLighting = 1;
+        chair.hasTexture = 0;
+        gameObjects.push_back(std::move(chair));
+
+        GameObject cacomistle = GameObject::createGameObject();
+        cacomistle.model3D = cacomistleModel;
+        cacomistle.transform.translation = { startX + 2 * spacing, -15.75f, 10.5f };
+        cacomistle.transform.scale = { 1.0f, -1.0f, 1.0f };
+        cacomistle.hasLighting = 1;
+        cacomistle.hasTexture = 0;
+        gameObjects.push_back(std::move(cacomistle));
+
+        GameObject cup = GameObject::createGameObject();
+        cup.model3D = cupModel;
+        cup.transform.translation = { startX + 3 * spacing, -15.75f, 10.5f };
+        cup.transform.scale = { 1.0f, -1.0f, 1.0f };
+        cup.hasLighting = 1;
+        cup.hasTexture = 0;
+        gameObjects.push_back(std::move(cup));
+
+        GameObject deer = GameObject::createGameObject();
+        deer.model3D = deerModel;
+        deer.transform.translation = { startX + 4 * spacing, -15.75f, 10.5f };
+        deer.transform.scale = { 1.0f, -1.0f, 1.0f };
+        deer.hasLighting = 1;
+        deer.hasTexture = 0;
+        gameObjects.push_back(std::move(deer));
+
+        GameObject giraffe = GameObject::createGameObject();
+        giraffe.model3D = giraffeModel;
+        giraffe.transform.translation = { startX + 5 * spacing, -15.75f, 10.5f };
+        giraffe.transform.scale = { 1.0f, -1.0f, 1.0f };
+        giraffe.hasLighting = 1;
+        giraffe.hasTexture = 0;
+        gameObjects.push_back(std::move(giraffe));
+
+        GameObject mongolianGerbil = GameObject::createGameObject();
+        mongolianGerbil.model3D = mongolianGerbilModel;
+        mongolianGerbil.transform.translation = { startX + 6 * spacing, -15.75f, 10.5f };
+        mongolianGerbil.transform.scale = { 1.0f, -1.0f, 1.0f };
+        mongolianGerbil.hasLighting = 1;
+        mongolianGerbil.hasTexture = 0;
+        gameObjects.push_back(std::move(mongolianGerbil));
+
+        GameObject mudpuppy = GameObject::createGameObject();
+        mudpuppy.model3D = mudpuppyModel;
+        mudpuppy.transform.translation = { startX + 7 * spacing, -15.75f, 10.5f };
+        mudpuppy.transform.scale = { 1.0f, -1.0f, 1.0f };
+        mudpuppy.hasLighting = 1;
+        mudpuppy.hasTexture = 0;
+        gameObjects.push_back(std::move(mudpuppy));
+
+        GameObject osaka = GameObject::createGameObject();
+        osaka.model3D = osakaModel;
+        osaka.transform.translation = { startX + 8 * spacing, -15.75f, 10.5f };
+        osaka.transform.scale = { 1.0f, -1.0f, 1.0f };
+        osaka.hasLighting = 1;
+        osaka.hasTexture = 0;
+        gameObjects.push_back(std::move(osaka));
+
+        GameObject penguin = GameObject::createGameObject();
+        penguin.model3D = penguinModel;
+        penguin.transform.translation = { startX + 9 * spacing, -15.75f, 10.5f };
+        penguin.transform.scale = { 1.0f, -1.0f, 1.0f };
+        penguin.hasLighting = 1;
+        penguin.hasTexture = 0;
+        gameObjects.push_back(std::move(penguin));
+
+        GameObject pig = GameObject::createGameObject();
+        pig.model3D = pigModel;
+        pig.transform.translation = { startX + 10 * spacing, -15.75f, 10.5f };
+        pig.transform.scale = { 1.0f, -1.0f, 1.0f };
+        pig.hasLighting = 1;
+        pig.hasTexture = 0;
+        gameObjects.push_back(std::move(pig));
+
+        GameObject saltChair = GameObject::createGameObject();
+        saltChair.model3D = saltChairModel;
+        saltChair.transform.translation = { startX + 11 * spacing, -15.75f, 10.5f };
+        saltChair.transform.scale = { 1.0f, -1.0f, 1.0f };
+        saltChair.hasLighting = 1;
+        saltChair.hasTexture = 0;
+        gameObjects.push_back(std::move(saltChair));
+
+        GameObject seagull = GameObject::createGameObject();
+        seagull.model3D = seagullModel;
+        seagull.transform.translation = { startX + 12 * spacing, -15.75f, 10.5f };
+        seagull.transform.scale = { 1.0f, -1.0f, 1.0f };
+        seagull.hasLighting = 1;
+        seagull.hasTexture = 0;
+        gameObjects.push_back(std::move(seagull));
 
         const int TERRAIN_WIDTH = 100;
         const int TERRAIN_DEPTH = 100;
