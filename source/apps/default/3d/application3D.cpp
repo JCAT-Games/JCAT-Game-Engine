@@ -61,6 +61,9 @@ namespace JCAT {
         Texture stone = Texture(device, resourceManager, "../textures/close-up-rock-with-lichen.jpg");
         Texture stone2 = Texture(device, resourceManager, "../textures/cracked-plaster-wall.jpg");
         Texture sand = Texture(device, resourceManager, "../textures/metallic-gold-paper-background.jpg");
+        Texture wood = Texture(device, resourceManager, "../textures/wood.jpg");
+        Texture moss = Texture(device, resourceManager, "../textures/moss.jpg");
+        Texture metal = Texture(device, resourceManager, "../textures/metal.jpg");
 
         // Bind texture to descriptor set
         VkDescriptorImageInfo imageInfo {};
@@ -428,8 +431,8 @@ namespace JCAT {
         seagull.hasTexture = 0;
         gameObjects.push_back(std::move(seagull));
 
-        const int TERRAIN_WIDTH = 100;
-        const int TERRAIN_DEPTH = 100;
+        const int TERRAIN_WIDTH = 75;
+        const int TERRAIN_DEPTH = 75;
         const int MAX_HEIGHT = 50;
         const float SCALE = 0.01f;
         const float AMPLITUDE = 20.0f;
