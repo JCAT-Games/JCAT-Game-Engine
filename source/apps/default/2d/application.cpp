@@ -1,6 +1,7 @@
 #include "./apps/default/2d/application.h"
 
 #include "./appCore/keyboardController.h"
+#include "./appCore/imguiHandler.h"
 #include "./engine/2d/camera2D.h"
 #include "./apps/default/2d/applicationRenderer.h"
 
@@ -33,6 +34,8 @@ namespace JCAT {
 
         std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
 
+        ImGuiIO &io = GuiHandler::initializeImGui(window, device, renderer);
+
         while (!window.shouldWindowClose()) {
             glfwPollEvents();
 
@@ -51,15 +54,37 @@ namespace JCAT {
             float aspect = renderer.getAspectRatio();
             camera.setOrthographicProjection(-aspect, aspect, -1, 1);
 
+            // Start the ImGui frame
+            ImGui_ImplVulkan_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            // Show a basic window with some FPS info
+            ImGui::Begin("Application Frame Rate");
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::End();
+
             if (VkCommandBuffer commandBuffer = renderer.beginRecordingFrame()) {
+                // Begin render pass and render game sprites
                 renderer.beginSwapChainRenderPass(commandBuffer);
                 applicationRenderer.renderGameObjects(commandBuffer, gameSprites, camera);
+
+                // Render ImGui content and obtain draw data to add to command buffer
+                ImGui::Render();
+                ImDrawData *drawData = ImGui::GetDrawData();
+                
+                // Record imgui primitives into command buffer
+                // Last part of the process so UI windows are always on top
+                ImGui_ImplVulkan_RenderDrawData(drawData, commandBuffer);
+                
+                // End render pass and recording and then submit command buffers
                 renderer.endSwapChainRenderPass(commandBuffer);
                 renderer.endRecordingFrame();
             }
         }
 
         vkDeviceWaitIdle(device.device());
+        GuiHandler::shutdownImGui();
     }
 
     void Application::loadGameSprites() {

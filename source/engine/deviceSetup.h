@@ -143,6 +143,13 @@ namespace JCAT {
              */
             VkQueue presentQueue();
 
+            /**
+             * @brief Retrieves the Vulkan instance being used.
+             *
+             * @return VkInstance The Vulkan instance for passing Vulkan information to implementation 
+             */
+            VkInstance getInstance();
+
             SwapChainSupportDetails getSwapChainSupport();
             VkFormat findSupportedDepthFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
             uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);

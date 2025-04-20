@@ -98,6 +98,14 @@ else()
     message(FATAL_ERROR "TINY_OBJ_PATH is not defined in .env.cmake!")
 endif()
 
+# Creates a library from the ImGui files and links the necessary directories and libraries
+set(IMGUI_DIR ${PROJECT_SOURCE_DIR}/imgui)
+file(GLOB IMGUI_SRC ${IMGUI_DIR}/*.cpp ${IMGUI_DIR}/*.h)
+add_library(imgui ${IMGUI_SRC})
+target_include_directories(imgui PUBLIC ${PROJECT_SOURCE_DIR}/imgui)
+target_include_directories(imgui PUBLIC ${Vulkan_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS})
+target_link_libraries(imgui PUBLIC glfw3 vulkan-1)
+
 # Gathers all .cpp files in the source directory and all subdirectories and compiles hem to an executable using C++ 17
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/source/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -128,6 +136,7 @@ if (WIN32)
         ${GLM_PATH}
         ${STB_IMAGE_INCLUDE_DIR}
         ${TINY_OBJ_INCLUDE_DIR}
+        ${IMGUI_DIR}
     )
  
     # Setting Up Linker Directories for compilation
@@ -137,7 +146,7 @@ if (WIN32)
     )
  
     # Linking required libraries
-    target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1 stb_image tiny_obj)
+    target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1 stb_image tiny_obj imgui)
 # If use is on Linux
 elseif (UNIX)
     # Create a build for Linux
@@ -149,7 +158,7 @@ elseif (UNIX)
     )
 
     # Linking required libraries
-    target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} stb_image tiny_obj)
+    target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} stb_image tiny_obj imgui)
 endif()
 
 ##### For Compiling Shader Objects #####

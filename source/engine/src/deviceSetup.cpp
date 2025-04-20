@@ -49,6 +49,10 @@ namespace JCAT {
         return presentQueue_;
     }
 
+    VkInstance DeviceSetup::getInstance() {
+        return instance;
+    }
+
     SwapChainSupportDetails DeviceSetup::getSwapChainSupport() {
         return querySwapChainSupport(physicalDevice);
     }
