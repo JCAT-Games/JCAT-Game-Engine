@@ -34,7 +34,7 @@ namespace JCAT {
 
         std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
 
-        ImGuiIO &io = GuiHandler::initializeImGui(window, device, renderer);
+        ImGuiIO &io = ImGuiHandler::initializeImGui(window, device, renderer, true);
 
         while (!window.shouldWindowClose()) {
             glfwPollEvents();
@@ -55,9 +55,7 @@ namespace JCAT {
             camera.setOrthographicProjection(-aspect, aspect, -1, 1);
 
             // Start the ImGui frame
-            ImGui_ImplVulkan_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
+            ImGuiHandler::startImGuiFrame();
 
             // Show a basic window with some FPS info
             ImGui::Begin("Application Frame Rate");
@@ -69,13 +67,9 @@ namespace JCAT {
                 renderer.beginSwapChainRenderPass(commandBuffer);
                 applicationRenderer.renderGameObjects(commandBuffer, gameSprites, camera);
 
-                // Render ImGui content and obtain draw data to add to command buffer
-                ImGui::Render();
-                ImDrawData *drawData = ImGui::GetDrawData();
-                
-                // Record imgui primitives into command buffer
-                // Last part of the process so UI windows are always on top
-                ImGui_ImplVulkan_RenderDrawData(drawData, commandBuffer);
+                // Render ImGui content and record ImGui primitives into command buffer
+                // Last part of the process so UI windows are always at front
+                ImGuiHandler::renderImGui(commandBuffer);
                 
                 // End render pass and recording and then submit command buffers
                 renderer.endSwapChainRenderPass(commandBuffer);
@@ -83,8 +77,9 @@ namespace JCAT {
             }
         }
 
+        // Waits for queue operations to complete and shuts down ImGui
         vkDeviceWaitIdle(device.device());
-        GuiHandler::shutdownImGui();
+        ImGuiHandler::shutdownImGui();
     }
 
     void Application::loadGameSprites() {

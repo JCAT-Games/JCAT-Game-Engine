@@ -1,10 +1,8 @@
 #include "./appCore/imguiHandler.h"
 
 namespace JCAT {
-    GuiHandler::GuiHandler() {}
-    GuiHandler::~GuiHandler() {}
 
-    ImGuiIO& GuiHandler::initializeImGui(Window &window, DeviceSetup &device, Renderer &renderer) {
+    ImGuiIO& ImGuiHandler::initializeImGui(Window &window, DeviceSetup &device, Renderer &renderer, bool lightStyle) {
         // Create ImGui context and set up IO functions
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -13,7 +11,8 @@ namespace JCAT {
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
         // Setup ImGui style
-        ImGui::StyleColorsDark();
+        if(lightStyle) ImGui::StyleColorsLight();
+        else ImGui::StyleColorsDark();
 
         // ImGui setup for working with Vulkan
         ImGui_ImplGlfw_InitForVulkan(window.getWindow(), false);
@@ -37,13 +36,25 @@ namespace JCAT {
         return io;
     }
 
-    void GuiHandler::shutdownImGui() {
+    void ImGuiHandler::startImGuiFrame() {
+        ImGui_ImplVulkan_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+    }
+
+    void ImGuiHandler::renderImGui(VkCommandBuffer &commandBuffer) {
+        // Records ImGui primitives to given command buffer
+        ImGui::Render();
+        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
+    }
+
+    void ImGuiHandler::shutdownImGui() {
         ImGui_ImplVulkan_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     }
 
-    void GuiHandler::check_vk_result(VkResult err) {
+    void ImGuiHandler::check_vk_result(VkResult err) {
         if (err == VK_SUCCESS)
             return;
         fprintf(stderr, "[vulkan] Error: VkResult = %d\n", err);
