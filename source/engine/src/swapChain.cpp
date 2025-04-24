@@ -171,6 +171,7 @@ namespace JCAT {
 
         // Submit the draw command buffer
         if (vkQueueSubmit(device.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
+            // On Nvidia GPUs, VK_ERROR_DEVICE_LOST is sometimes returned by above function, causing error to be thrown
             throw std::runtime_error("Failed to submit the draw command buffer!");
         }
 
