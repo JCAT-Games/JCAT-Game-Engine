@@ -89,7 +89,7 @@ else()
 endif()
 
 if (DEFINED TINY_OBJ_PATH)
-    message(STATUS "Using TINY_OBJ_PATH frm .env.cmake: ${TINY_OBJ_PATH}")
+    message(STATUS "Using TINY_OBJ_PATH from .env.cmake: ${TINY_OBJ_PATH}")
     set(TINY_OBJ_INCLUDE_DIR "${TINY_OBJ_PATH}")
 
     add_library(tiny_obj INTERFACE)
@@ -98,13 +98,20 @@ else()
     message(FATAL_ERROR "TINY_OBJ_PATH is not defined in .env.cmake!")
 endif()
 
-# Creates a library from the ImGui files and links the necessary directories and libraries
-set(IMGUI_DIR ${PROJECT_SOURCE_DIR}/imgui)
-file(GLOB IMGUI_SRC ${IMGUI_DIR}/*.cpp ${IMGUI_DIR}/*.h)
-add_library(imgui ${IMGUI_SRC})
-target_include_directories(imgui PUBLIC ${PROJECT_SOURCE_DIR}/imgui)
-target_include_directories(imgui PUBLIC ${Vulkan_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS})
-target_link_libraries(imgui PUBLIC glfw3 vulkan-1)
+if (DEFINED IMGUI_PATH)
+    # Creates a library from the basic ImGui files in the location provided in .env.cmake
+    message(STATUS "Using IMGUI_PATH from .env.cmake: ${IMGUI_PATH}")
+    file(GLOB IMGUI_SRC ${IMGUI_PATH}/*.cpp ${IMGUI_PATH}/*.h)
+    add_library(imgui ${IMGUI_SRC})
+    # Also creates a library for the needed backends for this project and links Vulkan and GLFW
+    file(GLOB IMGUI_BACKEND_SRC ${IMGUI_PATH}/backends/imgui_impl_glfw.*
+                                ${IMGUI_PATH}/backends/imgui_impl_vulkan.*)
+    add_library(imgui_backends ${IMGUI_BACKEND_SRC})
+    target_include_directories(imgui_backends PUBLIC ${Vulkan_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} ${IMGUI_PATH})
+    target_link_libraries(imgui_backends PUBLIC imgui glfw3 vulkan-1)
+else()
+    message(FATAL_ERROR "IMGUI_PATH is not defined in .env.cmake!")
+endif()
 
 # Gathers all .cpp files in the source directory and all subdirectories and compiles hem to an executable using C++ 17
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/source/*.cpp)
@@ -136,7 +143,8 @@ if (WIN32)
         ${GLM_PATH}
         ${STB_IMAGE_INCLUDE_DIR}
         ${TINY_OBJ_INCLUDE_DIR}
-        ${IMGUI_DIR}
+        ${IMGUI_PATH}
+        ${IMGUI_PATH}/backends
     )
  
     # Setting Up Linker Directories for compilation
@@ -146,7 +154,7 @@ if (WIN32)
     )
  
     # Linking required libraries
-    target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1 stb_image tiny_obj imgui)
+    target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1 stb_image tiny_obj imgui imgui_backends)
 # If use is on Linux
 elseif (UNIX)
     # Create a build for Linux
@@ -158,7 +166,7 @@ elseif (UNIX)
     )
 
     # Linking required libraries
-    target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} stb_image tiny_obj imgui)
+    target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} stb_image tiny_obj imgui imgui_backends)
 endif()
 
 ##### For Compiling Shader Objects #####

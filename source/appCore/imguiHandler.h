@@ -5,15 +5,23 @@
 #include "./engine/deviceSetup.h"
 #include "./engine/renderer.h"
 
-#include "./../imgui/imgui.h"
-#include "./../imgui/imgui_impl_glfw.h"
-#include "./../imgui/imgui_impl_vulkan.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
 
 namespace JCAT {
     /**
      * @class ImGuiHandler
      * @brief This class contains static functions for simplifying working with ImGui and its
      *        GLFW and Vulkan implementations to implement a UI interface to thIS game engine
+     * 
+     * @details The Dear ImGui Open Source Library (https://github.com/ocornut/imgui) provides a lot 
+     * of functionality for implementing UI (including text, sliders, buttons, and more input options) 
+     * into a preexisting application. If working with ImGui here, you may want to read the comments
+     * in imgui.h, imgui_impl_vulkan.h, and maybe imgui_impl_glfw.h (all in the repository) beforehand.
+     * 
+     * https://github.com/ocornut/imgui/tree/master/examples/example_glfw_vulkan
+     * This example from the repository was used to help implement many of this features in this class
      */
     class ImGuiHandler {
         public: 
