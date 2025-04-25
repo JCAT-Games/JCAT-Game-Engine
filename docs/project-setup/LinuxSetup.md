@@ -21,10 +21,13 @@ To edit and run the project on a computer using Linux, follow these steps:
    - Put the directory containing these files in a known location
 7. Download the stb_image.h file located [here](https://github.com/nothings/stb/blob/master/stb_image.h) and store it in a known location
 8. Download the tiny_obj_loader.h file located [here](https://github.com/tinyobjloader/tinyobjloader/blob/release/tiny_obj_loader.h) and store it in a known location
-9. Go to the directory where you cloned the GitHub Repository to (perhaps named JCAT Game Engine) and make a copy of the envUnixTemplate.cmake file and name it ".env.cmake" (in Visual Studio Code, the file icon may change to a green dollar sign)
-10. Change the file paths in this .env.cmake file to be the locations of the previously downloaded files and directories
+9. Download the latest .zip file from [here](https://github.com/ocornut/imgui/releases) (scroll down until you find the Assets section)
+   - Extract the folder within the .zip file (name should be imgui followed by a version number) and put it in a known location
+   - Do not change the folder structure of this folder, but if you want to avoid clutter, you can remove all of the files from the backends folder **except for those with glfw or vulkan in the file name**
+10. Go to the directory where you cloned the GitHub Repository to (perhaps named JCAT Game Engine) and make a copy of the envUnixTemplate.cmake file and name it ".env.cmake" (in Visual Studio Code, the file icon may change to a green dollar sign)
+11. Change the file paths in this .env.cmake file to be the locations of the previously downloaded files and directories
     - Follow the instructions in the comments and the example file paths ("/path/to/your...")
-11. To run the game engine application, go to the directory where you cloned the repository, select unixBuild (a .sh file) and when that finishes running, go to the "build" directory and finally select the application file named "JCATEngine.exe"
+12. To run the game engine application, go to the directory where you cloned the repository, select unixBuild (a .sh file) and when that finishes running, go to the "build" directory and finally select the application file named "JCATEngine.exe"
     - The application is running correctly if a new window named "JCAT Game Engine" shows a non-blank screen
     - If your computer has an Nvidia GPU and either is plugged in or has no other GPU, the game engine may 
     crash on start up. If this happens, keep running the application and it should eventually work.

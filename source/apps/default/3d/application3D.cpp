@@ -1,6 +1,7 @@
 #include "./apps/default/3d/application3D.h"
 
 #include "./appCore/keyboardController.h"
+#include "./appCore/imguiHandler.h"
 #include "./engine/3d/camera3D.h"
 #include "./apps/default/3d/application3DRenderer.h"
 #include "./apps/default/3d/perlinNoise3D.h"
@@ -95,6 +96,8 @@ namespace JCAT {
 
         std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
 
+        ImGuiIO &io = ImGuiHandler::initializeImGui(window, device, renderer);
+
         while (!window.shouldWindowClose()) {
             glfwPollEvents();
 
@@ -107,6 +110,14 @@ namespace JCAT {
 
             float aspect = renderer.getAspectRatio();
             camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
+
+            // Start the ImGui frame
+            ImGuiHandler::startImGuiFrame();
+
+            // Show a basic window with some FPS info
+            ImGui::Begin("Application Frame Rate");
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::End();
 
             if (VkCommandBuffer commandBuffer = renderer.beginRecordingFrame()) {
 
@@ -126,15 +137,23 @@ namespace JCAT {
                 uboBuffers[frameIndex]->writeToBuffer(&ubo);
                 uboBuffers[frameIndex]->flush();
 
-                // render
+                // Begin render pass and render game objects
                 renderer.beginSwapChainRenderPass(commandBuffer);
                 applicationRenderer.renderGameObjects(frameInfo, gameObjects);
+
+                // Render ImGui content and record ImGui primitives into command buffer
+                // Last part of the process so UI windows are always at front
+                ImGuiHandler::renderImGui(commandBuffer);
+
+                // End render pass and recording and then submit command buffers
                 renderer.endSwapChainRenderPass(commandBuffer);
                 renderer.endRecordingFrame();
             }
         }
 
+        // Waits for queue operations to complete and shuts down ImGui
         vkDeviceWaitIdle(device.device());
+        ImGuiHandler::shutdownImGui();
     }
 
     // Courtesy of tutorial for this:

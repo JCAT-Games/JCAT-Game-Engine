@@ -560,7 +560,9 @@ namespace JCAT {
 
         pipelineInfo.basePipelineIndex = -1;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-
+        
+        // On Nvidia GPUs, the below function sometimes causes the program to crash 
+        // without any printed error messages (including the std::runtime_error)
         if (vkCreateGraphicsPipelines(device.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
 	        throw std::runtime_error("Failed to create this graphics pipeline!");
         }

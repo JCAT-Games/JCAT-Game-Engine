@@ -1,6 +1,7 @@
 #include "./apps/default/2d/application.h"
 
 #include "./appCore/keyboardController.h"
+#include "./appCore/imguiHandler.h"
 #include "./engine/2d/camera2D.h"
 #include "./apps/default/2d/applicationRenderer.h"
 
@@ -33,6 +34,8 @@ namespace JCAT {
 
         std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
 
+        ImGuiIO &io = ImGuiHandler::initializeImGui(window, device, renderer, true);
+
         while (!window.shouldWindowClose()) {
             glfwPollEvents();
 
@@ -51,15 +54,32 @@ namespace JCAT {
             float aspect = renderer.getAspectRatio();
             camera.setOrthographicProjection(-aspect, aspect, -1, 1);
 
+            // Start the ImGui frame
+            ImGuiHandler::startImGuiFrame();
+
+            // Show a basic window with some FPS info
+            ImGui::Begin("Application Frame Rate");
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::End();
+
             if (VkCommandBuffer commandBuffer = renderer.beginRecordingFrame()) {
+                // Begin render pass and render game sprites
                 renderer.beginSwapChainRenderPass(commandBuffer);
                 applicationRenderer.renderGameObjects(commandBuffer, gameSprites, camera);
+
+                // Render ImGui content and record ImGui primitives into command buffer
+                // Last part of the process so UI windows are always at front
+                ImGuiHandler::renderImGui(commandBuffer);
+                
+                // End render pass and recording and then submit command buffers
                 renderer.endSwapChainRenderPass(commandBuffer);
                 renderer.endRecordingFrame();
             }
         }
 
+        // Waits for queue operations to complete and shuts down ImGui
         vkDeviceWaitIdle(device.device());
+        ImGuiHandler::shutdownImGui();
     }
 
     void Application::loadGameSprites() {
